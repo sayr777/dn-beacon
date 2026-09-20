@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Expo — Аудиогид и навигация на BLE-маячках для музеев, выставок и аэропортов</title>
+<meta name="description" content="Посетитель подходит к экспонату — и слышит рассказ. Без скачивания карт и без GPS. DN·Expo — proximity-контент для любого пространства.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #7e22ce; --purple-dark: #6b21a8; --purple-light: #faf5ff;
+    --slate: #1e293b; --text: #1e293b; --muted: #64748b;
+    --border: #e2e8f0; --bg: #f8fafc; --white: #fff;
+    --green: #059669; --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--purple); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #d8b4fe; }
+  .nav-cta { background: var(--purple); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; }
+
+  .hero { background: linear-gradient(135deg, #12001e 0%, #1e003a 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(216,180,254,.1); color: #d8b4fe; border: 1px solid rgba(216,180,254,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 820px; margin-bottom: 20px; }
+  .hero h1 span { color: #d8b4fe; }
+  .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 640px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--purple); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--purple); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 660px; margin-bottom: 48px; }
+
+  .how { background: var(--white); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; counter-reset: s; }
+  .step { background: var(--white); padding: 28px; border-right: 1px solid var(--border); }
+  .step:last-child { border-right: none; }
+  .step::before { counter-increment: s; content: counter(s); display: block; width: 36px; height: 36px; background: var(--purple); color: #fff; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; margin-bottom: 14px; font-size: .9rem; }
+  .step h3 { font-size: .9rem; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: .84rem; color: var(--muted); }
+
+  /* SCENARIOS */
+  .scenarios { background: var(--bg); }
+  .sc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; }
+  .sc-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
+  .sc-card .ico { font-size: 2.2rem; margin-bottom: 14px; }
+  .sc-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+  .sc-card p { font-size: .88rem; color: var(--muted); margin-bottom: 14px; }
+  .sc-card ul { display: flex; flex-direction: column; gap: 6px; }
+  .sc-card li { font-size: .82rem; color: var(--muted); padding-left: 14px; position: relative; list-style: none; }
+  .sc-card li::before { content: '→'; position: absolute; left: 0; color: var(--purple); }
+
+  /* PHONE MOCKUP */
+  .demo { background: var(--white); }
+  .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  @media(max-width:700px){.demo-grid{grid-template-columns:1fr}}
+  .phone-wrap { background: var(--slate); border-radius: 20px; padding: 28px; font-size: .82rem; color: #94a3b8; max-width: 380px; }
+  .pw-header { color: #d8b4fe; font-weight: 700; margin-bottom: 20px; font-size: .88rem; display: flex; align-items: center; gap: 8px; }
+  .pw-item { background: rgba(216,180,254,.06); border: 1px solid rgba(216,180,254,.15); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+  .pw-item .pi-title { color: #f1f5f9; font-weight: 700; margin-bottom: 4px; font-size: .85rem; }
+  .pw-item .pi-sub { color: #94a3b8; font-size: .78rem; margin-bottom: 10px; }
+  .pw-item .pi-distance { color: #d8b4fe; font-size: .78rem; margin-bottom: 10px; }
+  .pi-btn { display: inline-block; background: var(--purple); color: #fff; padding: 6px 14px; border-radius: 6px; font-size: .75rem; font-weight: 700; margin-top: 4px; }
+  .pi-playing { color: #a78bfa; font-size: .8rem; margin-top: 8px; }
+  .pi-progress { width: 100%; height: 4px; background: rgba(255,255,255,.1); border-radius: 2px; margin-top: 6px; }
+  .pi-bar { width: 45%; height: 100%; background: var(--purple); border-radius: 2px; }
+  .demo-text h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--slate); }
+  .demo-text p { font-size: .95rem; color: var(--muted); margin-bottom: 20px; }
+  .feature-list { display: flex; flex-direction: column; gap: 14px; }
+  .fl-item { display: flex; gap: 12px; align-items: flex-start; }
+  .fl-ico { width: 36px; height: 36px; background: var(--purple-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .fl-text h4 { font-size: .9rem; font-weight: 700; margin-bottom: 2px; }
+  .fl-text p { font-size: .84rem; color: var(--muted); }
+
+  /* LANGUAGES & FORMATS */
+  .content-types { background: var(--bg); }
+  .ct-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .ct-item { background: var(--white); padding: 22px 16px; text-align: center; }
+  .ct-item .ct-ico { font-size: 2rem; margin-bottom: 8px; }
+  .ct-item h3 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+  .ct-item p { font-size: .8rem; color: var(--muted); }
+
+  /* ANALYTICS */
+  .analytics { background: var(--slate); color: #fff; }
+  .analytics h2 { color: #fff; }
+  .analytics .subtitle { color: #94a3b8; }
+  .an-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .an-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 22px; }
+  .an-val { font-size: 1.8rem; font-weight: 800; color: #d8b4fe; }
+  .an-lbl { font-size: .78rem; color: #94a3b8; margin-top: 4px; }
+  .an-delta { font-size: .8rem; margin-top: 8px; color: #34d399; }
+
+  .specs { background: var(--white); }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .spec-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .spec-card h3 { font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .87rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .k { color: var(--muted); }
+  .spec-row .v { font-weight: 600; }
+  .v.purple { color: var(--purple); }
+  .v.green { color: var(--green); }
+
+  .cta { background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.85); max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--purple); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+  @media(max-width:600px){.step{border-right:none;border-bottom:1px solid var(--border)}.step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Expo</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Аудиогид · Indoor Navigation · Proximity Content</div>
+  <h1>Посетитель подходит к экспонату —<br><span>телефон сам запускает рассказ</span></h1>
+  <p>DN·Expo превращает любое пространство в интерактивную среду: музей, выставку, аэропорт, ТПУ, исторический квартал. Маячок у объекта — персонализированный контент на смартфоне. Без QR, без поиска по карте, без GPS.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить КП</a>
+    <a href="#scenarios" class="btn-outline">Сценарии использования</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>0</strong><span>действий от посетителя для запуска</span></div>
+    <div class="hero-stat"><strong>1–3 м</strong><span>точность определения объекта</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>маячок без обслуживания</span></div>
+    <div class="hero-stat"><strong>40+</strong><span>языков контента</span></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Автоматический аудиогид: как это работает</h2>
+  <p class="subtitle">Посетитель ничего не нажимает — приложение само знает, где он стоит.</p>
+  <div class="steps">
+    <div class="step">
+      <h3>Маячок у каждого объекта</h3>
+      <p>Небольшой BLE-маячок крепится к постаменту, рамке, стенду или вмуровывается в стену. Радиус срабатывания — от 0.5 до 5 метров, настраивается.</p>
+    </div>
+    <div class="step">
+      <h3>Приложение обнаруживает приближение</h3>
+      <p>Приложение (музейное или стороннее с DN·Expo SDK) получает сигнал маячка в фоне. Идентифицирует конкретный объект по UUID.</p>
+    </div>
+    <div class="step">
+      <h3>Контент в нужный момент</h3>
+      <p>Автоматически: аудио начинает играть, открывается текст, видео или AR-слой. Посетитель слышит рассказ, пока рассматривает экспонат — без поиска на карте.</p>
+    </div>
+    <div class="step">
+      <h3>Персонализация и аналитика</h3>
+      <p>Язык — из настроек телефона. История посещения фиксируется. Детские экскурсии, VIP-программа, аудио для слабовидящих — отдельные контентные слои.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section class="scenarios" id="scenarios">
+  <div class="section-label">Применение</div>
+  <h2>Где работает DN·Expo</h2>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="ico">🏛️</div>
+      <h3>Музеи и галереи</h3>
+      <p>Традиционный аудиогид — это устройство из 90-х с кнопками. Посетитель ищет нужный номер вместо того, чтобы смотреть на экспонат.</p>
+      <ul>
+        <li>Автозапуск рассказа при подходе к объекту</li>
+        <li>Голос куратора / профессионального актёра</li>
+        <li>AR-слой: как выглядело «тогда»</li>
+        <li>«Аудиогид для детей» — параллельный контент</li>
+        <li>Несколько языков из одного маячка</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🎪</div>
+      <h3>Выставки и trade show</h3>
+      <p>Посетитель стенда хочет получить материал о продукте — но не скачивать ещё одно приложение и не давать email незнакомым людям.</p>
+      <ul>
+        <li>Каталог, презентация, видео — на телефон автоматически</li>
+        <li>Лиды: «получить материал» → запрос контакта</li>
+        <li>Аналитика посещаемости каждого стенда</li>
+        <li>Обновление контента без замены оборудования</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">✈️</div>
+      <h3>Аэропорты и ТПУ</h3>
+      <p>Крупный аэропорт или транспортно-пересадочный узел — лабиринт из уровней, пересадок и выходов. GPS не работает внутри здания.</p>
+      <ul>
+        <li>«Ваш выход — Gate D12, прямо 400 м, налево»</li>
+        <li>Маршрут метро → электричка → автовокзал</li>
+        <li>Реклама и навигация к lounge / магазинам</li>
+        <li>Для слабовидящих: голосовые подсказки</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🏰</div>
+      <h3>Исторические объекты и городские маршруты</h3>
+      <p>Открытый исторический квартал, замок или парк — GPS работает, но точность 5–10 м не позволяет понять, у какого именно здания стоит турист.</p>
+      <ul>
+        <li>1–3 м: приложение знает, на какой стороне здания вы стоите</li>
+        <li>Пешеходный маршрут с автопереключением остановок</li>
+        <li>QR нет — не надо вытягивать шею к таблице</li>
+        <li>Автономная работа при слабом интернете</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🏨</div>
+      <h3>Отели и курорты</h3>
+      <p>Гость приезжает впервые: ресторан, спа, конференц-зал, парковка. Буклеты — устарели. Карта на сайте — общая и не персонализирована.</p>
+      <ul>
+        <li>«Добро пожаловать, Алексей» при входе в лобби</li>
+        <li>Навигация по территории без GPS</li>
+        <li>Актуальные часы работы ресторана / спа</li>
+        <li>Управление номером: климат, ТВ, заказ</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🏭</div>
+      <h3>Промышленные экскурсии и обучение</h3>
+      <p>Заводские туры, учебные маршруты по производственным объектам. Инструктаж у каждой станции — вместо многостраничного мануала.</p>
+      <ul>
+        <li>«Внимание: зона повышенного шума» при входе в цех</li>
+        <li>Инструкция по работе со станком — на телефон</li>
+        <li>Тест пройден → допуск к работе подтверждён</li>
+        <li>Фиксация: сотрудник прошёл инструктаж у объекта</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo">
+  <div class="section-label">Интерфейс посетителя</div>
+  <h2>Что видит и слышит посетитель</h2>
+  <div class="demo-grid">
+    <div>
+      <div class="phone-wrap">
+        <div class="pw-header">🏛️ Музей истории · Зал III</div>
+        <div class="pw-item">
+          <div class="pi-title">Статуя Командора, XVI в.</div>
+          <div class="pi-sub">Мрамор · Мастерская Бернини</div>
+          <div class="pi-distance">📍 Вы в 1.2 м от объекта</div>
+          <div class="pi-playing">▶ Воспроизводится... 01:24 / 03:10</div>
+          <div class="pi-progress"><div class="pi-bar"></div></div>
+        </div>
+        <div class="pw-item">
+          <div class="pi-title">Рядом в зале:</div>
+          <div class="pi-sub" style="margin-bottom:8px">Бронзовый рельеф «Триумф», ~8 м →</div>
+          <div class="pi-sub">Мозаика «Поход», ~12 м ↑</div>
+        </div>
+        <div class="pw-item">
+          <div class="pi-title">Контент доступен:</div>
+          <div class="pi-sub">🔊 Аудио (RU / EN / DE / ZH)</div>
+          <div class="pi-sub">📷 Фото: как выглядело до реставрации</div>
+          <div class="pi-sub">🎥 Видео: техника создания мрамора XVI в.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="feature-list">
+        <div class="fl-item"><div class="fl-ico">🎵</div><div class="fl-text"><h4>Автозапуск без действий</h4><p>Приложение в фоне получает сигнал маячка и автоматически начинает воспроизведение нужного трека. Посетитель слышит рассказ, не отрываясь от взгляда на экспонат.</p></div></div>
+        <div class="fl-item"><div class="fl-ico">🌍</div><div class="fl-text"><h4>Автоматическое определение языка</h4><p>Язык смартфона → язык аудиогида. Иностранная группа получает контент на своём языке без переключения.</p></div></div>
+        <div class="fl-item"><div class="fl-ico">👁️‍🗨️</div><div class="fl-text"><h4>Доступность для слабовидящих</h4><p>Расширенные аудиоописания, совместимость с VoiceOver и TalkBack. «Говорящий музей» — без специального оборудования напрокат.</p></div></div>
+        <div class="fl-item"><div class="fl-ico">📊</div><div class="fl-text"><h4>Аналитика маршрутов</h4><p>Какие экспонаты посещают чаще, где посетители задерживаются, какие зоны пропускают. Данные для кураторов и дирекции.</p></div></div>
+        <div class="fl-item"><div class="fl-ico">✏️</div><div class="fl-text"><h4>Обновление контента без физических работ</h4><p>Временная выставка — загрузите новые аудиотреки в CMS. Менять или трогать маячки не нужно: UUID — постоянный идентификатор.</p></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT TYPES -->
+<section class="content-types">
+  <div class="section-label">Форматы контента</div>
+  <h2>Что можно доставлять через DN·Expo</h2>
+  <p class="subtitle">Любой формат — от аудио до AR.</p>
+  <div class="ct-grid">
+    <div class="ct-item"><div class="ct-ico">🔊</div><h3>Аудиогид</h3><p>MP3/AAC, несколько языков, несколько версий (детская, VIP, специализированная)</p></div>
+    <div class="ct-item"><div class="ct-ico">📄</div><h3>Текст + фото</h3><p>Расширенное описание, дополнительные изображения, сравнение «до и после»</p></div>
+    <div class="ct-item"><div class="ct-ico">🎥</div><h3>Видео</h3><p>Документальный ролик, реконструкция, интервью с хранителем</p></div>
+    <div class="ct-item"><div class="ct-ico">🕹️</div><h3>AR-слой</h3><p>Дополненная реальность: как объект выглядел в оригинале, 3D-сканирование</p></div>
+    <div class="ct-item"><div class="ct-ico">🗺️</div><h3>Навигация</h3><p>Маршрут по залам, схема здания, «следующий объект в туре»</p></div>
+    <div class="ct-item"><div class="ct-ico">🛒</div><h3>Электронный магазин</h3><p>Репродукции, книги, каталог — одним тапом от экспоната</p></div>
+  </div>
+</section>
+
+<!-- ANALYTICS -->
+<section class="analytics">
+  <div class="section-label">Аналитика</div>
+  <h2>Данные, которые помогают улучшать экспозицию</h2>
+  <p class="subtitle">Какие маршруты популярны, где аудитория задерживается, что пропускают.</p>
+  <div class="an-grid">
+    <div class="an-card"><div class="an-val">2 340</div><div class="an-lbl">Посетителей с аудиогидом за неделю</div><div class="an-delta">↑ +23% после редизайна маршрута</div></div>
+    <div class="an-card"><div class="an-val">4 мин 20 с</div><div class="an-lbl">Среднее время у «хитового» экспоната</div><div class="an-delta">×2.8 vs среднего объекта</div></div>
+    <div class="an-card"><div class="an-val">67%</div><div class="an-lbl">Использование языка EN (топ-1)</div><div class="an-delta">RU — 24%, DE — 9%</div></div>
+    <div class="an-card"><div class="an-val">12%</div><div class="an-lbl">Конверсия в покупку в магазине</div><div class="an-delta">↑ из посетителей с аудиогидом</div></div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Expo</h2>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Маячок</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Формат</span><span class="v purple">iBeacon</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67, 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Радиус срабатывания</span><span class="v purple">0.5–5 м (настр.)</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>CMS контента</h3>
+      <div class="spec-row"><span class="k">Управление контентом</span><span class="v green">веб-интерфейс</span></div>
+      <div class="spec-row"><span class="k">Форматы</span><span class="v green">MP3, MP4, PDF, URL, ARKit</span></div>
+      <div class="spec-row"><span class="k">Языков</span><span class="v purple">40+</span></div>
+      <div class="spec-row"><span class="k">Обновление без визита</span><span class="v green">да (OTA)</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Мобильное приложение</h3>
+      <div class="spec-row"><span class="k">iOS</span><span class="v green">CoreLocation нативно</span></div>
+      <div class="spec-row"><span class="k">Android</span><span class="v green">AltBeacon SDK</span></div>
+      <div class="spec-row"><span class="k">Фоновое сканирование</span><span class="v green">да</span></div>
+      <div class="spec-row"><span class="k">White-label</span><span class="v green">ваш бренд и дизайн</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Аналитика</h3>
+      <div class="spec-row"><span class="k">Тепловая карта</span><span class="v green">реальное время</span></div>
+      <div class="spec-row"><span class="k">Маршруты</span><span class="v green">визуализация Sankey</span></div>
+      <div class="spec-row"><span class="k">A/B тесты</span><span class="v green">по сегментам</span></div>
+      <div class="spec-row"><span class="k">Экспорт</span><span class="v green">CSV / REST API</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Превратите пространство в интерактивную среду</h2>
+  <p>Подготовим схему размещения маячков для вашего объекта, демо-приложение и расчёт стоимости внедрения.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Expo" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Expo</strong> — решение на базе <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#d8b4fe">dynamic-iBeacon</a> · <a href="mailto:info@dn-beacon.ru" style="color:#d8b4fe">info@dn-beacon.ru</a></p>
+</footer>
+</body>
+</html>

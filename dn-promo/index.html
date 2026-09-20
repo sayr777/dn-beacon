@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Promo — Геоконтекстная реклама на BLE-маячках (Location-Based Advertising)</title>
+<meta name="description" content="Маячок у полки, входа или остановки — персонализированное предложение на смартфон пользователя в нужный момент. Рынок LBA: $15 млрд+.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rose: #e11d48;
+    --rose-dark: #be123c;
+    --rose-light: #fff1f2;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--rose); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #fda4af; }
+  .nav-cta { background: var(--rose); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; }
+  .nav-cta:hover { background: var(--rose-dark); }
+
+  .hero { background: linear-gradient(135deg, #1a0008 0%, #0f0018 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(253,164,175,.1); color: #fda4af; border: 1px solid rgba(253,164,175,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 820px; margin-bottom: 20px; }
+  .hero h1 span { color: #fda4af; }
+  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 660px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--rose); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-primary:hover { background: var(--rose-dark); }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rose); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 660px; margin-bottom: 48px; }
+
+  /* MARKET */
+  .market { background: var(--white); }
+  .market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 40px; }
+  .m-item { background: var(--white); padding: 28px 20px; text-align: center; }
+  .m-item .val { font-size: 2rem; font-weight: 800; color: var(--rose); display: block; }
+  .m-item .lbl { font-size: .8rem; color: var(--muted); margin-top: 6px; }
+  .market p { font-size: .95rem; color: var(--muted); max-width: 800px; }
+  .market p + p { margin-top: 12px; }
+
+  /* HOW */
+  .how { background: var(--bg); }
+  .how-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; counter-reset: steps; }
+  .how-step { padding: 28px; border-right: 1px solid var(--border); background: var(--white); }
+  .how-step:last-child { border-right: none; }
+  .how-step::before { counter-increment: steps; content: counter(steps); display: block; width: 36px; height: 36px; background: var(--rose); color: #fff; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; margin-bottom: 14px; font-size: .9rem; }
+  .how-step h3 { font-size: .9rem; font-weight: 700; margin-bottom: 8px; }
+  .how-step p { font-size: .84rem; color: var(--muted); }
+
+  /* SECTORS */
+  .sectors { background: var(--white); }
+  .sector-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .sector-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
+  .sector-card .ico { font-size: 2rem; margin-bottom: 14px; }
+  .sector-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+  .sector-card p { font-size: .88rem; color: var(--muted); margin-bottom: 14px; }
+  .examples { display: flex; flex-direction: column; gap: 6px; }
+  .ex { display: flex; gap: 8px; font-size: .82rem; color: var(--muted); }
+  .ex::before { content: '→'; color: var(--rose); flex-shrink: 0; }
+
+  /* ANALYTICS MOCKUP */
+  .analytics { background: var(--slate); color: #fff; }
+  .analytics h2 { color: #fff; }
+  .analytics .subtitle { color: #94a3b8; }
+  .an-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 32px; }
+  .an-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 22px; }
+  .an-card .an-val { font-size: 1.8rem; font-weight: 800; color: #fda4af; }
+  .an-card .an-lbl { font-size: .78rem; color: #94a3b8; margin-top: 4px; }
+  .an-card .an-delta { font-size: .8rem; margin-top: 8px; }
+  .an-card .an-delta.up { color: #34d399; }
+  .an-card .an-delta.down { color: #f87171; }
+  .funnel { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); border-radius: var(--radius); padding: 24px; }
+  .funnel h3 { font-size: .78rem; text-transform: uppercase; letter-spacing: .08em; color: #fda4af; margin-bottom: 18px; }
+  .funnel-row { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; font-size: .85rem; }
+  .funnel-bar-wrap { flex: 1; background: rgba(255,255,255,.07); border-radius: 4px; height: 22px; overflow: hidden; }
+  .funnel-bar { height: 100%; background: linear-gradient(90deg, var(--rose), #f43f5e); border-radius: 4px; display: flex; align-items: center; padding-left: 8px; font-size: .75rem; font-weight: 700; color: #fff; }
+  .funnel-row .fn-lbl { width: 140px; color: #cbd5e1; flex-shrink: 0; }
+  .funnel-row .fn-cnt { width: 60px; text-align: right; color: #fff; font-weight: 600; flex-shrink: 0; }
+
+  /* VS GPS */
+  .vs { background: var(--bg); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--slate); color: #fff; padding: 13px 16px; text-align: left; font-weight: 600; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--white); }
+  tr:hover td { background: var(--rose-light); }
+  .hl td:first-child { font-weight: 700; color: var(--rose); }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: #ef4444; }
+  .mid { color: #d97706; }
+
+  /* SPECS */
+  .specs { background: var(--white); }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .spec-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .spec-card h3 { font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .87rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .k { color: var(--muted); }
+  .spec-row .v { font-weight: 600; }
+  .v.rose { color: var(--rose); }
+  .v.green { color: var(--green); }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--rose) 0%, var(--rose-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.85); max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--rose); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+
+  @media(max-width:600px){.hero-stats{gap:24px}.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Promo</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться с нами</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Location-Based Advertising · Proximity Marketing</div>
+  <h1>Маячок у полки отправляет<br><span>скидку прямо в телефон покупателя</span></h1>
+  <p>DN·Promo — платформа геоконтекстной рекламы на BLE-маячках. Когда смартфон клиента оказывается в нужном месте — у входа, у витрины, на остановке — система отправляет персонализированное предложение в нужный момент. Точность 1–3 метра. Работает без GPS — в любом помещении.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить коммерческое предложение</a>
+    <a href="#sectors" class="btn-outline">Отраслевые сценарии</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>$15 млрд+</strong><span>глобальный рынок LBA 2024</span></div>
+    <div class="hero-stat"><strong>×4</strong><span>CTR выше обычной мобильной рекламы</span></div>
+    <div class="hero-stat"><strong>1–3 м</strong><span>точность против ~50 м у GPS</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>маячок без замены батареи</span></div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section class="market">
+  <div class="section-label">Рынок</div>
+  <h2>LBA — один из самых быстрорастущих рекламных форматов</h2>
+  <div class="market-grid">
+    <div class="m-item"><span class="val">$15 млрд+</span><span class="lbl">Объём рынка LBA, 2024</span></div>
+    <div class="m-item"><span class="val">20%+</span><span class="lbl">Ежегодный рост рынка</span></div>
+    <div class="m-item"><span class="val">×4</span><span class="lbl">CTR vs обычная мобильная реклама</span></div>
+    <div class="m-item"><span class="val">+30–50%</span><span class="lbl">Конверсия в ритейле с proximity-нотификациями</span></div>
+    <div class="m-item"><span class="val">3 млрд</span><span class="lbl">BLE-совместимых смартфонов на рынке</span></div>
+  </div>
+  <p>Геоконтекстная реклама работает на пересечении физического местоположения и цифрового намерения. Пользователь стоит перед полкой — и в этот момент получает скидку именно на этот товар. Момент принятия решения о покупке и рекламный контакт совпадают. Это принципиально отличает LBA от любой традиционной рекламы.</p>
+  <p style="margin-top:12px">iBeacon — основной стандарт proximity-маркетинга: поддерживается нативно в iOS и через SDK на Android, совместим со всеми ведущими LBA-платформами (Swirl, Gimbal, Estimote, Proxama и десятками других).</p>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>От маячка до конверсии — четыре шага</h2>
+  <p class="subtitle">Стандартная интеграция через iBeacon SDK занимает от нескольких часов до пары дней.</p>
+  <div class="how-steps">
+    <div class="how-step">
+      <h3>Маячок DN·Promo на точке</h3>
+      <p>Устанавливается у входа, на полке, у кассы или на остановке. Постоянно транслирует стандартный iBeacon-сигнал. Батарея — 15–20 лет, обслуживание не требуется.</p>
+    </div>
+    <div class="how-step">
+      <h3>SDK в приложении обнаруживает сигнал</h3>
+      <p>Мобильное приложение (ваше или партнёрское) с iBeacon SDK регистрирует вхождение в зону. UUID маячка идентифицирует точку — конкретный магазин, полку или зону.</p>
+    </div>
+    <div class="how-step">
+      <h3>Сервер формирует персонализированный контент</h3>
+      <p>На сервер DN·Promo поступает событие: пользователь X у маячка Y. Сервер знает историю покупок, сегмент и текущие акции. Формирует релевантное предложение.</p>
+    </div>
+    <div class="how-step">
+      <h3>Push-уведомление или in-app сообщение</h3>
+      <p>Пользователь получает предложение в нужный момент — стоя у полки. Одним тапом — переход на страницу товара, купон или навигация к нужному отделу.</p>
+    </div>
+    <div class="how-step">
+      <h3>Аналитика и оптимизация</h3>
+      <p>Платформа фиксирует: показы, клики, конверсии, время у точки, повторные визиты. A/B тесты сообщений и сегментов — в реальном времени.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTORS -->
+<section class="sectors" id="sectors">
+  <div class="section-label">Отраслевые сценарии</div>
+  <h2>Где DN·Promo приносит максимальный эффект</h2>
+  <p class="subtitle">Шесть вертикалей с готовыми сценариями и измеримыми метриками результата.</p>
+  <div class="sector-grid">
+    <div class="sector-card">
+      <div class="ico">🛒</div>
+      <h3>Продуктовый ритейл и супермаркеты</h3>
+      <p>Маячки у входа, у категорийных стеллажей и у кассы. Покупатель получает релевантные предложения по ходу маршрута — именно у той полки, куда смотрит.</p>
+      <div class="examples">
+        <div class="ex">Скидка на молоко при входе в молочный отдел</div>
+        <div class="ex">«Вы берёте пасту — вот соус со скидкой 20%»</div>
+        <div class="ex">Напоминание о товаре из списка покупок рядом с полкой</div>
+        <div class="ex">Тепловая карта: какие зоны покупатели пропускают</div>
+      </div>
+    </div>
+    <div class="sector-card">
+      <div class="ico">🏬</div>
+      <h3>Торговые центры и ТРЦ</h3>
+      <p>Маячки у каждого арендатора и в коридорах. Единое приложение ТРЦ — персонализированная лента предложений по мере прохода мимо магазинов.</p>
+      <div class="examples">
+        <div class="ex">«Вы проходите мимо — сегодня скидка 15%»</div>
+        <div class="ex">Навигация к нужному магазину по этажу</div>
+        <div class="ex">Аналитика арендатору: трафик мимо vs. заходы</div>
+        <div class="ex">Программа лояльности: баллы за визит в зону</div>
+      </div>
+    </div>
+    <div class="sector-card">
+      <div class="ico">🚌</div>
+      <h3>Остановки общественного транспорта</h3>
+      <p>Маячок на павильоне идентифицирует остановку. Пока пассажир ждёт — он в «рекламном окне» 3–7 минут с высоким вниманием.</p>
+      <div class="examples">
+        <div class="ex">Реклама кафе в 100 м с акцией</div>
+        <div class="ex">Объявления о местных мероприятиях</div>
+        <div class="ex">Таргетинг по маршруту: остановка «у офисного квартала» vs. «у рынка»</div>
+        <div class="ex">Расписание и задержки транспорта (DN·City)</div>
+      </div>
+    </div>
+    <div class="sector-card">
+      <div class="ico">✈️</div>
+      <h3>Аэропорты и вокзалы</h3>
+      <p>Пассажир проводит в аэропорту 1,5–3 часа. Маячки в каждой зоне превращают это время в управляемый рекламный маршрут.</p>
+      <div class="examples">
+        <div class="ex">Duty-free: персональные предложения у входа</div>
+        <div class="ex">Навигация к нужному выходу / gate</div>
+        <div class="ex">Предложение loungeclub при обнаружении у зоны ожидания</div>
+        <div class="ex">Местные рестораны и кафе по маршруту к выходу</div>
+      </div>
+    </div>
+    <div class="sector-card">
+      <div class="ico">🏟️</div>
+      <h3>Спортивные арены и event-пространства</h3>
+      <p>Маячки в секторах трибун, у точек питания, у merchandise-зон. Аудитория сконцентрирована, лояльна и готова тратить.</p>
+      <div class="examples">
+        <div class="ex">Заказ еды к своему месту: «мы знаем, что вы в секторе B»</div>
+        <div class="ex">Мерч со скидкой в момент входа</div>
+        <div class="ex">Видеоповтор голевого момента — прямо на телефон</div>
+        <div class="ex">Аналитика загруженности секторов для организаторов</div>
+      </div>
+    </div>
+    <div class="sector-card">
+      <div class="ico">🍽️</div>
+      <h3>Рестораны и HoReCa</h3>
+      <p>Маячок у входа и у столиков. Гость получает персональное приветствие, меню и предложения ещё до того, как официант подошёл.</p>
+      <div class="examples">
+        <div class="ex">«Добро пожаловать, Алексей — ваш столик готов»</div>
+        <div class="ex">QR-меню открывается автоматически при посадке</div>
+        <div class="ex">Уведомление о блюде дня при входе</div>
+        <div class="ex">Программа лояльности: 5-й визит — кофе в подарок</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYTICS -->
+<section class="analytics">
+  <div class="section-label">Аналитика</div>
+  <h2>Измеряем всё — от входа в зону до покупки</h2>
+  <p class="subtitle">Каждый маячок — точка данных. Платформа строит воронку от физического трафика до конверсии.</p>
+  <div class="an-grid">
+    <div class="an-card"><div class="an-val">12 840</div><div class="an-lbl">Уникальных посетителей сегодня</div><div class="an-delta up">↑ +18% к прошлой неделе</div></div>
+    <div class="an-card"><div class="an-val">4 210</div><div class="an-lbl">Показов уведомлений</div><div class="an-delta up">↑ +7% к вчера</div></div>
+    <div class="an-card"><div class="an-val">23.4%</div><div class="an-lbl">CTR (клик по уведомлению)</div><div class="an-delta up">↑ ×4.2 vs баннер</div></div>
+    <div class="an-card"><div class="an-val">8.1%</div><div class="an-lbl">Конверсия в покупку</div><div class="an-delta up">↑ +3.2 пп vs контроль</div></div>
+    <div class="an-card"><div class="an-val">2 мин 40 с</div><div class="an-lbl">Среднее время у полки</div><div class="an-delta down">↓ −15 с после редизайна</div></div>
+    <div class="an-card"><div class="an-val">34%</div><div class="an-lbl">Повторные визиты за 7 дней</div><div class="an-delta up">↑ +6 пп с программой лояльности</div></div>
+  </div>
+  <div class="funnel">
+    <h3>Воронка: трафик → конверсия · Молочный отдел · сегодня</h3>
+    <div class="funnel-row"><span class="fn-lbl">Вошли в зону</span><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:100%">3 840</div></div><span class="fn-cnt">3 840</span></div>
+    <div class="funnel-row"><span class="fn-lbl">Приложение активно</span><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:68%">2 611</div></div><span class="fn-cnt">2 611</span></div>
+    <div class="funnel-row"><span class="fn-lbl">Уведомление показано</span><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:52%">2 010</div></div><span class="fn-cnt">2 010</span></div>
+    <div class="funnel-row"><span class="fn-lbl">Клик по офферу</span><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:22%">471</div></div><span class="fn-cnt">471</span></div>
+    <div class="funnel-row"><span class="fn-lbl">Покупка</span><div class="funnel-bar-wrap"><div class="funnel-bar" style="width:10%">312</div></div><span class="fn-cnt">312</span></div>
+  </div>
+</section>
+
+<!-- VS GPS -->
+<section class="vs">
+  <div class="section-label">Сравнение технологий</div>
+  <h2>iBeacon vs GPS-геофенсинг vs QR</h2>
+  <p class="subtitle">Почему proximity-реклама на BLE выигрывает для точечного indoor-таргетинга.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметр</th><th>DN·Promo (iBeacon)</th><th>GPS-геофенсинг</th><th>QR-код</th><th>NFC-метка</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>Точность позиционирования</td><td class="check">1–3 м</td><td class="cross">50–300 м</td><td class="mid">прямая видимость</td><td class="cross">прикосновение</td></tr>
+        <tr><td>Работа внутри зданий</td><td class="check">Да</td><td class="cross">Нет / ненадёжно</td><td class="check">Да</td><td class="check">Да</td></tr>
+        <tr class="hl"><td>Пассивность для пользователя</td><td class="check">Ничего не нажимать</td><td class="check">Ничего не нажимать</td><td class="cross">Нужно сканировать</td><td class="cross">Нужно поднести</td></tr>
+        <tr><td>Разряд батареи телефона</td><td class="check">Минимальный (BLE)</td><td class="cross">Значительный (GPS)</td><td class="check">Нет</td><td class="check">Нет</td></tr>
+        <tr class="hl"><td>Аналитика поведения</td><td class="check">Полная (маршрут, время)</td><td class="mid">Только зоны</td><td class="cross">Только сканирование</td><td class="cross">Только касание</td></tr>
+        <tr><td>Обслуживание инфраструктуры</td><td class="check">20 лет без замены батареи</td><td class="check">Серверная геозона</td><td class="mid">Наклейка изнашивается</td><td class="mid">Пассивная, долгая</td></tr>
+        <tr class="hl"><td>A/B тесты сообщений</td><td class="check">Да</td><td class="check">Да</td><td class="cross">Нет</td><td class="cross">Нет</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs" id="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>DN·Promo — аппаратная и программная платформа</h2>
+  <p class="subtitle">Стандартный iBeacon, совместимый с любым LBA SDK.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Маячок DN·Promo</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Формат</span><span class="v rose">iBeacon (Apple стандарт)</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67, 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD, 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Дальность</span><span class="v">1–70 м (TX power)</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Совместимость SDK</h3>
+      <div class="spec-row"><span class="k">iOS</span><span class="v green">CoreLocation (нативно)</span></div>
+      <div class="spec-row"><span class="k">Android</span><span class="v green">AltBeacon, Gimbal, Swirl</span></div>
+      <div class="spec-row"><span class="k">Estimote SDK</span><span class="v green">совместим</span></div>
+      <div class="spec-row"><span class="k">Proxama / Unacast</span><span class="v green">совместим</span></div>
+      <div class="spec-row"><span class="k">Собственный SDK</span><span class="v green">REST API + webhook</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Серверная платформа</h3>
+      <div class="spec-row"><span class="k">API</span><span class="v green">REST (JSON)</span></div>
+      <div class="spec-row"><span class="k">Аналитика реальное время</span><span class="v green">WebSocket + dashboard</span></div>
+      <div class="spec-row"><span class="k">Сегментация</span><span class="v green">RFM, история, пол, возраст</span></div>
+      <div class="spec-row"><span class="k">A/B тесты</span><span class="v green">встроены</span></div>
+      <div class="spec-row"><span class="k">Интеграция CRM/CDP</span><span class="v green">REST / Webhook</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Безопасность</h3>
+      <div class="spec-row"><span class="k">Шифрование ID</span><span class="v rose">AES-128, смена каждые 5 мин</span></div>
+      <div class="spec-row"><span class="k">Клонирование сети</span><span class="v green">невозможно без ключа</span></div>
+      <div class="spec-row"><span class="k">GDPR / 152-ФЗ</span><span class="v green">opt-in, анонимизация</span></div>
+      <div class="spec-row"><span class="k">Данные пользователя</span><span class="v green">хранение на стороне клиента</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Готовы запустить proximity-рекламу?</h2>
+  <p>Расскажите о вашей сети точек — подготовим схему расстановки маячков, расчёт охвата и стоимость за 1 рабочий день.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Promo" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Promo</strong> — решение на базе промышленного образца <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#fda4af">dynamic-iBeacon</a> · <a href="mailto:info@dn-beacon.ru" style="color:#fda4af">info@dn-beacon.ru</a></p>
+</footer>
+</body>
+</html>

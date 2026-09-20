@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Rail — Контроль обходов инфраструктуры и навигация на ж/д и метро</title>
+<meta name="description" content="Обходчик действительно побывал у стрелочного перевода. Пассажир на ТПУ видит маршрут через подземные переходы. DN·Rail — BLE для железнодорожной инфраструктуры.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1e3a5f; --navy-dark: #152d4a; --navy-light: #eff6ff;
+    --slate: #1e293b; --text: #1e293b; --muted: #64748b;
+    --border: #e2e8f0; --bg: #f8fafc; --white: #fff;
+    --green: #059669; --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--navy); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #93c5fd; }
+  .nav-cta { background: var(--navy); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; }
+
+  .hero { background: linear-gradient(135deg, #050f1a 0%, #0c2340 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(147,197,253,.1); color: #93c5fd; border: 1px solid rgba(147,197,253,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 860px; margin-bottom: 20px; }
+  .hero h1 span { color: #93c5fd; }
+  .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 640px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--navy); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 660px; margin-bottom: 48px; }
+
+  /* TWO MODULES */
+  .modules { background: var(--white); }
+  .mod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media(max-width:700px){.mod-grid{grid-template-columns:1fr}}
+  .mod-card { border: 2px solid var(--navy); border-radius: var(--radius); padding: 32px; }
+  .mod-card .mod-num { display: inline-block; background: var(--navy); color: #fff; padding: 4px 12px; border-radius: 4px; font-size: .78rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 16px; }
+  .mod-card h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 12px; }
+  .mod-card p { font-size: .9rem; color: var(--muted); margin-bottom: 16px; }
+  .mod-card ul { display: flex; flex-direction: column; gap: 7px; }
+  .mod-card li { font-size: .88rem; color: var(--muted); padding-left: 16px; position: relative; list-style: none; }
+  .mod-card li::before { content: '→'; position: absolute; left: 0; color: var(--navy); font-weight: 700; }
+
+  /* PATROL */
+  .patrol { background: var(--bg); }
+  .patrol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  @media(max-width:700px){.patrol-grid{grid-template-columns:1fr}}
+  .mock-terminal { background: var(--slate); border-radius: 14px; padding: 24px; font-family: monospace; font-size: .78rem; color: #94a3b8; }
+  .mt-header { color: #93c5fd; font-weight: 700; margin-bottom: 16px; font-size: .82rem; }
+  .mt-row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,.06); }
+  .mt-row .k { color: #94a3b8; }
+  .mt-row .v { color: #f1f5f9; font-weight: 600; }
+  .mt-row .ok { color: #34d399; }
+  .mt-row .miss { color: #f87171; }
+  .mt-row .late { color: #fcd34d; }
+  .mt-log { margin-top: 18px; border-top: 1px solid rgba(255,255,255,.08); padding-top: 14px; }
+  .ml-title { color: #93c5fd; font-size: .78rem; font-weight: 700; margin-bottom: 10px; }
+  .ml-entry { display: flex; gap: 10px; margin-bottom: 7px; }
+  .ml-time { color: #64748b; width: 46px; flex-shrink: 0; }
+  .ml-text { color: #cbd5e1; }
+  .patrol-desc { display: flex; flex-direction: column; gap: 18px; }
+  .pd-item { display: flex; gap: 14px; align-items: flex-start; }
+  .pd-ico { width: 38px; height: 38px; background: var(--navy-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .pd-text h3 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+  .pd-text p { font-size: .84rem; color: var(--muted); }
+
+  /* NAVIGATION MODULE */
+  .navmod { background: var(--white); }
+  .navmod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .nm-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .nm-card .ico { font-size: 2rem; margin-bottom: 12px; }
+  .nm-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .nm-card p { font-size: .86rem; color: var(--muted); }
+
+  .specs { background: var(--bg); }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .spec-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .spec-card h3 { font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .87rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .k { color: var(--muted); }
+  .spec-row .v { font-weight: 600; }
+  .v.navy { color: var(--navy); }
+  .v.green { color: var(--green); }
+
+  .cta { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.85); max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--navy); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Rail</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Железная дорога · Метро · Инфраструктурный контроль</div>
+  <h1>Обходчик действительно был<br><span>у стрелочного перевода</span></h1>
+  <p>DN·Rail — два модуля для железнодорожной инфраструктуры. Первый: необходимое доказательство физического присутствия сотрудника у объекта — вместо фиктивных отчётов. Второй: бесшовная навигация по ТПУ и вокзалам для пассажиров там, где нет GPS.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить КП</a>
+    <a href="#modules" class="btn-outline">Модули решения</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>0</strong><span>фиктивных отчётов при BLE-маячках</span></div>
+    <div class="hero-stat"><strong>1–3 м</strong><span>точность фиксации присутствия</span></div>
+    <div class="hero-stat"><strong>−GPS</strong><span>навигация работает под землёй</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>маячок без обслуживания</span></div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="modules" id="modules">
+  <div class="section-label">Модули</div>
+  <h2>DN·Rail включает два независимых модуля</h2>
+  <p class="subtitle">Можно внедрять вместе или отдельно в зависимости от задачи.</p>
+  <div class="mod-grid">
+    <div class="mod-card">
+      <div class="mod-num">Модуль 1</div>
+      <h3>Контроль обходов инфраструктуры</h3>
+      <p>Маячок на стрелочном переводе, опоре контактной сети, мостовом пролёте, трансформаторной будке. Обходчик со смартфоном обязан «отметиться» у каждой точки. Система фиксирует факт присутствия с точностью до метра — не просто «был в районе».</p>
+      <ul>
+        <li>Фиктивный обход исключён: нужно подойти на &lt;3 м</li>
+        <li>Временно́й штамп + ID сотрудника + GPS+BLE координата</li>
+        <li>Алерт диспетчеру: точка пропущена или посещена с опозданием</li>
+        <li>Автоматический наряд-допуск: закрывается при обходе всех точек</li>
+        <li>Отчёт для проверяющих — неизменяемый журнал</li>
+      </ul>
+    </div>
+    <div class="mod-card">
+      <div class="mod-num">Модуль 2</div>
+      <h3>Навигация по ТПУ и вокзальным комплексам</h3>
+      <p>Крупные транспортно-пересадочные узлы — многоуровневые лабиринты подземных переходов, платформ и автовокзалов. GPS внутри не работает. BLE-маячки покрывают каждый коридор и обеспечивают пошаговую навигацию.</p>
+      <ul>
+        <li>«Из вагона метро к платформе Сапсана» — один маршрут</li>
+        <li>Актуальные данные о задержках транспорта</li>
+        <li>Навигация для слабовидящих: голосовые подсказки</li>
+        <li>Аварийная эвакуация: маршрут к ближайшему выходу</li>
+        <li>Реклама магазинов и кафе по маршруту</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PATROL DETAIL -->
+<section class="patrol">
+  <div class="section-label">Модуль 1 · Детали</div>
+  <h2>Контроль обходов: как это работает на практике</h2>
+  <div class="patrol-grid">
+    <div>
+      <div class="mock-terminal">
+        <div class="mt-header">DN·Rail · Перегон Москва-Пасс — Сортировочная · 06:15</div>
+        <div class="mt-row"><span class="k">Обходчик</span><span class="v">Семёнов А.П., смена 06:00–18:00</span></div>
+        <div class="mt-row"><span class="k">Маршрут</span><span class="v">Северный, 14 точек</span></div>
+        <div class="mt-row"><span class="k">Пройдено</span><span class="v ok">8 / 14</span></div>
+        <div class="mt-row"><span class="k">Пропущено</span><span class="v miss">0</span></div>
+        <div class="mt-row"><span class="k">С задержкой</span><span class="v late">1 (опора №7, +12 мин)</span></div>
+        <div class="mt-log">
+          <div class="ml-title">— Журнал обхода</div>
+          <div class="ml-entry"><span class="ml-time">06:08</span><span class="ml-text" style="color:#34d399">Стрелочный перевод №3 ✓ · 1.2 м · 0:42 мин</span></div>
+          <div class="ml-entry"><span class="ml-time">06:14</span><span class="ml-text" style="color:#34d399">Стрелочный перевод №4 ✓ · 0.9 м</span></div>
+          <div class="ml-entry"><span class="ml-time">06:21</span><span class="ml-text" style="color:#fcd34d">Опора КС №7 ✓ · задержка +12 мин</span></div>
+          <div class="ml-entry"><span class="ml-time">06:29</span><span class="ml-text" style="color:#34d399">Мост пролёт 3/5 ✓ · 2.1 м</span></div>
+          <div class="ml-entry"><span class="ml-time">06:35</span><span class="ml-text">Трансформаторная РП-12 → в процессе...</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="patrol-desc">
+      <div class="pd-item"><div class="pd-ico">🔒</div><div class="pd-text"><h3>Фиктивный обход невозможен</h3><p>Маячок фиксирует присутствие только при физическом подходе ближе 3 метров. Нельзя «подписать» точку дистанционно, задним числом или из кабины дрезины.</p></div></div>
+      <div class="pd-item"><div class="pd-ico">🌨️</div><div class="pd-text"><h3>Работает в −40°C и IP67</h3><p>Маячок установлен на открытой инфраструктуре. Промышленный корпус AK-W-70-4, батарея Li-SOCl₂ стабильна в экстремальных температурах.</p></div></div>
+      <div class="pd-item"><div class="pd-ico">📱</div><div class="pd-text"><h3>Обходчику — только смартфон</h3><p>Никакого специального оборудования. Корпоративное приложение на Android-смартфоне считывает маячок в фоне. Сотрудник видит список точек и галочки по мере обхода.</p></div></div>
+      <div class="pd-item"><div class="pd-ico">⚡</div><div class="pd-text"><h3>Наряд-допуск закрывается автоматически</h3><p>Все 14 точек пройдены → наряд закрывается в системе документооборота без ручного ввода. Инспектор видит неизменяемый журнал с криптографической подписью.</p></div></div>
+      <div class="pd-item"><div class="pd-ico">🚨</div><div class="pd-text"><h3>Аварийная сигнализация</h3><p>Смартфон обходчика не регистрировал движение 15+ минут в опасной зоне — алерт диспетчеру. «Человек упал» определяется акселерометром телефона в связке с BLE.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- NAV MODULE -->
+<section class="navmod">
+  <div class="section-label">Модуль 2 · Детали</div>
+  <h2>Навигация на ТПУ: сценарии для пассажиров</h2>
+  <p class="subtitle">Бесшовный маршрут там, где GPS не работает и пересадки занимают время.</p>
+  <div class="navmod-grid">
+    <div class="nm-card">
+      <div class="ico">🚇</div>
+      <h3>Метро → электричка</h3>
+      <p>На Курском, Ярославском, Белорусском — пересадки через подземные переходы. Маячки ведут пассажира от выхода из вагона до нужной платформы пригородного поезда без навигатора.</p>
+    </div>
+    <div class="nm-card">
+      <div class="ico">🚌</div>
+      <h3>Вокзал → автобусная станция</h3>
+      <p>Крупный вокзальный комплекс с несколькими уровнями и переходами. «Ваш автобус до Суздаля — выход C, 200 м прямо и налево, платформа 7».</p>
+    </div>
+    <div class="nm-card">
+      <div class="ico">♿</div>
+      <h3>Доступность для маломобильных</h3>
+      <p>Маршруты с учётом лифтов и пандусов, голосовые подсказки для слабовидящих. «Говорящий вокзал» — без специальных устройств напрокат.</p>
+    </div>
+    <div class="nm-card">
+      <div class="ico">🚨</div>
+      <h3>Аварийная эвакуация</h3>
+      <p>При эвакуации система переключается в режим «кратчайший путь к выходу». Пассажиры получают push-уведомление с маршрутом на свой смартфон.</p>
+    </div>
+    <div class="nm-card">
+      <div class="ico">📊</div>
+      <h3>Аналитика трафика для ж/д оператора</h3>
+      <p>Тепловые карты загруженности переходов, «узкие места» инфраструктуры, прогноз пиков для планирования персонала. Данные в реальном времени.</p>
+    </div>
+    <div class="nm-card">
+      <div class="ico">🏪</div>
+      <h3>Коммерциализация пространства</h3>
+      <p>Реклама магазинов и кафе по маршруту пассажира. Интеграция с DN·Promo — дополнительный доход для управляющей компании ТПУ.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Rail</h2>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Маячок на инфраструктуре</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67, −40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD, 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Монтаж</span><span class="v navy">без электропитания</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Точность фиксации присутствия</h3>
+      <div class="spec-row"><span class="k">Дальность регистрации</span><span class="v navy">0.5–5 м (настр.)</span></div>
+      <div class="spec-row"><span class="k">Точность RSSI</span><span class="v navy">1–3 м</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v navy">AES-128, каждые 5 мин</span></div>
+      <div class="spec-row"><span class="k">Фальсификация</span><span class="v green">невозможна</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Интеграция</h3>
+      <div class="spec-row"><span class="k">API</span><span class="v green">REST (JSON)</span></div>
+      <div class="spec-row"><span class="k">Документооборот</span><span class="v green">1С:ЗУП, SAP HCM</span></div>
+      <div class="spec-row"><span class="k">ЖД-системы</span><span class="v green">ГИД Урал, АСОУП</span></div>
+      <div class="spec-row"><span class="k">Карты</span><span class="v green">SVG / AutoCAD</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Сертификация</h3>
+      <div class="spec-row"><span class="k">Устойчивость к вибрации</span><span class="v green">МЭК 60068-2-6</span></div>
+      <div class="spec-row"><span class="k">ЭМС</span><span class="v green">EN 301 489-1</span></div>
+      <div class="spec-row"><span class="k">Пожарная безопасность</span><span class="v green">по запросу</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Оснастите инфраструктуру доказательным контролем</h2>
+  <p>Расскажите о вашем объекте: тип инфраструктуры, количество контрольных точек, ПО документооборота. Подготовим план за 1 день.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Rail" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Rail</strong> — решение на базе <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#93c5fd">dynamic-iBeacon</a> · <a href="mailto:info@dn-beacon.ru" style="color:#93c5fd">info@dn-beacon.ru</a></p>
+</footer>
+</body>
+</html>
