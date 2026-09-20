@@ -174,6 +174,31 @@
   .card-light .label { color: #ca8a04; }
   .card-light .tag { background: #fffbeb; color: #ca8a04; }
   .card-light .cta-link { color: #ca8a04; }
+  /* Waste — forest green */
+  .card-waste .card-head { border-top: 4px solid #166534; }
+  .card-waste .label { color: #166534; }
+  .card-waste .tag { background: #f0fdf4; color: #166534; }
+  .card-waste .cta-link { color: #166534; }
+  /* Fuel — dark amber */
+  .card-fuel .card-head { border-top: 4px solid #92400e; }
+  .card-fuel .label { color: #92400e; }
+  .card-fuel .tag { background: #fffbeb; color: #92400e; }
+  .card-fuel .cta-link { color: #92400e; }
+  /* Evac — dark crimson */
+  .card-evac .card-head { border-top: 4px solid #7f1d1d; }
+  .card-evac .label { color: #7f1d1d; }
+  .card-evac .tag { background: #fef2f2; color: #7f1d1d; }
+  .card-evac .cta-link { color: #7f1d1d; }
+  /* Rent — slate gray */
+  .card-rent .card-head { border-top: 4px solid #374151; }
+  .card-rent .label { color: #374151; }
+  .card-rent .tag { background: #f9fafb; color: #374151; }
+  .card-rent .cta-link { color: #374151; }
+  /* Sign — dark ocean blue */
+  .card-sign .card-head { border-top: 4px solid #0c4a6e; }
+  .card-sign .label { color: #0c4a6e; }
+  .card-sign .tag { background: #f0f9ff; color: #0c4a6e; }
+  .card-sign .cta-link { color: #0c4a6e; }
 
   .why { padding: 72px 5%; background: var(--white); }
   .why h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; text-align: center; margin-bottom: 12px; }
@@ -242,7 +267,7 @@
 
 <section class="products">
   <h2>Коммерческие решения</h2>
-  <p class="sub">22 готовых продукта для транспорта, инфраструктуры, логистики, безопасности и маркетинга.</p>
+  <p class="sub">27 готовых продуктов для транспорта, инфраструктуры, логистики, безопасности и маркетинга.</p>
   <div class="prod-grid">
 
     <a href="dn-fleet/index.html" class="prod-card card-fleet">
@@ -597,6 +622,86 @@
       </div>
     </a>
 
+    <a href="dn-waste/index.html" class="prod-card card-waste">
+      <div class="card-head">
+        <div class="label">ТКО · Мусоровозы · ЖКХ</div>
+        <h3>DN·Waste</h3>
+        <p>Метка на контейнере + считыватель на манипуляторе мусоровоза. Факт вывоза фиксируется автоматически: ID контейнера, GPS, timestamp. Исключает приписки и серые схемы.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">ТКО учёт</span>
+          <span class="tag">ГИС ЖКХ</span>
+          <span class="tag">100% доказательность</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="dn-fuel/index.html" class="prod-card card-fuel">
+      <div class="card-head">
+        <div class="label">АЗС · Топливо · Флот</div>
+        <h3>DN·Fuel</h3>
+        <p>Пистолет ТРК разблокируется только при наличии метки авторизованного ТС в зоне 10–30 см. Слив в канистры и заправка чужих машин исключены на аппаратном уровне.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">BLE авторизация</span>
+          <span class="tag">1С интеграция</span>
+          <span class="tag">0 несанкционированных</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="dn-evac/index.html" class="prod-card card-evac">
+      <div class="card-head">
+        <div class="label">ЧС · Эвакуация · Шахты · Тоннели</div>
+        <h3>DN·Evac</h3>
+        <p>При тревоге диспетчер за 10 секунд видит: кто в безопасной зоне, кто внутри. Спасатели идут с точными данными, а не вслепую. Акт эвакуации одной кнопкой.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">ФНП · МЧС</span>
+          <span class="tag">DN·Mesh совместим</span>
+          <span class="tag">&lt;10 сек</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="dn-rent/index.html" class="prod-card card-rent">
+      <div class="card-head">
+        <div class="label">Инструмент · Стройка · Аренда</div>
+        <h3>DN·Rent</h3>
+        <p>Прораб видит весь инструмент в радиусе 70 м через смартфон — за 30 секунд, без обхода. Инструмент вынесли за периметр — алерт немедленно. −90% потерь.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Инвентаризация</span>
+          <span class="tag">Геозона</span>
+          <span class="tag">Журнал выдачи</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="dn-sign/index.html" class="prod-card card-sign">
+      <div class="card-head">
+        <div class="label">Дорожные знаки · АСУДД · V2I</div>
+        <h3>DN·Sign</h3>
+        <p>Патрульный автомобиль считывает телеметрию активного знака при проезде — без остановки. LED горит, заряд аккумулятора, температура. Автоматический журнал КЖЦ.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">BLE телеметрия</span>
+          <span class="tag">Wialon · АСУДД</span>
+          <span class="tag">КЖЦ журнал</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
   </div>
 </section>
 
@@ -622,7 +727,7 @@
     <div class="why-item">
       <div class="ico">📡</div>
       <h3>iBeacon · Eddystone · AltBeacon</h3>
-      <p>Любой BLE-совместимый смартфон, бортовой трекер или сканер считывает метку без специального оборудования. Прошивка поддерживает все три стандарта.</p>
+      <p>Совместим с популярными BLE-трекерами: Teltonika FMB920/FMC150, GalileoSky 7x, Навтелеком Кловер, Вега-Абсолют. Любой BLE-смартфон и сканер работают без дополнительного ПО.</p>
     </div>
     <div class="why-item">
       <div class="ico">🔗</div>

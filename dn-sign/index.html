@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Sign — BLE-телеметрия активных дорожных знаков | DN·Beacon</title>
+<meta name="description" content="Знак не горит — патрульный автомобиль узнает об этом при проезде, не останавливаясь. Телеметрия LED-статуса, заряда аккумулятора и температуры через BLE.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#0c4a6e;--cd:#0a3a57;--cl:#f0f9ff;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--blue:#0369a1;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#7dd3fc}
+  .nav-back{color:#94a3b8;font-size:.85rem}.nav-back:hover{color:#fff}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#020c17 0%,#0c2a43 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(125,211,252,.08);color:#7dd3fc;border:1px solid rgba(125,211,252,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#7dd3fc}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .probs{background:var(--white)}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+  .prob-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;border-left:4px solid var(--c)}
+  .prob-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .prob-card p{font-size:.84rem;color:var(--muted)}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:12px;overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#7dd3fc;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#7dd3fc;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:56px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .integ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:32px}
+  .integ-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .integ-card h3{font-size:.88rem;font-weight:700;color:var(--slate);margin-bottom:8px}
+  .integ-card p{font-size:.83rem;color:var(--muted)}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.ok{color:#16a34a}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-back">← DN·Beacon</a>
+  <div class="nav-logo">DN·<span>Sign</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Дорожные знаки · АСУДД · V2I · Телеметрия</div>
+  <h1>Знак не горит — патрульный автомобиль <span>узнает при проезде</span></h1>
+  <p>DN·Sign — BLE-модуль в корпусе активного дорожного знака. Транслирует телеметрию: статус LED, заряд аккумулятора, температуру. Патрульное ТС или дорожная служба считывает данные без остановки. Неисправность фиксируется автоматически — не ждать ежеквартального объезда.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">Сценарии применения</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>проезд</strong><span>данные о состоянии знака считываются без остановки</span></div>
+    <div class="hero-stat"><strong>&lt;20%</strong><span>заряд аккумулятора — автоматический алерт на замену</span></div>
+    <div class="hero-stat"><strong>КЖЦ</strong><span>автоматический акт ТО для контракта жизненного цикла</span></div>
+    <div class="hero-stat"><strong>10 лет</strong><span>батарея BLE-модуля без обслуживания</span></div>
+  </div>
+</section>
+
+<section class="probs">
+  <div class="section-label">Проблемы отрасли</div>
+  <h2>Активный знак, который никто не контролирует</h2>
+  <p class="subtitle">Активные дорожные знаки — дорогостоящие объекты стоимостью 50–500 тыс. рублей каждый. Но их техническое состояние выявляется только при ручном объезде.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <h3>Знак не горит — неделю никто не знает</h3>
+      <p>Аккумулятор разряжен или контроллер LED завис. Водители не видят рекомендуемую скорость или предупреждение о пешеходном переходе. Инспекция узнаёт при следующем объезде.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Зима убивает аккумуляторы</h3>
+      <p>Солнечные батареи не заряжают в декабре–феврале. Аккумулятор деградирует в мороз. Самые критичные для зимней дороги знаки — самые уязвимые в самое опасное время года.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Нет журнала ТО для КЖЦ</h3>
+      <p>Контракт жизненного цикла требует документирования технического обслуживания. Ручные записи объездных бригад — неполные и с запозданием. DN·Sign создаёт автоматический журнал.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Временные знаки: нет учёта установки</h3>
+      <p>Подрядчик установил временный знак ограничения скорости на ремонте. Знак сдвинули, убрали — никто не фиксирует. При ДТП в зоне работ доказать факт установки невозможно.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как DN·Sign передаёт телеметрию знака</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>BLE-модуль в корпусе знака</h3>
+      <p>DN·Sign встраивается в корпус активного знака рядом с контроллером LED. Подключается к контроллеру по UART/I2C — считывает статус LED, уровень заряда аккумулятора, температуру внутри корпуса.</p>
+    </div>
+    <div class="how-step">
+      <h3>Непрерывная трансляция телеметрии</h3>
+      <p>Метка транслирует iBeacon-пакет с закодированной телеметрией: LED горит/не горит, заряд 0–100%, температура °C, uptime контроллера. Интервал передачи — настраиваемый.</p>
+    </div>
+    <div class="how-step">
+      <h3>Патрульное ТС считывает при проезде</h3>
+      <p>BLE-считыватель в патрульном автомобиле дорожной службы фиксирует пакет при проезде мимо знака. Данные уходят на сервер через LTE автоматически. Машина не останавливается.</p>
+    </div>
+    <div class="how-step">
+      <h3>Сервер строит карту состояния</h3>
+      <p>Каждый проезд — обновление статуса знака на карте. Алерты при разряде (<20%), отказе LED или аномальной температуре. Для редко объезжаемых участков — периодический плановый маршрут.</p>
+    </div>
+    <div class="how-step">
+      <h3>Автоматический акт ТО</h3>
+      <p>При обслуживании бригада ТО сканирует метку знака — в журнале создаётся запись с временной меткой и геокоординатой. Документ готов для КЖЦ-контракта и дорожного аудита.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white)">
+  <div class="section-label">Интерфейс</div>
+  <h2>Карта состояния дорожных знаков в реальном времени</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Sign · Трасса М-11 · км 47–89 · Обновлено: 11:24</div>
+        <div class="t-row"><span class="k">Знак SG-0471 · км 52.3 · «Рек. скорость»</span><span class="v ok">✓ LED горит · 74% заряд</span></div>
+        <div class="t-row"><span class="k">Температура корпуса</span><span class="v">−12°C · норма</span></div>
+        <div class="t-row"><span class="k">Знак SG-0488 · км 61.7 · «Пешеходный»</span><span class="v err">✗ LED не горит!</span></div>
+        <div class="t-row"><span class="k">Заряд</span><span class="v err">8% · критично · заявка создана</span></div>
+        <div class="t-row"><span class="k">Знак SG-0511 · км 74.1 · «Временный»</span><span class="v warn">⚠ Заряд 19%</span></div>
+        <div class="t-row"><span class="k">Последнее ТО</span><span class="v">18 дней назад</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Сегодня</div>
+          <div class="tl-row"><span class="tl-time">11:24</span><span class="tl-text" style="color:#f87171">SG-0488 · LED отказ · автозаявка в службу ТО</span></div>
+          <div class="tl-row"><span class="tl-time">09:15</span><span class="tl-text" style="color:#fbbf24">SG-0511 · заряд 19% → плановая замена на этой неделе</span></div>
+          <div class="tl-row"><span class="tl-time">08:40</span><span class="tl-text" style="color:#34d399">Маршрут Р-20 · 34 знака проверены · все в норме</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🚗</div><div class="feat-text"><h3>Данные при проезде, без остановки</h3><p>Патрульный автомобиль объезжает маршрут в обычном режиме. BLE-считыватель автоматически «опрашивает» каждый знак при проезде. Инспектор не выходит из машины.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔋</div><div class="feat-text"><h3>Предиктивное предупреждение о разряде</h3><p>Система предупреждает о разряде заранее (<20% = предупреждение, <10% = критический алерт + автозаявка). Замена аккумулятора планируется, а не случается аварийно.</p></div></div>
+      <div class="feat"><div class="feat-ico">📋</div><div class="feat-text"><h3>Автоматический журнал КЖЦ</h3><p>Каждый проезд и каждое ТО — запись в журнале с временной меткой и геопозицией. Документ соответствует требованиям контракта жизненного цикла знаков.</p></div></div>
+      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>V2I — предупреждение водителю</h3><p>Опция: мобильное приложение водителя или бортовой блок принимает сигнал DN·Sign при приближении. Неисправный знак = предупреждение в навигаторе.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--bg)">
+  <div class="section-label">Интеграция</div>
+  <h2>Открытый API для инфраструктурных платформ</h2>
+  <div class="integ-grid">
+    <div class="integ-card">
+      <h3>АСУДД</h3>
+      <p>Автоматизированные системы управления дорожным движением. Телеметрия знаков DN·Sign поступает в АСУДД через REST API, отображается на общей карте сети.</p>
+    </div>
+    <div class="integ-card">
+      <h3>Wialon / СКАУТ</h3>
+      <p>Патрульные ТС уже оснащены бортовыми блоками Wialon или СКАУТ. DN·Sign интегрируется через Bluetooth-модуль блока — данные знаков отображаются в той же системе мониторинга транспорта.</p>
+    </div>
+    <div class="integ-card">
+      <h3>ГИС Росавтодора</h3>
+      <p>REST API → ГИС-платформы федерального и регионального дорожного хозяйства. Актуальный реестр состояния знаков по трассе — без ручного ввода.</p>
+    </div>
+    <div class="integ-card">
+      <h3>Система ТО</h3>
+      <p>Автоматическое создание заявок на ТО при срабатывании алертов. Интеграция с CMMS (Maximo, 1С:ТОиР) — заявка создаётся в нужной системе сразу при фиксации неисправности.</p>
+    </div>
+  </div>
+</section>
+
+<section id="sectors">
+  <div class="section-label">Сценарии применения</div>
+  <h2>Любые активные объекты дорожной инфраструктуры</h2>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="ico">🛣️</div>
+      <h3>Федеральные и региональные трассы</h3>
+      <p>Сотни активных знаков на трассе. Ручной объезд раз в неделю — это слишком редко для объектов безопасности. DN·Sign даёт актуальный статус после каждого проезда патрульного ТС.</p>
+      <ul>
+        <li>Автоматический учёт в реестре знаков</li>
+        <li>Соответствие требованиям Росавтодора к мониторингу</li>
+        <li>Предиктивное планирование ТО вместо аварийного</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🚶</div>
+      <h3>Умные пешеходные переходы</h3>
+      <p>Знаки с радарными табло скорости, подсветкой разметки, светофорными секциями. Каждый элемент с DN·Sign сообщает о своём статусе — не только знак в целом.</p>
+      <ul>
+        <li>Мониторинг радарного табло отдельно от знака</li>
+        <li>Алерт при отказе светодиодной подсветки</li>
+        <li>Статистика по времени неисправности для отчётов</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🚧</div>
+      <h3>Временная организация движения</h3>
+      <p>Временные знаки на объекте дорожного ремонта. Подрядчик обязан установить — и DN·Sign фиксирует факт установки, снятия и рабочее состояние.</p>
+      <ul>
+        <li>Электронный журнал установки/снятия временных знаков</li>
+        <li>Доказательная база при ДТП в зоне работ</li>
+        <li>Контроль соответствия схеме ОДД</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🚇</div>
+      <h3>Тоннели и знаки переменной информации</h3>
+      <p>В тоннелях знаки переменной информации критичны. Отказ в тоннеле — нет естественного освещения, водители дезориентированы. DN·Sign + DN·Mesh обеспечивают мониторинг без GSM-покрытия.</p>
+      <ul>
+        <li>Мониторинг при отсутствии мобильной связи</li>
+        <li>Интеграция с системами вентиляции и освещения тоннеля</li>
+        <li>Алерт в диспетчерскую тоннеля немедленно при отказе</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Sign</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>BLE-модуль знака</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Интерфейс к контроллеру</span><span class="v ok">UART · I2C</span></div>
+    </div>
+    <div class="spec-card"><h3>Питание BLE-модуля</h3>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v ok">ER14505H-LD · Li-SOCl₂ · 2700 мАч</span></div>
+      <div class="spec-row"><span class="k">Срок службы</span><span class="v accent">до 10 лет</span></div>
+      <div class="spec-row"><span class="k">Интервал передачи</span><span class="v ok">настраиваемый</span></div>
+    </div>
+    <div class="spec-card"><h3>BLE · Телеметрия</h3>
+      <div class="spec-row"><span class="k">Формат</span><span class="v ok">iBeacon · Eddystone · AltBeacon</span></div>
+      <div class="spec-row"><span class="k">Дальность</span><span class="v ok">до 70 м</span></div>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v ok">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v ok">каждые 5 мин (настраивается)</span></div>
+    </div>
+    <div class="spec-card"><h3>Интеграция</h3>
+      <div class="spec-row"><span class="k">API</span><span class="v ok">REST · Webhook</span></div>
+      <div class="spec-row"><span class="k">Платформы</span><span class="v ok">Wialon · СКАУТ · АСУДД</span></div>
+      <div class="spec-row"><span class="k">CMMS</span><span class="v ok">Maximo · 1С:ТОиР</span></div>
+      <div class="spec-row"><span class="k">Тоннели</span><span class="v ok">совместим с DN·Mesh</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Каждый знак под контролем — без лишних объездов</h2>
+  <p>Укажите тип объекта и количество активных знаков. Рассчитаем стоимость внедрения и покажем интеграцию с вашей системой мониторинга.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Sign" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Sign</strong> — решение DN·Beacon · dynamic-iBeacon · <a href="mailto:sayr@inbox.ru" style="color:#7dd3fc">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

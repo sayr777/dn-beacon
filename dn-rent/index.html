@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Rent — Учёт инструмента и оборудования на объектах | DN·Beacon</title>
+<meta name="description" content="BLE-метка на каждую единицу инструмента. Прораб видит всё оборудование в радиусе 70 м через смартфон. Алерт при выносе за периметр. Строительство, аренда, выездные бригады.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#374151;--cd:#1f2937;--cl:#f9fafb;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--gray:#4b5563;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#d1d5db}
+  .nav-back{color:#94a3b8;font-size:.85rem}.nav-back:hover{color:#fff}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#111827 0%,#374151 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(209,213,219,.08);color:#d1d5db;border:1px solid rgba(209,213,219,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#d1d5db}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .probs{background:var(--white)}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+  .prob-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;border-left:4px solid var(--c)}
+  .prob-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .prob-card p{font-size:.84rem;color:var(--muted)}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:12px;overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#d1d5db;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#d1d5db;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:56px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;border:1px solid var(--border)}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--gray)}.v.ok{color:#16a34a}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-back">← DN·Beacon</a>
+  <div class="nav-logo">DN·<span>Rent</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Инструмент · Стройка · Аренда · Инвентаризация</div>
+  <h1>Прораб видит весь инструмент <span>за 30 секунд</span> — не обходя объект</h1>
+  <p>DN·Rent — BLE-метка на каждую единицу инструмента и оборудования. Перфоратор, нивелир, сварочный аппарат — прораб через смартфон видит всё в радиусе 70 м. Инструмент вынесли за периметр — алерт немедленно.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">По отраслям</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>30 сек</strong><span>полная инвентаризация инструмента на объекте</span></div>
+    <div class="hero-stat"><strong>−90%</strong><span>потерь инструмента после внедрения</span></div>
+    <div class="hero-stat"><strong>до 70 м</strong><span>радиус обнаружения метки смартфоном</span></div>
+    <div class="hero-stat"><strong>10 лет</strong><span>батарея метки без обслуживания</span></div>
+  </div>
+</section>
+
+<section class="probs">
+  <div class="section-label">Проблемы отрасли</div>
+  <h2>Инструмент «испаряется» на стройплощадке</h2>
+  <p class="subtitle">Исследования показывают: потери инструмента и мелкого оборудования на строительных объектах достигают 3–5% от сметы. Большинство случаев — не кража, а банальное «забыли и потеряли».</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <h3>Инструмент уходит с объектом работника</h3>
+      <p>Временный рабочий или субподрядчик уходит вечером — инструмент уходит с ним. Намеренно или нет — результат одинаковый: завтра его нет на объекте.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Инвентаризация — часы ручного труда</h3>
+      <p>Кладовщик с clipboard обходит секции, пишет вручную. Это занимает 2–4 часа, проводится раз в неделю — за это время много чего успевает пропасть.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Нет привязки «кто взял инструмент»</h3>
+      <p>Журнал выдачи ведётся от руки, если вообще ведётся. При передаче объекта между подрядчиками никто не может доказать, что и в каком состоянии было передано.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Аренда: споры о времени использования</h3>
+      <p>Прокатный пункт выставляет счёт за 5 дней. Заказчик утверждает, что вернул на 3-й день. Без электронного журнала доказать что-либо невозможно.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как DN·Rent контролирует инструмент</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Метка на каждой единице</h3>
+      <p>DN·Rent крепится к инструменту (хомут, наклейка, встроенный отсек в ручке). Метка транслирует уникальный зашифрованный ID непрерывно. IP67, −40°C…+85°C — переживёт любую стройплощадку.</p>
+    </div>
+    <div class="how-step">
+      <h3>Смартфон = сканер инвентаря</h3>
+      <p>Прораб открывает приложение — смартфон автоматически находит все метки в радиусе до 70 м. Список инструмента с именем, статусом и последним местонахождением — за 30 секунд.</p>
+    </div>
+    <div class="how-step">
+      <h3>Периметр объекта</h3>
+      <p>GPS-трекер на транспорте (или маяки на воротах) фиксирует, когда инструмент покидает периметр объекта. Алерт: «Перфоратор DN-4471 покинул периметр в 17:42 — проверьте».</p>
+    </div>
+    <div class="how-step">
+      <h3>Журнал выдачи и возврата</h3>
+      <p>При выдаче кладовщик сканирует QR или NFC метки — инструмент привязывается к работнику. При возврате — сканирует снова. История операций доступна на любом устройстве.</p>
+    </div>
+    <div class="how-step">
+      <h3>Инвентаризационный отчёт</h3>
+      <p>Одна кнопка — отчёт: список всего инструмента на объекте, кто держит каждую единицу, когда последний раз видели в зоне. Для передачи объекта, аудита, страховки.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white)">
+  <div class="section-label">Интерфейс</div>
+  <h2>Дашборд инвентаря в кармане прораба</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Rent · Объект «ЖК Северный» · Инструмент: 84/87</div>
+        <div class="t-row"><span class="k">RN-1041 · Перфоратор Bosch GBH 4-32</span><span class="v ok">✓ Секция А · этаж 3</span></div>
+        <div class="t-row"><span class="k">Держит</span><span class="v">Петров А.С. · с 08:15</span></div>
+        <div class="t-row"><span class="k">RN-1078 · Нивелир Leica Rugby 610</span><span class="v warn">⚠ Не виден 2 ч</span></div>
+        <div class="t-row"><span class="k">Последний сигнал</span><span class="v warn">Секция В · 13:20</span></div>
+        <div class="t-row"><span class="k">RN-1055 · Сварочный инвертор</span><span class="v err">✗ Вне периметра!</span></div>
+        <div class="t-row"><span class="k">Покинул в</span><span class="v err">17:47 · ворота 1 · держит Сидоров</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Алерты за день</div>
+          <div class="tl-row"><span class="tl-time">17:47</span><span class="tl-text" style="color:#f87171">RN-1055 вышел за периметр → прораб уведомлён</span></div>
+          <div class="tl-row"><span class="tl-time">15:20</span><span class="tl-text" style="color:#fbbf24">RN-1078 не виден более 1 ч → проверьте местонахождение</span></div>
+          <div class="tl-row"><span class="tl-time">08:15</span><span class="tl-text" style="color:#34d399">RN-1041 выдан Петрову А.С. · журнал обновлён</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">📱</div><div class="feat-text"><h3>Приложение вместо обхода</h3><p>Прораб стоит на месте — смартфон сам собирает все метки в радиусе 70 м. Инвентаризация занимает 30 секунд вместо 4 часов.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔔</div><div class="feat-text"><h3>Алерт на выход с объекта</h3><p>Инструмент пересёк периметр — мгновенный алерт. Рабочий день ещё не закончен, охрана у ворот — есть шанс вернуть до того, как факт потери стал необратимым.</p></div></div>
+      <div class="feat"><div class="feat-ico">📄</div><div class="feat-text"><h3>Акт передачи объекта</h3><p>При сдаче или передаче строительного объекта — печатный инвентарный акт с серийными номерами и историей каждой единицы. Подписывается в приложении.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔗</div><div class="feat-text"><h3>Связь с DN·Asset</h3><p>DN·Rent — специализация DN·Asset для мелкого инструмента. Добавляет ролевой доступ (прораб, кладовщик, руководитель) и мобильный склад.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sectors">
+  <div class="section-label">Отраслевые сценарии</div>
+  <h2>Строительство, аренда, выездные бригады</h2>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="ico">🏗️</div>
+      <h3>Дорожное строительство</h3>
+      <p>Нивелиры, тахеометры, перфораторы, вибраторы — оборудование на сотни тысяч рублей. Объект длиной 20 км — инструмент буквально «теряется в пространстве».</p>
+      <ul>
+        <li>GPS + BLE: инструмент привязан к зоне трассы</li>
+        <li>Контроль субподрядных бригад</li>
+        <li>Инвентарный акт при сдаче объекта</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🔧</div>
+      <h3>Промышленный обслуживание</h3>
+      <p>Выездная бригада с чемоданом инструмента на объекте заказчика. Один забытый ключ на объекте = день потерян на возврат, или скандал с заказчиком.</p>
+      <ul>
+        <li>Чек-лист «всё собрано» перед отъездом</li>
+        <li>История инструмента на каждом объекте</li>
+        <li>Контроль возврата инструмента в парк</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🏪</div>
+      <h3>Прокатные пункты</h3>
+      <p>Электронный журнал выдачи и возврата с временными метками. Споры о сроке аренды решаются данными, а не словами.</p>
+      <ul>
+        <li>Автоматическое начало и окончание аренды</li>
+        <li>Алерт при просрочке возврата</li>
+        <li>История использования для страховых случаев</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🏢</div>
+      <h3>Facility management</h3>
+      <p>Инструмент и оборудование технических служб крупного бизнес-центра или торгового комплекса. Кто взял, где оставил — всегда известно.</p>
+      <ul>
+        <li>Учёт по зонам и этажам</li>
+        <li>Ролевой доступ: бригада / мастер / администратор</li>
+        <li>Интеграция с CMMS</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Rent</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Метка на инструменте</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Крепление</span><span class="v ok">хомут, наклейка, отсек</span></div>
+    </div>
+    <div class="spec-card"><h3>Питание</h3>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v ok">ER14505H-LD · Li-SOCl₂ · 2700 мАч</span></div>
+      <div class="spec-row"><span class="k">Срок службы</span><span class="v accent">до 10 лет</span></div>
+      <div class="spec-row"><span class="k">Интервал передачи</span><span class="v ok">настраиваемый</span></div>
+    </div>
+    <div class="spec-card"><h3>BLE · Обнаружение</h3>
+      <div class="spec-row"><span class="k">Формат</span><span class="v ok">iBeacon · Eddystone · AltBeacon</span></div>
+      <div class="spec-row"><span class="k">Дальность</span><span class="v ok">до 70 м</span></div>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v ok">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v ok">каждые 5 мин (настраивается)</span></div>
+    </div>
+    <div class="spec-card"><h3>Интеграция</h3>
+      <div class="spec-row"><span class="k">Мобильное приложение</span><span class="v ok">iOS · Android</span></div>
+      <div class="spec-row"><span class="k">API</span><span class="v ok">REST · Webhook</span></div>
+      <div class="spec-row"><span class="k">Алерты</span><span class="v ok">Telegram · email · push</span></div>
+      <div class="spec-row"><span class="k">Опция</span><span class="v ok">QR + NFC при выдаче</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Знайте, где каждый инструмент — прямо сейчас</h2>
+  <p>Укажите тип объекта и количество единиц инструмента. Рассчитаем количество меток и стоимость внедрения за 1 день.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Rent" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Rent</strong> — решение DN·Beacon · dynamic-iBeacon · <a href="mailto:sayr@inbox.ru" style="color:#d1d5db">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

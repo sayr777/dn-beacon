@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Evac — Контроль эвакуации персонала при ЧС | DN·Beacon</title>
+<meta name="description" content="Система контроля эвакуации: диспетчер видит в реальном времени кто вышел из опасной зоны, кто внутри. Шахты, тоннели, промышленные объекты. Интеграция с DN·Mesh.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#7f1d1d;--cd:#6b1a1a;--cl:#fef2f2;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--red:#dc2626;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#fca5a5}
+  .nav-back{color:#94a3b8;font-size:.85rem}.nav-back:hover{color:#fff}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#1a0000 0%,#3b0a0a 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(252,165,165,.08);color:#fca5a5;border:1px solid rgba(252,165,165,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#fca5a5}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .probs{background:var(--white)}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+  .prob-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;border-left:4px solid var(--c)}
+  .prob-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .prob-card p{font-size:.84rem;color:var(--muted)}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:12px;overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#fca5a5;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#fca5a5;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:56px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .norm-block{background:var(--cl);border:1px solid #fecaca;border-radius:12px;padding:28px;margin-top:32px}
+  .norm-block h3{font-size:.9rem;font-weight:700;color:var(--c);margin-bottom:12px}
+  .norm-block ul{display:flex;flex-direction:column;gap:8px}
+  .norm-block li{font-size:.85rem;color:var(--muted);padding-left:16px;position:relative;list-style:none}
+  .norm-block li::before{content:'§';position:absolute;left:0;color:var(--c);font-weight:700}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.ok{color:#16a34a}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-back">← DN·Beacon</a>
+  <div class="nav-logo">DN·<span>Evac</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">ЧС · Эвакуация · Шахты · Тоннели · Промышленность</div>
+  <h1>Диспетчер видит, кто <span>остался внутри</span> — ещё до прихода спасателей</h1>
+  <p>DN·Evac — система контроля эвакуации на базе личных BLE-меток персонала. При пожарной тревоге или аварии сервер за секунды строит два списка: кто в безопасной зоне и кто ещё внутри. Спасатели входят с точной информацией, а не вслепую.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">По отраслям</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>&lt;10 с</strong><span>время построения списка эвакуации после тревоги</span></div>
+    <div class="hero-stat"><strong>vs 15 мин</strong><span>ручная перекличка на крупном объекте</span></div>
+    <div class="hero-stat"><strong>100%</strong><span>документированный акт эвакуации для ВГСЧ</span></div>
+    <div class="hero-stat"><strong>10 лет</strong><span>батарея личной метки без замены</span></div>
+  </div>
+</section>
+
+<section class="probs">
+  <div class="section-label">Проблема</div>
+  <h2>Почему ручная перекличка убивает людей?</h2>
+  <p class="subtitle">При аварии в тоннеле или шахте каждая минута промедления увеличивает риск гибели. Ручные методы учёта персонала не успевают за скоростью ЧС.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <h3>Никто не знает, сколько людей внутри</h3>
+      <p>На крупном объекте несколько смен, субподрядчики, временные рабочие. Актуальный список присутствующих существует только на бумаге — и только в начале смены.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Перекличка занимает 10–20 минут</h3>
+      <p>Пока мастера считают людей по бригадам, собирают данные, докладывают диспетчеру — прошло 15–20 минут. В тоннеле с задымлением это смертельная задержка.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Забои и изолированные зоны — слепое пятно</h3>
+      <p>Работник в дальнем забое или техническом тоннеле не может быстро выйти к точке сбора. Его вообще нет в общем потоке эвакуации — о нём вспомнят в последнюю очередь.</p>
+    </div>
+    <div class="prob-card">
+      <h3>Нет доказательной базы для расследования</h3>
+      <p>Кто, когда и через какой выход покинул опасную зону? Без электронного журнала с временными метками восстановить картину событий для ВГСЧ и следствия невозможно.</p>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как DN·Evac строит список эвакуации за секунды</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Личная BLE-метка каждого работника</h3>
+      <p>Метка интегрирована в каску, жилет или бейдж (DN·Staff / DN·Man). Работник заходит на объект — метка начинает транслировать зашифрованный ID. Транслирует непрерывно весь рабочий день.</p>
+    </div>
+    <div class="how-step">
+      <h3>BLE-ридеры у всех точек выхода</h3>
+      <p>Считыватели устанавливаются у каждого выхода из опасной зоны: аварийные ворота, турникеты КПП, стволы шахты. Радиус считывания: 3–10 м, покрывает весь проход.</p>
+    </div>
+    <div class="how-step">
+      <h3>Сигнал тревоги — и система включается</h3>
+      <p>При срабатывании пожарной сигнализации или кнопки тревоги сервер переходит в режим эвакуации. Все ридеры начинают непрерывно слушать и логировать каждую метку в зоне.</p>
+    </div>
+    <div class="how-step">
+      <h3>Два списка в реальном времени</h3>
+      <p>Сервер строит и непрерывно обновляет: ✓ вышли — метка считана у выхода; ⚠ неизвестно — последний сигнал был N минут назад; ✗ внутри — сигнал от ридеров внутри объекта.</p>
+    </div>
+    <div class="how-step">
+      <h3>Акт эвакуации одной кнопкой</h3>
+      <p>По завершении спасательной операции: печатный акт с именами, временем выхода каждого работника и временными метками. Готов для ВГСЧ, МЧС и следственных органов.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white)">
+  <div class="section-label">Интерфейс диспетчера</div>
+  <h2>Полная картина ЧС за 10 секунд</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Evac · Шахта «Северная» · ТРЕВОГА 14:37:08</div>
+        <div class="t-row"><span class="k">В безопасной зоне</span><span class="v ok">✓ 142 из 187</span></div>
+        <div class="t-row"><span class="k">Неизвестно</span><span class="v warn">⚠ 31 · последний сигнал &gt;5 мин</span></div>
+        <div class="t-row"><span class="k">Внутри (ридеры фиксируют)</span><span class="v err">✗ 14 человек</span></div>
+        <div class="t-row"><span class="k">Зона: Горизонт −180 м</span><span class="v err">8 меток активны</span></div>
+        <div class="t-row"><span class="k">Зона: Штрек 4-Север</span><span class="v err">6 меток активны</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Последние выходы через КПП-1</div>
+          <div class="tl-row"><span class="tl-time">14:41</span><span class="tl-text" style="color:#34d399">Бригада Петрова · 8 чел · ✓ все вышли</span></div>
+          <div class="tl-row"><span class="tl-time">14:39</span><span class="tl-text" style="color:#34d399">ИТР · 5 чел · ✓ вышли через ствол №2</span></div>
+          <div class="tl-row"><span class="tl-time">14:38</span><span class="tl-text" style="color:#fbbf24">Сидоров А.П. · последний сигнал горизонт −180 м</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">⚡</div><div class="feat-text"><h3>Список за 10 секунд вместо 15 минут</h3><p>Сервер строит список эвакуации автоматически по сигналам меток. Диспетчер видит картину через 10 секунд после тревоги, а не после ручной переклички.</p></div></div>
+      <div class="feat"><div class="feat-ico">🎯</div><div class="feat-text"><h3>Точное местонахождение оставшихся</h3><p>«Внутри» — это не просто факт. Система показывает зону последнего сигнала: горизонт, штрек, уровень. Спасатели идут в конкретное место, а не обходят весь объект.</p></div></div>
+      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Работает поверх DN·Mesh</h3><p>В шахтах и тоннелях без WiFi DN·Evac использует BLE Mesh-инфраструктуру DN·Mesh. Сигналы меток передаются через ретрансляторы к точкам учёта у выходов.</p></div></div>
+      <div class="feat"><div class="feat-ico">📋</div><div class="feat-text"><h3>Акт эвакуации с цифровой подписью</h3><p>Документ с именами, временем выхода и маршрутом — готов одной кнопкой. Принимается ВГСЧ, МЧС и следственными органами как официальный протокол эвакуации.</p></div></div>
+    </div>
+  </div>
+
+  <div class="norm-block">
+    <h3>Нормативная база</h3>
+    <ul>
+      <li>ФНП «Безопасность при ведении горных работ и горно-спасательных работ» (Приказ Ростехнадзора №550)</li>
+      <li>Приказ МЧС России №645 — требования к системам оповещения и управления эвакуацией</li>
+      <li>ГОСТ Р 59007-2020 — Системы охраны труда. Персональные средства мониторинга</li>
+      <li>ПВАВР (план ликвидации аварий) — требования к документированию сил и средств</li>
+      <li>Федеральный закон №116-ФЗ «О промышленной безопасности» — ст. 10, планы ликвидации аварий</li>
+    </ul>
+  </div>
+</section>
+
+<section id="sectors">
+  <div class="section-label">Отраслевые сценарии</div>
+  <h2>Закрытые и подземные объекты с персоналом</h2>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="ico">⛏️</div>
+      <h3>Горнодобыча и шахты</h3>
+      <p>Основная целевая отрасль. Требования ФНП и ПВАВР прямо предписывают системы учёта персонала при ЧС. DN·Evac — готовое соответствие нормативу.</p>
+      <ul>
+        <li>Интеграция с DN·Mesh для подземных горизонтов</li>
+        <li>Учёт по бригадам и горизонтам</li>
+        <li>Автоматический ПВАВР-протокол</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🚇</div>
+      <h3>Тоннели и метро</h3>
+      <p>При строительстве и техническом обслуживании тоннелей работает персонал в зонах без мобильной связи. DN·Evac + DN·Mesh обеспечивают покрытие без WiFi.</p>
+      <ul>
+        <li>Контроль рабочих окон и ночных смен</li>
+        <li>Интеграция с системами блокировки движения</li>
+        <li>Алерт при задержке выхода из тоннеля</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">⚗️</div>
+      <h3>Химические и нефтяные производства</h3>
+      <p>Взрывоопасные зоны, токсичные выбросы. Скорость эвакуации и точный учёт персонала — вопрос жизни. Метки в искробезопасном исполнении.</p>
+      <ul>
+        <li>Искробезопасное исполнение меток (ExZone)</li>
+        <li>Интеграция с газовыми датчиками и СИГНАЛ-20</li>
+        <li>Зонирование по категориям взрывоопасности</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🏭</div>
+      <h3>Крупные промышленные объекты</h3>
+      <p>Заводы, цеха, подстанции с большим числом работников и подрядчиков. DN·Evac интегрируется с системой контроля доступа DN·Staff.</p>
+      <ul>
+        <li>Единая система со СКУД и пропускным режимом</li>
+        <li>Учёт подрядчиков и посетителей</li>
+        <li>Интеграция с пожарной сигнализацией</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Evac</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Личная метка</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Носимый формат</span><span class="v ok">каска · жилет · бейдж</span></div>
+    </div>
+    <div class="spec-card"><h3>Питание</h3>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v ok">ER14505H-LD · Li-SOCl₂ · 2700 мАч</span></div>
+      <div class="spec-row"><span class="k">Срок службы</span><span class="v accent">до 10 лет</span></div>
+      <div class="spec-row"><span class="k">Интервал передачи</span><span class="v ok">настраиваемый</span></div>
+    </div>
+    <div class="spec-card"><h3>BLE · Обнаружение</h3>
+      <div class="spec-row"><span class="k">Формат</span><span class="v ok">iBeacon · Eddystone · AltBeacon</span></div>
+      <div class="spec-row"><span class="k">Дальность у точки выхода</span><span class="v ok">3–10 м</span></div>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v ok">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v ok">каждые 5 мин (настраивается)</span></div>
+    </div>
+    <div class="spec-card"><h3>Интеграция</h3>
+      <div class="spec-row"><span class="k">BLE Mesh</span><span class="v ok">совместим с DN·Mesh</span></div>
+      <div class="spec-row"><span class="k">СКУД</span><span class="v ok">совместим с DN·Staff</span></div>
+      <div class="spec-row"><span class="k">Пожарная сигнализация</span><span class="v ok">API / сухой контакт</span></div>
+      <div class="spec-row"><span class="k">Нормативы</span><span class="v accent">ФНП · МЧС №645 · ГОСТ Р 59007</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Спасатели входят с данными, а не вслепую</h2>
+  <p>Укажите тип объекта и численность персонала. Рассчитаем количество меток, точек учёта и полную стоимость внедрения за 1 день.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Evac" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Evac</strong> — решение DN·Beacon · dynamic-iBeacon · <a href="mailto:sayr@inbox.ru" style="color:#fca5a5">sayr@inbox.ru</a></p></footer>
+</body>
+</html>
