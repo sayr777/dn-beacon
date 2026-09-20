@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DN·Gate — Умный въезд: маячок у шлагбаума, телефон — ключ</title>
-<meta name="description" content="BLE-метка у шлагбаума + мобильное приложение: шлагбаум открывается автоматически при подъезде авторизованного водителя. Личный брелок не нужен.">
+<title>DN·Gate — Приглашение на въезд: маячок у шлагбаума подтверждает присутствие</title>
+<meta name="description" content="Водитель получает приглашение, подъезжает, жмёт «Я здесь» — приложение считывает BLE-метку у шлагбаума и отправляет криптодоказательство присутствия на сервер. Шлагбаум открывается.">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -30,9 +30,9 @@
 
   .hero { background: linear-gradient(135deg, #052e16 0%, #0c1a0e 100%); color: #fff; padding: 80px 5% 90px; }
   .hero-label { display: inline-block; background: rgba(134,239,172,.12); color: #86efac; border: 1px solid rgba(134,239,172,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
-  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 760px; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 800px; margin-bottom: 20px; }
   .hero h1 span { color: #86efac; }
-  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 640px; margin-bottom: 36px; }
+  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 660px; margin-bottom: 36px; }
   .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
   .btn-primary { background: var(--green); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
   .btn-primary:hover { background: var(--green-dark); }
@@ -48,22 +48,46 @@
 
   /* FLOW */
   .flow { background: var(--white); }
-  .flow-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+  .flow-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
   .flow-steps { display: flex; flex-direction: column; gap: 0; }
   .flow-step { display: flex; gap: 16px; padding: 20px 0; border-bottom: 1px solid var(--border); }
   .flow-step:last-child { border-bottom: none; }
   .flow-step .num { width: 36px; height: 36px; background: var(--green); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: .9rem; flex-shrink: 0; margin-top: 2px; }
   .flow-step h3 { font-size: .95rem; font-weight: 700; margin-bottom: 4px; }
   .flow-step p { font-size: .87rem; color: var(--muted); }
-  .flow-visual { background: linear-gradient(135deg, #052e16, #0f2d14); border-radius: var(--radius); padding: 36px 28px; color: #fff; }
-  .flow-visual h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; color: #86efac; margin-bottom: 24px; }
-  .timeline { position: relative; padding-left: 24px; }
-  .timeline::before { content: ''; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px; background: rgba(134,239,172,.25); }
-  .tl-item { position: relative; margin-bottom: 18px; }
-  .tl-item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; background: #86efac; border-radius: 50%; }
-  .tl-item .time { font-size: .72rem; color: #86efac; font-weight: 600; margin-bottom: 2px; }
-  .tl-item p { font-size: .85rem; color: #cbd5e1; }
-  .tl-item p strong { color: #fff; }
+  /* phone mockup */
+  .phone-wrap { display: flex; flex-direction: column; gap: 16px; }
+  .phone { background: linear-gradient(135deg, #052e16, #0a1f0d); border-radius: 24px; padding: 24px 20px; color: #fff; border: 1px solid rgba(134,239,172,.15); }
+  .phone-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+  .phone-app { font-size: .75rem; font-weight: 700; color: #86efac; letter-spacing: .06em; text-transform: uppercase; }
+  .phone-signal { font-size: .7rem; color: #64748b; }
+  .invite-card { background: rgba(255,255,255,.06); border: 1px solid rgba(134,239,172,.2); border-radius: 12px; padding: 16px; margin-bottom: 14px; }
+  .invite-from { font-size: .7rem; color: #86efac; font-weight: 600; margin-bottom: 6px; }
+  .invite-title { font-size: .92rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .invite-meta { font-size: .75rem; color: #94a3b8; }
+  .ble-status { display: flex; align-items: center; gap: 8px; background: rgba(134,239,172,.08); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; }
+  .ble-dot { width: 8px; height: 8px; background: #86efac; border-radius: 50%; animation: pulse 1.5s infinite; flex-shrink: 0; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .ble-text { font-size: .78rem; color: #86efac; }
+  .btn-here { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 1rem; font-weight: 800; cursor: pointer; }
+  .server-log { background: #0d1117; border-radius: 12px; padding: 16px; font-family: monospace; font-size: .75rem; }
+  .log-line { margin-bottom: 6px; }
+  .log-line .ts { color: #64748b; }
+  .log-line .ok { color: #86efac; }
+  .log-line .key { color: #60a5fa; }
+  .log-line .val { color: #fcd34d; }
+  .log-line .action { color: #f472b6; }
+  /* PROOF section */
+  .proof { background: var(--bg); }
+  .proof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .proof-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .proof-card .label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  .proof-card .label.green { color: var(--green); }
+  .proof-card .label.blue { color: #2563eb; }
+  .proof-card .label.red { color: #dc2626; }
+  .proof-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .proof-card p { font-size: .87rem; color: var(--muted); }
+  .proof-card code { display: block; background: #f1f5f9; border-radius: 6px; padding: 8px 10px; font-size: .78rem; color: var(--slate); margin-top: 10px; font-family: monospace; line-height: 1.5; }
 
   /* ADVANTAGES */
   .adv { background: var(--bg); }
@@ -136,18 +160,18 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-label">Контроль въезда · Мобильное приложение</div>
-  <h1>Маячок у шлагбаума —<br><span>телефон открывает ворота</span></h1>
-  <p>DN·Gate устанавливается один раз у въезда. Когда авторизованный водитель подъезжает, приложение на смартфоне автоматически обнаруживает BLE-сигнал и открывает шлагбаум. Никаких карточек, брелоков и PIN-кодов.</p>
+  <div class="hero-label">Контроль въезда · Приглашения · Мобильное приложение</div>
+  <h1>Приглашение — в телефон.<br><span>Метка у шлагбаума — доказательство присутствия.</span></h1>
+  <p>Водитель получает ссылку-приглашение, подъезжает к шлагбауму, открывает приложение и нажимает «Я здесь». Приложение считывает зашифрованный BLE-сигнал метки и отправляет его на сервер. Сервер проверяет: правильная ли метка и действительно ли приглашение — и открывает шлагбаум. Без брелоков, без карточек.</p>
   <div class="hero-btns">
     <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить коммерческое предложение</a>
-    <a href="#specs" class="btn-outline">Технические характеристики</a>
+    <a href="#proof" class="btn-outline">Как работает верификация</a>
   </div>
   <div class="hero-stats">
     <div class="hero-stat"><strong>1 метка</strong><span>на весь въезд</span></div>
     <div class="hero-stat"><strong>20 лет</strong><span>без замены батареи</span></div>
-    <div class="hero-stat"><strong>&lt;3 с</strong><span>от подъезда до открытия</span></div>
-    <div class="hero-stat"><strong>∞</strong><span>водителей на одну метку</span></div>
+    <div class="hero-stat"><strong>&lt;3 с</strong><span>от «Я здесь» до открытия</span></div>
+    <div class="hero-stat"><strong>∞</strong><span>приглашений на одну метку</span></div>
   </div>
 </section>
 
@@ -155,41 +179,91 @@
 <section class="flow">
   <div class="section-label">Принцип работы</div>
   <div class="flow-wrap">
-    <div class="flow-steps-col">
-      <h2>Пять шагов от подъезда до открытого шлагбаума</h2>
-      <p class="subtitle" style="margin-bottom:24px">Метка у шлагбаума — неподвижная точка-маяк. Смартфон водителя — ключ с правами доступа.</p>
+    <div>
+      <h2>От приглашения до открытого шлагбаума</h2>
+      <p class="subtitle" style="margin-bottom:24px">Метка у шлагбаума — неподвижная точка присутствия. Её зашифрованный сигнал служит криптодоказательством того, что телефон физически находится у этих конкретных ворот.</p>
       <div class="flow-steps">
         <div class="flow-step">
           <div class="num">1</div>
-          <div><h3>Водитель подъезжает</h3><p>Метка DN·Gate у ворот непрерывно транслирует iBeacon-сигнал. Приложение на смартфоне сканирует эфир в фоновом режиме.</p></div>
+          <div><h3>Водитель получает приглашение</h3><p>Диспетчер создаёт приглашение в системе DN·Gate. Водителю приходит ссылка — в SMS, мессенджере или по email. Он открывает ссылку, устанавливает приложение и принимает приглашение одним тапом.</p></div>
         </div>
         <div class="flow-step">
           <div class="num">2</div>
-          <div><h3>Приложение обнаруживает маячок</h3><p>Когда RSSI метки превышает порог (настраивается), приложение DN·Gate фиксирует «подъезд к воротам» и отправляет запрос на сервер.</p></div>
+          <div><h3>Водитель подъезжает и открывает приложение</h3><p>Приложение показывает активное приглашение. Рядом с воротами BLE-метка DN·Gate видна в эфире. Водитель нажимает кнопку <strong>«Я здесь»</strong>.</p></div>
         </div>
         <div class="flow-step">
           <div class="num">3</div>
-          <div><h3>Сервер проверяет права</h3><p>Сервер DN·Gate сверяет id водителя, id ворот и текущее время с политикой доступа. Разрешён ли въезд именно сейчас?</p></div>
+          <div><h3>Приложение считывает зашифрованный сигнал метки</h3><p>В момент нажатия приложение фиксирует текущие UUID, Major, Minor и RSSI ближайшей BLE-метки. Эти значения динамические — они изменились 5 минут назад и сменятся снова через &lt;5 минут.</p></div>
         </div>
         <div class="flow-step">
           <div class="num">4</div>
-          <div><h3>Команда на контроллер шлагбаума</h3><p>При разрешении сервер посылает команду на контроллер через MQTT или HTTP. Поддерживаются реле, Wiegand 26/34, RS-485.</p></div>
+          <div><h3>Сервер верифицирует связку: приглашение + метка</h3><p>На сервер уходит пакет: <code style="font-size:.82rem;background:#f1f5f9;padding:2px 6px;border-radius:4px">{invite_token, uuid, major, minor, rssi, ts}</code>. Сервер проверяет два условия независимо: (1) приглашение действительно для этого водителя и ещё не истекло; (2) AES-128 расшифровка Major/Minor совпадает с ожидаемыми воротами в текущем временном слоте.</p></div>
         </div>
         <div class="flow-step">
           <div class="num">5</div>
-          <div><h3>Шлагбаум открывается, событие записывается</h3><p>Факт въезда (водитель, ворота, время) фиксируется в журнале. Доступно в веб-интерфейсе и через API в реальном времени.</p></div>
+          <div><h3>Шлагбаум открывается, событие записывается</h3><p>Только если обе проверки пройдены — сервер отправляет команду на контроллер шлагбаума. Приглашение помечается как использованное. В журнал: водитель, ворота, время, RSSI.</p></div>
         </div>
       </div>
     </div>
-    <div class="flow-visual">
-      <h3>Лента событий объекта</h3>
-      <div class="timeline">
-        <div class="tl-item"><div class="time">08:14:32</div><p><strong>Иванов А.П.</strong> — въезд через ворота №1<br>RSSI −62 дБм · разрешено</p></div>
-        <div class="tl-item"><div class="time">08:21:05</div><p><strong>Петров С.И.</strong> — въезд через ворота №1<br>RSSI −58 дБм · разрешено</p></div>
-        <div class="tl-item"><div class="time">09:03:17</div><p><strong>Неизвестный телефон</strong> — попытка<br>Нет аккаунта DN·Gate · отказано</p></div>
-        <div class="tl-item"><div class="time">11:30:44</div><p><strong>Курьер ООО «Логист»</strong> — разовый доступ<br>Действителен до 12:00 · разрешено</p></div>
-        <div class="tl-item"><div class="time">17:52:09</div><p><strong>Иванов А.П.</strong> — выезд через ворота №2<br>Время на объекте: 9 ч 37 мин</p></div>
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-bar">
+          <span class="phone-app">DN·Gate</span>
+          <span class="phone-signal">BLE ●●●○</span>
+        </div>
+        <div class="invite-card">
+          <div class="invite-from">📨 Приглашение от ООО «Технострой»</div>
+          <div class="invite-title">Въезд на склад №3</div>
+          <div class="invite-meta">Действительно сегодня · до 17:00 · 1 раз</div>
+        </div>
+        <div class="ble-status">
+          <div class="ble-dot"></div>
+          <span class="ble-text">Метка обнаружена: ворота №3 · −61 дБм</span>
+        </div>
+        <button class="btn-here">📍 Я здесь — открыть шлагбаум</button>
       </div>
+      <div class="server-log">
+        <div class="log-line"><span class="ts">14:32:07 </span><span class="key">invite </span><span class="val">«Петров · склад №3»</span> <span class="ok">✓ valid</span></div>
+        <div class="log-line"><span class="ts">14:32:07 </span><span class="key">beacon </span><span class="val">major=0x3A1C minor=0xF08B</span></div>
+        <div class="log-line"><span class="ts">14:32:07 </span><span class="key">AES-128</span><span class="val"> decrypt → gate_id=3</span> <span class="ok">✓ match</span></div>
+        <div class="log-line"><span class="ts">14:32:07 </span><span class="key">slot    </span><span class="val">current ±1</span> <span class="ok">✓ fresh</span></div>
+        <div class="log-line"><span class="ts">14:32:07 </span><span class="action">→ OPEN gate #3</span></div>
+        <div class="log-line"><span class="ts">14:32:08 </span><span class="ok">✓ barrier raised · invite consumed</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF -->
+<section class="proof" id="proof">
+  <div class="section-label">Модель безопасности</div>
+  <h2>Почему это нельзя обмануть без физического присутствия</h2>
+  <p class="subtitle">Сервер проверяет два независимых условия. Обойти оба одновременно — невозможно без знания AES-ключа и реального нахождения у шлагбаума.</p>
+  <div class="proof-grid">
+    <div class="proof-card">
+      <div class="label green">✓ Условие 1 — Личность</div>
+      <h3>Приглашение действительно для этого водителя</h3>
+      <p>Токен приглашения привязан к аккаунту. Он одноразовый, имеет срок действия и выдан конкретному человеку. Передать токен постороннему бессмысленно — без второго условия шлагбаум не откроется.</p>
+      <code>invite_token: eyJhbGciOiJIUzI1NiJ9...
+driver_id:    48291
+valid_until:  2026-09-20T17:00:00Z
+uses_left:    1</code>
+    </div>
+    <div class="proof-card">
+      <div class="label blue">✓ Условие 2 — Местоположение</div>
+      <h3>Метка соответствует нужным воротам в текущий момент</h3>
+      <p>Major и Minor меняются каждые 5 минут по AES-128. Сервер расшифровывает значения и проверяет: это ворота №3, и значения актуальны (слот ±1 от текущего). Скриншот, перехваченный пакет или значения из прошлого — не пройдут.</p>
+      <code>uuid:  550e8400-e29b-41d4-a716-... (ворота №3)
+major: 0x3A1C  ← AES-128(key, gate_id‖slot)
+minor: 0xF08B
+slot:  unix_time/300 = 5529736  ← актуален</code>
+    </div>
+    <div class="proof-card">
+      <div class="label red">✗ Что не работает у злоумышленника</div>
+      <h3>Три сценария атаки — все отклонены</h3>
+      <p><strong>Replay</strong> — перехватить пакет и воспроизвести позже: значения метки сменятся через &lt;5 мин, сервер отклонит устаревший слот.</p>
+      <p style="margin-top:8px"><strong>Фальсификация</strong> — подставить случайные Major/Minor: AES-128 расшифровка не даст нужный gate_id.</p>
+      <p style="margin-top:8px"><strong>Чужое приглашение</strong> — переслать ссылку третьему лицу: без подходящей BLE-метки рядом второе условие не пройдёт.</p>
     </div>
   </div>
 </section>
@@ -197,28 +271,28 @@
 <!-- ADVANTAGES -->
 <section class="adv">
   <div class="section-label">Преимущества</div>
-  <h2>Почему это удобнее карточки или пульта</h2>
-  <p class="subtitle">Метка у ворот — дешевле и надёжнее, чем раздавать брелоки каждому водителю.</p>
+  <h2>Что делает DN·Gate удобным для работы с внешними водителями</h2>
+  <p class="subtitle">Главная сила — отсутствие физического носителя. Любой сторонний водитель получает доступ за секунды, не приезжая на объект заранее.</p>
   <div class="adv-grid">
-    <div class="adv-card"><div class="ico">📱</div><h3>У всех уже есть смартфон</h3><p>Не нужно закупать и учитывать сотни личных брелоков. Приложение ставится бесплатно, права назначаются дистанционно за секунды.</p></div>
-    <div class="adv-card"><div class="ico">⚡</div><h3>Мгновенное управление правами</h3><p>Уволили водителя — закрыли доступ в приложении. Новый сотрудник — выдали права без поездки на объект. Всё через веб-интерфейс.</p></div>
-    <div class="adv-card"><div class="ico">🗓️</h3><h3>Расписание и зоны доступа</h3><p>Каждому водителю — своё расписание: только будни 7:00–19:00. Подрядчику — разовая ссылка-приглашение на один день.</p></div>
-    <div class="adv-card"><div class="ico">🔗</div><h3>Одна метка — несколько ворот</h3><p>На территории с несколькими въездами устанавливается по одной метке DN·Gate на каждые ворота. Приложение работает со всеми.</p></div>
-    <div class="adv-card"><div class="ico">📊</div><h3>Журнал по каждому водителю</h3><p>Полная история: кто, в какие ворота, во сколько въехал и выехал. Экспорт в Excel или выгрузка через API в вашу учётную систему.</p></div>
-    <div class="adv-card"><div class="ico">🔋</div><h3>Метка работает 20 лет</h3><p>Один раз установил — забыл. Батарея ER14505H-LD (Li-SOCl₂) обеспечивает 15–20 лет без обслуживания.</p></div>
+    <div class="adv-card"><div class="ico">🔗</div><h3>Приглашение — просто ссылка</h3><p>Диспетчер создаёт приглашение в веб-интерфейсе и отправляет ссылку в WhatsApp, Telegram или SMS. Водитель устанавливает приложение и принимает приглашение в один тап. Никакой личной явки.</p></div>
+    <div class="adv-card"><div class="ico">⏱️</div><h3>Доступ на конкретное время</h3><p>Приглашение действует один раз, до определённого часа или в конкретный день. По истечении — автоматически аннулируется. Не нужно «закрывать» карточку вручную.</p></div>
+    <div class="adv-card"><div class="ico">📍</div><h3>Метка подтверждает присутствие</h3><p>Нажать «Я здесь» можно только стоя рядом с воротами — иначе BLE-метка не будет видна, и сервер откажет. Нельзя открыть шлагбаум «из дома» или по старым данным.</p></div>
+    <div class="adv-card"><div class="ico">📱</div><h3>Водитель не носит ничего лишнего</h3><p>Брелок можно забыть дома, карточку — намочить. Смартфон водитель и так берёт с собой. Приложение DN·Gate — ещё одна иконка на экране.</p></div>
+    <div class="adv-card"><div class="ico">📊</div><h3>Журнал с личностью, не с токеном</h3><p>В записи события — имя водителя и название организации, а не безликий номер карточки. Это важно при разборе инцидентов и актировании посещений.</p></div>
+    <div class="adv-card"><div class="ico">🔋</div><h3>Метка у ворот — на 20 лет</h3><p>Единственное «железо» на объекте — маячок DN·Gate. Батарея ER14505H-LD обеспечивает 15–20 лет без обслуживания. Монтаж — 10 минут.</p></div>
   </div>
 </section>
 
 <!-- USE CASES -->
 <section class="cases">
   <div class="section-label">Сценарии применения</div>
-  <h2>Для каких объектов подходит DN·Gate</h2>
-  <p class="subtitle">Решение оптимально там, где водителей много, а личные метки — неудобны или нецелесообразны.</p>
+  <h2>Где DN·Gate решает задачу лучше всего</h2>
+  <p class="subtitle">Оптимален для объектов, где постоянно бывают внешние водители — от другой организации, незнакомые, разовые.</p>
   <div class="cases-grid">
-    <div class="case-card"><h3>Складские и логистические комплексы</h3><p>Десятки водителей-экспедиторов с разными маршрутами. Права настраиваются на конкретные ворота и временные окна погрузки/разгрузки.</p></div>
-    <div class="case-card"><h3>Корпоративные и ведомственные парковки</h3><p>Сотрудники паркуются по приложению. Посетители получают разовую ссылку — QR в письме или мессенджере — на конкретное время.</p></div>
-    <div class="case-card"><h3>Строительные площадки</h3><p>Подрядчики приезжают на объект со своими машинами. Временный доступ выдаётся удалённо, аннулируется по окончании договора.</p></div>
-    <div class="case-card"><h3>Сервисные и дилерские центры</h3><p>Выездной персонал и курьеры получают доступ только в рабочие часы. Зоны выдачи автомобилей изолируются от зон сервиса.</p></div>
+    <div class="case-card"><h3>Склады с привлечёнными перевозчиками</h3><p>Экспедитор из транспортной компании приезжает забрать груз. Диспетчер высылает приглашение за час до прибытия. Водитель въезжает в нужное окно без бумажного пропуска и без звонка на проходную.</p></div>
+    <div class="case-card"><h3>Офисные и бизнес-центры</h3><p>Сотрудник приглашает клиента или подрядчика. Тот получает ссылку, паркуется на гостевой стоянке по приложению. Охранник видит в системе: кто, к кому и на сколько — без бумажных журналов.</p></div>
+    <div class="case-card"><h3>Строительные объекты</h3><p>Каждый день — новые водители бетона, арматуры, техники. Прораб рассылает утренние приглашения через систему. Все въезды зафиксированы с именем водителя и организацией-подрядчиком.</p></div>
+    <div class="case-card"><h3>Сервисные центры и автодилеры</h3><p>Клиент приезжает на сервис. За час до записи ему приходит ссылка. Он въезжает в зону приёмки напрямую — без ожидания у шлагбаума и без уточнений у охраны.</p></div>
   </div>
 </section>
 
