@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Pass — Персональная метка водителя: автоматический въезд без телефона</title>
+<meta name="description" content="Личная BLE-метка на водителе или транспортном средстве — шлагбаум открывается автоматически при подъезде. Смартфон не нужен, руки свободны.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --indigo: #4f46e5;
+    --indigo-dark: #4338ca;
+    --indigo-light: #eef2ff;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--indigo); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #a5b4fc; }
+  .nav-cta { background: var(--indigo); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; }
+  .nav-cta:hover { background: var(--indigo-dark); }
+
+  .hero { background: linear-gradient(135deg, #0e0b2e 0%, #1a1040 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(165,180,252,.12); color: #a5b4fc; border: 1px solid rgba(165,180,252,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 760px; margin-bottom: 20px; }
+  .hero h1 span { color: #a5b4fc; }
+  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 640px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--indigo); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-primary:hover { background: var(--indigo-dark); }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--indigo); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 640px; margin-bottom: 48px; }
+
+  /* FLOW */
+  .flow { background: var(--white); }
+  .steps-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; counter-reset: steps; }
+  .step { padding: 28px; border-right: 1px solid var(--border); }
+  .step:last-child { border-right: none; }
+  .step::before { counter-increment: steps; content: counter(steps); display: block; width: 36px; height: 36px; background: var(--indigo); color: #fff; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; margin-bottom: 14px; font-size: .9rem; }
+  .step h3 { font-size: .9rem; font-weight: 700; margin-bottom: 6px; }
+  .step p { font-size: .84rem; color: var(--muted); }
+
+  /* FORM FACTORS */
+  .forms { background: var(--bg); }
+  .forms-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+  .form-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; text-align: center; }
+  .form-card .ico { font-size: 2.5rem; margin-bottom: 14px; }
+  .form-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .form-card p { font-size: .85rem; color: var(--muted); }
+  .form-card .tag { display: inline-block; background: var(--indigo-light); color: var(--indigo); font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; margin-top: 8px; }
+
+  /* CASES */
+  .cases { background: var(--white); }
+  .cases-list { display: flex; flex-direction: column; gap: 28px; }
+  .case { display: grid; grid-template-columns: 60px 1fr; gap: 20px; align-items: start; }
+  .case-ico { width: 60px; height: 60px; background: var(--indigo-light); color: var(--indigo); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+  .case-body h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .case-body p { font-size: .9rem; color: var(--muted); }
+
+  /* MULTI-GATE */
+  .multigate { background: var(--bg); }
+  .mg-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .mg-text h2 { margin-bottom: 16px; }
+  .mg-text p { font-size: .95rem; color: var(--muted); margin-bottom: 20px; }
+  .mg-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .mg-list li { display: flex; gap: 12px; font-size: .9rem; }
+  .mg-list li .dot { width: 8px; height: 8px; background: var(--indigo); border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .log-card { background: linear-gradient(135deg, #0e0b2e, #1e1650); border-radius: var(--radius); padding: 28px; color: #fff; }
+  .log-card h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: .08em; color: #a5b4fc; margin-bottom: 20px; }
+  .log-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.08); font-size: .85rem; }
+  .log-row:last-child { border-bottom: none; }
+  .log-row .name { color: #fff; font-weight: 600; }
+  .log-row .meta { color: #94a3b8; font-size: .78rem; text-align: right; }
+  .log-row .status-ok { color: #86efac; font-size: .75rem; font-weight: 600; }
+  .log-row .status-no { color: #f87171; font-size: .75rem; font-weight: 600; }
+
+  /* SPECS */
+  .specs { background: var(--slate); color: #fff; }
+  .specs h2 { color: #fff; }
+  .specs .subtitle { color: #94a3b8; }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .spec-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 26px; }
+  .spec-card h3 { font-size: .82rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .88rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .label { color: #94a3b8; }
+  .spec-row .value { font-weight: 600; color: #fff; text-align: right; }
+  .value.indigo { color: #a5b4fc; }
+  .value.green { color: #34d399; }
+
+  /* COMPARE */
+  .compare { background: var(--white); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--slate); color: #fff; padding: 13px 16px; text-align: left; font-weight: 600; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: var(--indigo-light); }
+  .hl td:first-child { font-weight: 700; color: var(--indigo); }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: #ef4444; }
+  .mid { color: #d97706; }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--indigo) 0%, var(--indigo-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.85); max-width: 540px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--indigo); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+
+  @media(max-width: 768px) { .mg-wrap { grid-template-columns: 1fr; } }
+  @media(max-width: 600px) {
+    .step { border-right: none; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .hero-stats { gap: 24px; }
+    .case { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Pass</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться с нами</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Контроль въезда · Персональная метка</div>
+  <h1>Личная метка водителя —<br><span>шлагбаум открывается сам</span></h1>
+  <p>DN·Pass — брелок или накладная метка на транспортном средстве. Когда водитель подъезжает к воротам, считыватель DN·Pass идентифицирует метку и открывает шлагбаум автоматически. Смартфон не нужен, руки заняты рулём — всё работает само.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить коммерческое предложение</a>
+    <a href="#specs" class="btn-outline">Технические характеристики</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>0</strong><span>действий от водителя</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>метка без замены батареи</span></div>
+    <div class="hero-stat"><strong>AES-128</strong><span>метку нельзя скопировать</span></div>
+    <div class="hero-stat"><strong>50 м</strong><span>дальность считывания</span></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="flow">
+  <div class="section-label">Принцип работы</div>
+  <h2>Полностью автоматически — от метки до поднятого шлагбаума</h2>
+  <p class="subtitle">Водитель ничего не нажимает. Считыватель работает непрерывно и реагирует на каждую авторизованную метку.</p>
+  <div class="steps-row">
+    <div class="step"><h3>Метка на ТС или водителе</h3><p>Брелок в кабине, карточка на каске или накладная метка на бампере. Метка постоянно транслирует зашифрованный iBeacon-сигнал.</p></div>
+    <div class="step"><h3>Считыватель сканирует эфир</h3><p>BLE-ридер у ворот непрерывно принимает все iBeacon-пакеты в радиусе 1–50 м (настраивается порогом RSSI или зоной).</p></div>
+    <div class="step"><h3>Сервер расшифровывает ID</h3><p>Пакет передаётся на сервер DN·Pass. AES-128 lookup за &lt;50 мс возвращает уникальный ID метки — личность водителя или регистрационный номер ТС.</p></div>
+    <div class="step"><h3>Проверка прав</h3><p>Сервер проверяет: есть ли у этого водителя право въезда прямо сейчас? Учитываются расписание, направление (въезд / выезд) и зона ворот.</p></div>
+    <div class="step"><h3>Шлагбаум открывается</h3><p>Команда на контроллер через реле или Wiegand. Факт въезда фиксируется: водитель, ворота, направление, время. Выход — симметричный процесс.</p></div>
+  </div>
+</section>
+
+<!-- FORM FACTORS -->
+<section class="forms">
+  <div class="section-label">Форм-факторы метки</div>
+  <h2>Три варианта исполнения под любую задачу</h2>
+  <p class="subtitle">Метка DN·Pass одинаково работает в любом корпусе — водитель или диспетчер выбирает удобный вариант.</p>
+  <div class="forms-grid">
+    <div class="form-card">
+      <div class="ico">🔑</div>
+      <h3>Брелок</h3>
+      <p>Крепится на ключи или в кармане водителя. Оптимально для легкового транспорта и персонала.</p>
+      <div class="tag">Рекомендуется для легковых</div>
+    </div>
+    <div class="form-card">
+      <div class="ico">💳</div>
+      <h3>Пропуск-карточка</h3>
+      <p>Формат ISO-карты (банковская). Носится в кармане, кармашке спецодежды или на шнурке.</p>
+      <div class="tag">Удобно для пешеходов</div>
+    </div>
+    <div class="form-card">
+      <div class="ico">🚛</div>
+      <h3>Метка на транспортное средство</h3>
+      <p>Корпус IP67, крепится на лобовое стекло, бампер или кабину. Идентифицирует сам автомобиль, независимо от водителя.</p>
+      <div class="tag">Рекомендуется для грузовых</div>
+    </div>
+    <div class="form-card">
+      <div class="ico">⛑️</div>
+      <h3>Метка на каску / спецодежду</h3>
+      <p>Для объектов, где смартфон запрещён по технике безопасности. Метка вшивается в каску или крепится на жилет.</p>
+      <div class="tag">Для промышленных объектов</div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="cases">
+  <div class="section-label">Сценарии применения</div>
+  <h2>Где DN·Pass работает лучше всего</h2>
+  <p class="subtitle">Решение особенно эффективно там, где смартфон неудобен, запрещён или просто ненужен.</p>
+  <div class="cases-list">
+    <div class="case">
+      <div class="case-ico">🏭</div>
+      <div class="case-body">
+        <h3>Промышленные объекты и карьеры</h3>
+        <p>На горнодобывающих предприятиях смартфон может быть запрещён в зоне взрывных работ или во взрывоопасных помещениях. Метка на каске или кабине карьерного самосвала идентифицирует водителя без телефона. Шлагбаум на въезде в охраняемую зону открывается автоматически, журнал ведётся полностью.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-ico">🚛</div>
+      <div class="case-body">
+        <h3>Грузовые терминалы и распределительные центры</h3>
+        <p>Дальнобойщики и экспедиторы въезжают на территорию 50–100 раз в сутки. Метка DN·Pass на грузовике открывает нужные ворота автоматически. Система знает, к какой рампе направлен конкретный автомобиль, и может открывать только разрешённые ворота по маршруту погрузки.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-ico">🏗️</div>
+      <div class="case-body">
+        <h3>Строительные площадки с несколькими КПП</h3>
+        <p>На крупных объектах — несколько въездов для разных категорий техники. Метка DN·Pass настраивается: бетономешалка открывает только ворота бетонного узла, кран — зону монтажа. Персонал прорабов с брелоком DN·Pass — любой въезд. Все события — в единый журнал.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-ico">🏢</div>
+      <div class="case-body">
+        <h3>Корпоративный автопарк с подземным паркингом</h3>
+        <p>Сотрудник садится в корпоративный автомобиль. Метка DN·Pass на транспортном средстве открывает шлагбаум паркинга без лишних действий. По той же метке фиксируется начало командировки или служебной поездки — данные идут в систему учёта пробега.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MULTI-GATE -->
+<section class="multigate">
+  <div class="section-label">Многоворотный периметр</div>
+  <div class="mg-wrap">
+    <div class="mg-text">
+      <h2>Одна метка — весь периметр объекта</h2>
+      <p>Считыватели DN·Pass устанавливаются на каждые ворота. Сервер знает права каждой метки для каждых ворот. Одна метка водителя работает по всей территории согласно настроенной политике.</p>
+      <ul class="mg-list">
+        <li><div class="dot"></div><span>Разные права на разные ворота для одной метки</span></li>
+        <li><div class="dot"></div><span>Расписание: метка активна только в рабочие смены</span></li>
+        <li><div class="dot"></div><span>Направление: разрешить только въезд, только выезд или оба</span></li>
+        <li><div class="dot"></div><span>Зоны: метка грузовика не откроет ворота в офисную зону</span></li>
+        <li><div class="dot"></div><span>Антипассбэк: повторный въезд без выезда — тревога</span></li>
+        <li><div class="dot"></div><span>Все события — в единый журнал по всему объекту</span></li>
+      </ul>
+    </div>
+    <div class="log-card">
+      <h3>Журнал периметра</h3>
+      <div class="log-row"><div><div class="name">Петров А.В. · Грузовик ТТ123</div><div class="meta">Ворота №1 (въезд) · 07:14</div></div><div class="status-ok">✓ разрешено</div></div>
+      <div class="log-row"><div><div class="name">Сидоров И.К. · Каска #047</div><div class="meta">Ворота №2 (въезд) · 07:21</div></div><div class="status-ok">✓ разрешено</div></div>
+      <div class="log-row"><div><div class="name">Метка #0F3A · неизвестна</div><div class="meta">Ворота №1 · 08:03</div></div><div class="status-no">✗ отказано</div></div>
+      <div class="log-row"><div><div class="name">Кузнецов Р.Н. · Кран КС-45</div><div class="meta">Ворота №3 (въезд) · 09:44</div></div><div class="status-ok">✓ разрешено</div></div>
+      <div class="log-row"><div><div class="name">Петров А.В. · Грузовик ТТ123</div><div class="meta">Ворота №1 (выезд) · 16:55</div></div><div class="status-ok">✓ разрешено</div></div>
+      <div class="log-row"><div><div class="name">Иванова С.П. · Пропуск-карта</div><div class="meta">Ворота №2, вне расписания · 22:10</div></div><div class="status-no">✗ вне часов доступа</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs" id="specs">
+  <div class="section-label" style="color:#a5b4fc">Технические характеристики</div>
+  <h2>DN·Pass — аппаратная платформа</h2>
+  <p class="subtitle">Характеристики персональной метки и считывателя у шлагбаума.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Метка (брелок / метка на ТС)</h3>
+      <div class="spec-row"><span class="label">Чипсет</span><span class="value">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="label">Формат</span><span class="value indigo">iBeacon (BLE 4.0+)</span></div>
+      <div class="spec-row"><span class="label">Интервал</span><span class="value">2 с (день) / 60 с (ночь)</span></div>
+      <div class="spec-row"><span class="label">Дальность</span><span class="value">1–50 м (TX power)</span></div>
+      <div class="spec-row"><span class="label">Шифрование</span><span class="value indigo">AES-128 ECB</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Энергетика</h3>
+      <div class="spec-row"><span class="label">Батарея</span><span class="value">ER14505H-LD</span></div>
+      <div class="spec-row"><span class="label">Тип</span><span class="value">Li-SOCl₂, 2700 мАч</span></div>
+      <div class="spec-row"><span class="label">Ток</span><span class="value green">~5.2 µА (день)</span></div>
+      <div class="spec-row"><span class="label">Ресурс</span><span class="value green">15–20 лет</span></div>
+      <div class="spec-row"><span class="label">Температура</span><span class="value">−40°C … +85°C</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Считыватель у ворот</h3>
+      <div class="spec-row"><span class="label">BLE-скан</span><span class="value">непрерывный</span></div>
+      <div class="spec-row"><span class="label">Зона считывания</span><span class="value">1–50 м (порог RSSI)</span></div>
+      <div class="spec-row"><span class="label">Антипассбэк</span><span class="value green">поддерживается</span></div>
+      <div class="spec-row"><span class="label">Офлайн-кэш</span><span class="value green">да, до 8 ч</span></div>
+      <div class="spec-row"><span class="label">Направление</span><span class="value green">въезд / выезд</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Интеграция</h3>
+      <div class="spec-row"><span class="label">Протоколы</span><span class="value">Реле / Wiegand 26/34</span></div>
+      <div class="spec-row"><span class="label">RS-485 / OSDP</span><span class="value green">поддерживается</span></div>
+      <div class="spec-row"><span class="label">REST API</span><span class="value green">JSON</span></div>
+      <div class="spec-row"><span class="label">Webhook</span><span class="value green">каждое событие</span></div>
+      <div class="spec-row"><span class="label">Совместимость</span><span class="value">любой контроллер СКУД</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="compare">
+  <div class="section-label">Сравнение с DN·Gate</div>
+  <h2>DN·Pass и DN·Gate — в чём разница</h2>
+  <p class="subtitle">Оба продукта решают задачу контроля въезда, но для разных условий.</p>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметр</th><th>DN·Pass (метка у водителя)</th><th>DN·Gate (метка у шлагбаума)</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>Нужен смартфон</td><td class="check">Нет — полностью автономно</td><td class="mid">Да — приложение iOS/Android</td></tr>
+        <tr><td>Работает без телефона</td><td class="check">Да, всегда</td><td class="cross">Нет</td></tr>
+        <tr class="hl"><td>Идентификация: кто открыл</td><td class="check">Метка = водитель или ТС</td><td class="check">Аккаунт в приложении</td></tr>
+        <tr><td>Временный доступ гостю</td><td class="mid">Выдать метку лично</td><td class="check">Ссылка за 10 сек дистанционно</td></tr>
+        <tr class="hl"><td>Стоимость на 50 водителей</td><td class="mid">50 меток + считыватели</td><td class="check">1 метка + приложение бесплатно</td></tr>
+        <tr><td>Условия использования</td><td class="check">Зоны запрета смартфонов, грузовые ТС</td><td class="check">Офисы, склады, посетители</td></tr>
+        <tr class="hl"><td>Защита от клонирования</td><td class="check">AES-128, динамический ID</td><td class="check">AES-128 + аутентификация в приложении</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:20px; font-size:.9rem; color:var(--muted)">💡 На одном объекте можно использовать оба решения одновременно: постоянный персонал работает через DN·Pass, гости и подрядчики — через DN·Gate.</p>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Готовы автоматизировать въезд на объект?</h2>
+  <p>Расскажите о количестве ворот и водителей — подберём оптимальный вариант (DN·Pass, DN·Gate или их комбинацию) и рассчитаем стоимость.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Pass" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Pass</strong> — решение на базе промышленного образца <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#a5b4fc">dynamic-iBeacon</a> · <a href="mailto:info@dn-beacon.ru" style="color:#a5b4fc">info@dn-beacon.ru</a></p>
+</footer>
+
+</body>
+</html>
