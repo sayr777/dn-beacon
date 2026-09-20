@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Pay — Безбарьерная оплата проезда и контроль доступа на BLE</title>
+<meta name="description" content="Система бесконтактной оплаты проезда на BLE-метках с динамическим шифрованием. Не нужно касаться терминала — турникет открывается автоматически.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --violet: #7c3aed;
+    --violet-dark: #6328c9;
+    --violet-light: #f3f0ff;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--violet); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #a78bfa; }
+  .nav-cta { background: var(--violet); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; transition: background .2s; }
+  .nav-cta:hover { background: var(--violet-dark); }
+
+  .hero { background: linear-gradient(135deg, #0e0520 0%, #130826 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(167,139,250,.15); color: #a78bfa; border: 1px solid rgba(167,139,250,.3); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 800px; margin-bottom: 20px; }
+  .hero h1 span { color: #a78bfa; }
+  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 640px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--violet); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; transition: background .2s; }
+  .btn-primary:hover { background: var(--violet-dark); }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--violet); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 640px; margin-bottom: 48px; }
+
+  /* HOW FLOW */
+  .flow { background: var(--white); }
+  .flow-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0; }
+  .flow-step { padding: 28px; border-right: 1px solid var(--border); text-align: center; }
+  .flow-step:last-child { border-right: none; }
+  .flow-step .ico { font-size: 2.5rem; margin-bottom: 14px; }
+  .flow-step h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .flow-step p { font-size: .85rem; color: var(--muted); }
+  .flow-step .ms { display: inline-block; background: var(--violet-light); color: var(--violet); font-weight: 700; font-size: .78rem; padding: 2px 8px; border-radius: 10px; margin-top: 8px; }
+
+  /* FEATURES */
+  .features { background: var(--bg); }
+  .feat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .feat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
+  .feat-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+  .feat-card h3 .ico { font-size: 1.4rem; }
+  .feat-card p { font-size: .9rem; color: var(--muted); }
+
+  /* VS COMPARISON */
+  .vs { background: var(--white); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--slate); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+  td { padding: 13px 16px; border-bottom: 1px solid var(--border); background: var(--white); }
+  tr:hover td { background: var(--violet-light); }
+  .hl td:first-child { font-weight: 700; color: var(--violet); }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: #ef4444; }
+  .mid { color: #d97706; }
+
+  /* SPECS */
+  .specs { background: var(--slate); color: #fff; }
+  .specs h2 { color: #fff; }
+  .specs .subtitle { color: #94a3b8; }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .spec-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 26px; }
+  .spec-card h3 { font-size: .82rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .88rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .label { color: #94a3b8; }
+  .spec-row .value { font-weight: 600; color: #fff; text-align: right; }
+  .value.violet { color: #a78bfa; }
+  .value.green { color: #34d399; }
+
+  /* USE CASES */
+  .cases { background: var(--bg); }
+  .cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+  .case-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .case-card .tag { display: inline-block; background: var(--violet-light); color: var(--violet); font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
+  .case-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .case-card p { font-size: .88rem; color: var(--muted); }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--violet) 0%, var(--violet-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.8); font-size: 1.05rem; max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--violet); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+
+  @media(max-width: 600px) {
+    .flow-step { border-right: none; border-bottom: 1px solid var(--border); }
+    .flow-step:last-child { border-bottom: none; }
+    .hero-stats { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Pay</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться с нами</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Оплата проезда и контроль доступа</div>
+  <h1>Безбарьерный вход в транспорт —<br><span>без касания и NFC</span></h1>
+  <p>DN·Pay — система оплаты проезда и контроля доступа на основе BLE-метки с динамическим шифрованием. Пассажир подходит к турникету — валидатор автоматически считывает BLE-сигнал, проверяет баланс и открывает проход. Без извлечения карты, без поднесения телефона.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить коммерческое предложение</a>
+    <a href="#specs" class="btn-outline">Технические характеристики</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>&lt;200 мс</strong><span>полный цикл валидации</span></div>
+    <div class="hero-stat"><strong>AES-128</strong><span>защита от клонирования</span></div>
+    <div class="hero-stat"><strong>15 лет</strong><span>брелок без зарядки</span></div>
+    <div class="hero-stat"><strong>офлайн</strong><span>работает без интернета</span></div>
+  </div>
+</section>
+
+<!-- HOW FLOW -->
+<section class="flow">
+  <div class="section-label">Как это работает</div>
+  <h2>Вход за 200 мс — без касания</h2>
+  <p class="subtitle">Полный цикл от шага пассажира к турникету до открытого прохода.</p>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="ico">🚶</div>
+      <h3>Пассажир подходит</h3>
+      <p>В кармане или сумке — брелок или смартфон с приложением DN·Pay. Никаких действий не требуется.</p>
+    </div>
+    <div class="flow-step">
+      <div class="ico">📡</div>
+      <h3>Считыватель обнаруживает метку</h3>
+      <p>Валидатор на турникете сканирует BLE-эфир. Принимает зашифрованный пакет метки.</p>
+      <div class="ms">~50 мс</div>
+    </div>
+    <div class="flow-step">
+      <div class="ico">🔐</div>
+      <h3>Локальная валидация</h3>
+      <p>Считыватель проверяет AES-128 подпись. Сверяет баланс из кэша или запрашивает сервер.</p>
+      <div class="ms">~80 мс</div>
+    </div>
+    <div class="flow-step">
+      <div class="ico">✅</div>
+      <h3>Проход открыт</h3>
+      <p>Турникет открывается. Транзакция записывается. Пассажир даже не замедлил шаг.</p>
+      <div class="ms">~200 мс итого</div>
+    </div>
+    <div class="flow-step">
+      <div class="ico">📊</div>
+      <h3>Синхронизация</h3>
+      <p>Данные транзакций передаются в биллинг при наличии соединения. Система работает и в офлайн-режиме.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="section-label">Ключевые возможности</div>
+  <h2>Что входит в платформу DN·Pay</h2>
+  <p class="subtitle">Полный стек от аппаратной метки до биллинговой интеграции.</p>
+  <div class="feat-grid">
+    <div class="feat-card"><h3><span class="ico">🔄</span>Динамический идентификатор</h3><p>Major и Minor BLE-пакета меняются каждые 5 минут по AES-128. Перехваченный сигнал устаревает раньше, чем злоумышленник успевает его использовать. Клонирование метки без знания ключа — невозможно.</p></div>
+    <div class="feat-card"><h3><span class="ico">📴</span>Офлайн-валидация</h3><p>Считыватель хранит локальный кэш: список активных меток и их балансов. При потере связи с сервером валидация продолжается до нескольких часов без деградации сервиса.</p></div>
+    <div class="feat-card"><h3><span class="ico">📱</span>Мобильная метка</h3><p>Смартфон с приложением DN·Pay работает как полноценная BLE-метка. Приложение эмулирует брелок — пассажир держит телефон в кармане и проходит без дополнительных действий.</p></div>
+    <div class="feat-card"><h3><span class="ico">🗓️</span>Гибкие тарифы</h3><p>Поддержка разовых поездок, лимитных абонементов, льготных тарифов и зонного ценообразования. Тарифная логика конфигурируется без обновления прошивки метки.</p></div>
+    <div class="feat-card"><h3><span class="ico">🔗</span>Мультимодальность</h3><p>Единая метка DN·Pay — единый лицевой счёт для автобуса, трамвая, троллейбуса и метро. Пересадочный тариф применяется автоматически.</p></div>
+    <div class="feat-card"><h3><span class="ico">🛡️</span>Защита от подмены</h3><p>Сервер верифицирует каждую транзакцию по временному окну и маршрутному контексту. Воспроизведение старого сигнала распознаётся и отклоняется.</p></div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="vs">
+  <div class="section-label">Сравнение технологий</div>
+  <h2>DN·Pay vs. другие способы оплаты проезда</h2>
+  <p class="subtitle">Почему BLE превосходит традиционные технологии в безбарьерных сценариях.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>DN·Pay (BLE)</th>
+          <th>Банковская карта (NFC)</th>
+          <th>Транспортная карта (RFID)</th>
+          <th>QR-код</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hl"><td>Нужно достать из кармана</td><td class="check">Нет</td><td class="mid">Иногда</td><td class="mid">Да</td><td class="cross">Да</td></tr>
+        <tr><td>Дальность считывания</td><td class="check">0.5–5 м</td><td class="cross">до 10 см</td><td class="cross">до 10 см</td><td class="cross">прямая видимость</td></tr>
+        <tr class="hl"><td>Офлайн-валидация</td><td class="check">Да (часы)</td><td class="cross">Нет</td><td class="mid">Частично</td><td class="cross">Нет</td></tr>
+        <tr><td>Защита от клонирования</td><td class="check">AES-128, динамический ID</td><td class="check">Tokenization</td><td class="mid">Зависит от типа карты</td><td class="cross">Отсутствует</td></tr>
+        <tr class="hl"><td>Работа без смартфона</td><td class="check">Да (брелок)</td><td class="check">Да (карта)</td><td class="check">Да (карта)</td><td class="cross">Нет</td></tr>
+        <tr><td>Срок жизни носителя</td><td class="check">15 лет (брелок)</td><td class="mid">3–5 лет</td><td class="mid">3–5 лет</td><td class="cross">разовый</td></tr>
+        <tr class="hl"><td>Комиссия платёжной системы</td><td class="check">Отсутствует</td><td class="cross">1–2%</td><td class="check">Нет</td><td class="check">Нет</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs" id="specs">
+  <div class="section-label" style="color:#a78bfa">Технические характеристики</div>
+  <h2>DN·Pay — аппаратная платформа</h2>
+  <p class="subtitle">Характеристики персональной метки-брелока и стационарного считывателя.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Метка-брелок</h3>
+      <div class="spec-row"><span class="label">Чипсет</span><span class="value">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="label">Формат</span><span class="value violet">iBeacon (BLE 4.0+)</span></div>
+      <div class="spec-row"><span class="label">Смена ID</span><span class="value">каждые 5 мин (AES-128)</span></div>
+      <div class="spec-row"><span class="label">Дальность</span><span class="value">0.5–5 м</span></div>
+      <div class="spec-row"><span class="label">Ресурс батареи</span><span class="value green">до 15 лет</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Считыватель (валидатор)</h3>
+      <div class="spec-row"><span class="label">BLE-скан</span><span class="value">непрерывный, активный</span></div>
+      <div class="spec-row"><span class="label">Локальный кэш</span><span class="value green">до 24 часов офлайн</span></div>
+      <div class="spec-row"><span class="label">Подключение</span><span class="value">Ethernet / WiFi / 4G</span></div>
+      <div class="spec-row"><span class="label">Время валидации</span><span class="value violet">&lt;200 мс</span></div>
+      <div class="spec-row"><span class="label">Монтаж</span><span class="value">на турникет / стойку</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Сервер DN·Pay</h3>
+      <div class="spec-row"><span class="label">API</span><span class="value">REST (JSON)</span></div>
+      <div class="spec-row"><span class="label">Биллинг</span><span class="value green">интеграция через API</span></div>
+      <div class="spec-row"><span class="label">Мульти-оператор</span><span class="value green">поддерживается</span></div>
+      <div class="spec-row"><span class="label">Аналитика</span><span class="value green">в реальном времени</span></div>
+      <div class="spec-row"><span class="label">Резервирование</span><span class="value">hot-standby</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Безопасность</h3>
+      <div class="spec-row"><span class="label">Шифрование</span><span class="value violet">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="label">ID в эфире</span><span class="value green">не передаётся</span></div>
+      <div class="spec-row"><span class="label">Replay-защита</span><span class="value green">временное окно</span></div>
+      <div class="spec-row"><span class="label">Изоляция ключей</span><span class="value green">по операторам</span></div>
+      <div class="spec-row"><span class="label">Мобильное приложение</span><span class="value">iOS / Android</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="cases">
+  <div class="section-label">Сценарии применения</div>
+  <h2>Где работает DN·Pay</h2>
+  <p class="subtitle">Единая платформа для всех видов общественного транспорта и объектов с контролем доступа.</p>
+  <div class="cases-grid">
+    <div class="case-card"><div class="tag">Наземный транспорт</div><h3>Автобусы и трамваи</h3><p>Валидатор у входной двери. Пассажир заходит — система считывает метку и списывает стоимость проезда. Не нужно останавливаться и что-то прикладывать.</p></div>
+    <div class="case-card"><div class="tag">Метро</div><h3>Подземный транспорт</h3><p>BLE-считыватели в турникетах метрополитена. Мультимодальный тариф — одна метка для метро и наземного транспорта с пересадочным льготным периодом.</p></div>
+    <div class="case-card"><div class="tag">Корпоративный транспорт</div><h3>Вахтовые и корпоративные перевозки</h3><p>Сотрудники проходят в корпоративный автобус по персональным BLE-меткам. Система автоматически формирует ведомость присутствия по каждому маршруту.</p></div>
+    <div class="case-card"><div class="tag">Контроль доступа</div><h3>Парковки и объекты</h3><p>BLE-считыватель на въезде паркинга. Шлагбаум открывается автоматически при приближении зарегистрированного автомобиля с меткой DN·Pay.</p></div>
+    <div class="case-card"><div class="tag">Учебные заведения</div><h3>Студенческие карты</h3><p>Брелок или мобильное приложение заменяет студенческий билет: вход в кампус, проездной, доступ в библиотеку — один носитель для всего.</p></div>
+    <div class="case-card"><div class="tag">Льготы</div><h3>Льготный проезд</h3><p>Метка персонифицирована. Льготный тариф применяется автоматически при идентификации метки без необходимости предъявлять дополнительные документы.</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Готовы запустить безбарьерный проезд?</h2>
+  <p>Расскажите о вашем транспортном контуре — подготовим архитектуру решения и расчёт стоимости за 1 рабочий день.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Pay" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Pay</strong> — решение на базе промышленного образца <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#a78bfa">dynamic-iBeacon</a> · Контакт: <a href="mailto:info@dn-beacon.ru" style="color:#a78bfa">info@dn-beacon.ru</a></p>
+</footer>
+
+</body>
+</html>
