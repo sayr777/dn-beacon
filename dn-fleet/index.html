@@ -229,7 +229,7 @@
   <div class="steps">
     <div class="step">
       <h3>Метка передаёт сигнал</h3>
-      <p>Каждые 2 секунды метка отправляет стандартный iBeacon-пакет. Major и Minor меняются каждые 5 минут по AES-128 — идентификатор нельзя скопировать или подделать без ключа.</p>
+      <p>Метка отправляет стандартный iBeacon-пакет с настраиваемым интервалом. Major и Minor меняются каждые 5 минут (настраивается) по AES-128 — идентификатор нельзя скопировать или подделать без ключа.</p>
     </div>
     <div class="step">
       <h3>Трекер принимает</h3>
@@ -258,7 +258,7 @@
       <div class="spec-row"><span class="label">Модуль</span><span class="value">YJ-16013</span></div>
       <div class="spec-row"><span class="label">Формат сигнала</span><span class="value blue">iBeacon (BLE 4.0+)</span></div>
       <div class="spec-row"><span class="label">Режим работы</span><span class="value">Broadcaster only</span></div>
-      <div class="spec-row"><span class="label">Интервал передачи</span><span class="value">2 с (день) / 60 с (ночь)</span></div>
+      <div class="spec-row"><span class="label">Интервал передачи</span><span class="value">настраиваемый</span></div>
     </div>
     <div class="spec-card">
       <h3>Энергопотребление</h3>
@@ -279,7 +279,7 @@
     <div class="spec-card">
       <h3>Безопасность и идентификация</h3>
       <div class="spec-row"><span class="label">Алгоритм</span><span class="value blue">AES-128 ECB</span></div>
-      <div class="spec-row"><span class="label">Смена идентификатора</span><span class="value">каждые 5 мин</span></div>
+      <div class="spec-row"><span class="label">Смена идентификатора</span><span class="value">каждые 5 мин (настраивается)</span></div>
       <div class="spec-row"><span class="label">TagID в эфире</span><span class="value green">не передаётся</span></div>
       <div class="spec-row"><span class="label">Мульти-оператор</span><span class="value green">поддерживается</span></div>
       <div class="spec-row"><span class="label">Дальность</span><span class="value">2–70 м (настраивается)</span></div>

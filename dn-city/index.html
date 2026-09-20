@@ -227,7 +227,7 @@
       <ul class="how-list">
         <li>
           <div class="dot"></div>
-          <div><strong>Метка передаёт зашифрованный сигнал</strong><span>Major и Minor меняются каждые 5 минут по AES-128. Сторонний наблюдатель не может определить номер остановки по радиоэфиру.</span></div>
+          <div><strong>Метка передаёт зашифрованный сигнал</strong><span>Major и Minor меняются каждые 5 минут (настраивается) по AES-128. Сторонний наблюдатель не может определить номер остановки по радиоэфиру.</span></div>
         </li>
         <li>
           <div class="dot"></div>
@@ -293,7 +293,7 @@
     <div class="spec-card">
       <h3>Безопасность</h3>
       <div class="spec-row"><span class="label">Шифрование</span><span class="value teal">AES-128 ECB</span></div>
-      <div class="spec-row"><span class="label">Смена ID</span><span class="value">каждые 5 мин</span></div>
+      <div class="spec-row"><span class="label">Смена ID</span><span class="value">каждые 5 мин (настраивается)</span></div>
       <div class="spec-row"><span class="label">ID в эфире</span><span class="value green">не передаётся</span></div>
       <div class="spec-row"><span class="label">Ключ по регионам</span><span class="value green">поддерживается</span></div>
       <div class="spec-row"><span class="label">Офлайн-режим</span><span class="value green">локальное AES</span></div>
@@ -307,7 +307,7 @@
   <h2>Защита от несанкционированного копирования</h2>
   <p class="subtitle">Решение спроектировано с учётом требований к безопасности транспортных и инфраструктурных проектов.</p>
   <div class="sec-grid">
-    <div class="sec-item"><div class="ico">🔄</div><div><h3>Динамические идентификаторы</h3><p>Номер остановки никогда не передаётся в открытом виде. Сигнал меняется каждые 5 минут — сторонний наблюдатель не может составить базу «сигнал → остановка».</p></div></div>
+    <div class="sec-item"><div class="ico">🔄</div><div><h3>Динамические идентификаторы</h3><p>Номер остановки никогда не передаётся в открытом виде. Сигнал меняется каждые 5 минут (настраивается) — сторонний наблюдатель не может составить базу «сигнал → остановка».</p></div></div>
     <div class="sec-item"><div class="ico">🔑</div><div><h3>128-битный ключ региона</h3><p>Подбор ключа перебором экономически нецелесообразен. Ключи разделяются по регионам и эксплуатационным зонам.</p></div></div>
     <div class="sec-item"><div class="ico">🚫</div><div><h3>Защита от replay-атаки</h3><p>Пакет действителен только в ограниченном временном окне. Сохранённый и воспроизведённый сигнал устаревает после смены слота.</p></div></div>
     <div class="sec-item"><div class="ico">🏛️</div><div><h3>Изоляция компрометации</h3><p>При физическом вскрытии одной метки компрометируется только её ключ. Разбивка по регионам исключает утечку всего каталога остановок.</p></div></div>

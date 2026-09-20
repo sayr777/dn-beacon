@@ -252,7 +252,7 @@ uses_left:    1</code>
     <div class="proof-card">
       <div class="label blue">✓ Условие 2 — Местоположение</div>
       <h3>Метка соответствует нужным воротам в текущий момент</h3>
-      <p>Major и Minor меняются каждые 5 минут по AES-128. Сервер расшифровывает значения и проверяет: это ворота №3, и значения актуальны (слот ±1 от текущего). Скриншот, перехваченный пакет или значения из прошлого — не пройдут.</p>
+      <p>Major и Minor меняются каждые 5 минут (настраивается) по AES-128. Сервер расшифровывает значения и проверяет: это ворота №3, и значения актуальны (слот ±1 от текущего). Скриншот, перехваченный пакет или значения из прошлого — не пройдут.</p>
       <code>uuid:  550e8400-e29b-41d4-a716-... (ворота №3)
 major: 0x3A1C  ← AES-128(key, gate_id‖slot)
 minor: 0xF08B
@@ -319,7 +319,7 @@ slot:  unix_time/300 = 5529736  ← актуален</code>
       <h3>Метка у шлагбаума</h3>
       <div class="spec-row"><span class="label">Чипсет</span><span class="value">Nordic nRF52832</span></div>
       <div class="spec-row"><span class="label">Формат</span><span class="value green">iBeacon (BLE 4.0+)</span></div>
-      <div class="spec-row"><span class="label">Интервал передачи</span><span class="value">2 с</span></div>
+      <div class="spec-row"><span class="label">Интервал передачи</span><span class="value">настраиваемый</span></div>
       <div class="spec-row"><span class="label">Дальность</span><span class="value">5–70 м (TX power)</span></div>
       <div class="spec-row"><span class="label">Защита</span><span class="value green">IP67</span></div>
     </div>
