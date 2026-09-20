@@ -38,10 +38,16 @@
   .platform { padding: 64px 5%; background: var(--white); }
   .platform h2 { font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 800; color: var(--slate); text-align: center; margin-bottom: 12px; }
   .platform .sub { text-align: center; color: var(--muted); font-size: .95rem; margin-bottom: 40px; }
+  .platform-body { display: flex; align-items: flex-start; gap: 48px; }
+  .platform-img { flex: 0 0 260px; }
+  .platform-img img { width: 100%; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,.12); background: #0d1117; display: block; }
+  .platform-img figcaption { font-size: .75rem; color: var(--muted); text-align: center; margin-top: 8px; }
+  .platform-specs { flex: 1; }
   .specs-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .spec-item { background: var(--white); padding: 20px; text-align: center; }
   .spec-item .val { font-size: 1.5rem; font-weight: 800; color: var(--blue); display: block; }
   .spec-item .lbl { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+  @media(max-width:720px) { .platform-body { flex-direction: column; } .platform-img { flex: none; width: 100%; max-width: 320px; margin: 0 auto; } }
 
   .products { padding: 72px 5%; background: var(--bg); }
   .products h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 12px; }
@@ -216,6 +222,12 @@
 <section class="platform">
   <h2>Единая аппаратная платформа</h2>
   <p class="sub">Все решения построены на одном промышленном образце — метке с динамически изменяемыми идентификаторами.</p>
+  <div class="platform-body">
+  <figure class="platform-img">
+    <img src="https://raw.githubusercontent.com/sayr777/dynamic-iBeacon/master/docs/images/yj16013-module-with-capacitor-and-battery.png" alt="Модуль YJ-16013 с конденсатором и батареей ER14505H-LD" loading="lazy">
+    <figcaption>Модуль YJ-16013 · nRF52832 · батарея ER14505H-LD</figcaption>
+  </figure>
+  <div class="platform-specs">
   <div class="specs-strip">
     <div class="spec-item"><span class="val">до 10 лет</span><span class="lbl">Срок службы батареи ER14505H-LD</span></div>
     <div class="spec-item"><span class="val">5.2 µА</span><span class="lbl">Ток потребления (день)</span></div>
@@ -224,6 +236,8 @@
     <div class="spec-item"><span class="val">AES-128</span><span class="lbl">Шифрование идентификатора</span></div>
     <div class="spec-item"><span class="val">5 мин</span><span class="lbl">Период смены Major/Minor/MAC (настраивается)</span></div>
   </div>
+  </div><!-- /platform-specs -->
+  </div><!-- /platform-body -->
 </section>
 
 <section class="products">
