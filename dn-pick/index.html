@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Pick — Точное складское комплектование на BLE AoA</title>
+<meta name="description" content="Рука сборщика потянулась не в ту ячейку — световой сигнал и вибрация до того, как товар взят. Ноль ошибок комплектования. DN·Pick на BLE AoA 10–30 см.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --teal: #0f766e; --teal-dark: #0d6560; --teal-light: #f0fdfa;
+    --slate: #1e293b; --text: #1e293b; --muted: #64748b;
+    --border: #e2e8f0; --bg: #f8fafc; --white: #fff;
+    --green: #059669; --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--teal); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #5eead4; }
+  .nav-cta { background: var(--teal); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; }
+
+  .hero { background: linear-gradient(135deg, #00100e 0%, #011f1c 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(94,234,212,.1); color: #5eead4; border: 1px solid rgba(94,234,212,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 860px; margin-bottom: 20px; }
+  .hero h1 span { color: #5eead4; }
+  .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 660px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--teal); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--teal); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 660px; margin-bottom: 48px; }
+
+  /* PROBLEMS */
+  .problems { background: var(--white); }
+  .prob-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .prob-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; border-left: 4px solid #ef4444; }
+  .prob-card .icon { font-size: 2rem; margin-bottom: 12px; }
+  .prob-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .prob-card p { font-size: .86rem; color: var(--muted); }
+
+  /* HOW */
+  .how { background: var(--bg); }
+  .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; counter-reset: s; }
+  .how-step { background: var(--white); padding: 28px; border-right: 1px solid var(--border); }
+  .how-step:last-child { border-right: none; }
+  .how-step::before { counter-increment: s; content: counter(s); display: block; width: 36px; height: 36px; background: var(--teal); color: #fff; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; margin-bottom: 14px; font-size: .9rem; }
+  .how-step h3 { font-size: .9rem; font-weight: 700; margin-bottom: 8px; }
+  .how-step p { font-size: .84rem; color: var(--muted); }
+
+  /* PICK MOCKUP */
+  .mockup { background: var(--white); }
+  .mk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal { background: var(--slate); border-radius: 14px; padding: 26px; font-family: monospace; font-size: .8rem; color: #94a3b8; }
+  .t-header { color: #5eead4; font-weight: 700; margin-bottom: 16px; font-size: .85rem; }
+  .order-block { background: rgba(94,234,212,.06); border: 1px solid rgba(94,234,212,.15); border-radius: 8px; padding: 14px; margin-bottom: 12px; }
+  .ob-title { color: #f1f5f9; font-weight: 700; margin-bottom: 10px; font-size: .82rem; }
+  .ob-row { display: flex; justify-content: space-between; padding: 5px 0; font-size: .77rem; }
+  .ob-row .item { color: #cbd5e1; }
+  .ob-row .cell { color: #94a3b8; }
+  .ob-row .status { font-weight: 700; }
+  .ob-row .ok { color: #34d399; }
+  .ob-row .active { color: #5eead4; }
+  .ob-row .err { color: #f87171; }
+  .ob-row .todo { color: #64748b; }
+  .pick-event { margin-top: 14px; border-top: 1px solid rgba(255,255,255,.07); padding-top: 12px; }
+  .pe-title { color: #5eead4; font-size: .78rem; font-weight: 700; margin-bottom: 10px; }
+  .pe-row { display: flex; gap: 10px; margin-bottom: 7px; font-size: .77px; }
+  .pe-time { color: #475569; width: 46px; flex-shrink: 0; font-size: .76rem; }
+  .pe-text { color: #cbd5e1; font-size: .76rem; }
+
+  .features { display: flex; flex-direction: column; gap: 18px; }
+  .feat { display: flex; gap: 14px; align-items: flex-start; }
+  .feat-ico { width: 38px; height: 38px; background: var(--teal-light); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .feat-text h3 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+  .feat-text p { font-size: .84rem; color: var(--muted); }
+
+  /* SCENARIOS */
+  .scenarios { background: var(--bg); }
+  .sc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .sc-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .sc-card .ico { font-size: 2rem; margin-bottom: 12px; }
+  .sc-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .sc-card p { font-size: .86rem; color: var(--muted); }
+  .sc-card ul { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .sc-card li { font-size: .82rem; color: var(--muted); padding-left: 14px; position: relative; list-style: none; }
+  .sc-card li::before { content: '→'; position: absolute; left: 0; color: var(--teal); }
+
+  /* METRICS */
+  .metrics { background: var(--slate); color: #fff; }
+  .metrics h2 { color: #fff; }
+  .metrics .subtitle { color: #94a3b8; }
+  .m-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .m-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 22px; }
+  .m-val { font-size: 1.8rem; font-weight: 800; color: #5eead4; }
+  .m-lbl { font-size: .78rem; color: #94a3b8; margin-top: 4px; }
+  .m-delta { font-size: .8rem; margin-top: 8px; color: #34d399; }
+
+  /* SPECS */
+  .specs { background: var(--white); }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .spec-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .spec-card h3 { font-size: .8rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: .87rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .k { color: var(--muted); }
+  .spec-row .v { font-weight: 600; }
+  .v.teal { color: var(--teal); }
+  .v.green { color: var(--green); }
+  .v.note { color: #9333ea; font-size: .82rem; }
+
+  .cta { background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.85); max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--teal); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Pick</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">BLE AoA · Bluetooth 5.1 · Складская логистика</div>
+  <h1>Рука потянулась не в ту ячейку —<br><span>сигнал до того, как товар взят</span></h1>
+  <p>DN·Pick — система точного комплектования заказов на BLE AoA. Точность 10–30 см позволяет отличать соседние ячейки на одной полке. Ноль ошибок без дополнительного сканирования — сборщик просто берёт нужный товар.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить КП</a>
+    <a href="#how" class="btn-outline">Как это работает</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>0</strong><span>ошибок комплектования с AoA-контролем</span></div>
+    <div class="hero-stat"><strong>10–30 см</strong><span>точность: различает соседние ячейки</span></div>
+    <div class="hero-stat"><strong>−35%</strong><span>время обучения нового сборщика</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>метка на браслете без замены батареи</span></div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="section-label">Проблемы</div>
+  <h2>Почему ошибки комплектования — системная проблема</h2>
+  <p class="subtitle">~1% ошибок при ручном комплектовании — отраслевая норма. Для склада 10 000 строк в день это 100 ошибок ежедневно.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <div class="icon">📦</div>
+      <h3>Похожие ячейки, схожие артикулы</h3>
+      <p>Полка B-14: ячейки 3 и 4 — одинаковые коробки, цифра на ярлыке мелкая. Сборщик спешит — берёт не то. Находят при инвентаризации.</p>
+    </div>
+    <div class="prob-card">
+      <div class="icon">🆕</div>
+      <h3>Высокая текучка, долгий онбординг</h3>
+      <p>Новый сборщик 2–3 недели учит расположение товара. В это время ошибок в 3–5 раз больше нормы. Наставник занят, не всегда рядом.</p>
+    </div>
+    <div class="prob-card">
+      <div class="icon">📱</div>
+      <h3>Сканирование замедляет работу</h3>
+      <p>Традиционный pick-by-scan: достать терминал, навести, считать штрихкод. На 200 строках в смену — 15–20 минут потерь только на сканирование.</p>
+    </div>
+    <div class="prob-card">
+      <div class="icon">💸</div>
+      <h3>Стоимость ошибки — не только возврат</h3>
+      <p>Недопоставка клиенту: штраф по договору, повторная доставка, репутационный ущерб. Сверхпоставка: инвентаризационные расхождения, списание.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Сборщик просто берёт товар. Система следит за точностью.</h2>
+  <p class="subtitle">Без дополнительного сканирования. Без остановок. Без лишних движений.</p>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Метки AoA на каждой ячейке</h3>
+      <p>Компактная BLE 5.1 метка крепится к стеллажу у каждой ячейки. Уникальный ID — конкретная ячейка. Батарея 15–20 лет — установил и забыл.</p>
+    </div>
+    <div class="how-step">
+      <h3>Браслет сборщика — AoA-ридер</h3>
+      <p>Сборщик носит лёгкий браслет с антенной решёткой. Когда рука тянется к ячейке, браслет определяет её с точностью 10–30 см и сообщает системе.</p>
+    </div>
+    <div class="how-step">
+      <h3>Сервер сверяет с заданием WMS</h3>
+      <p>«Рука у ячейки B-14-03» → WMS проверяет задание. Если это правильная ячейка — тихое подтверждение. Если нет — сигнал браслета до того, как товар взят.</p>
+    </div>
+    <div class="how-step">
+      <h3>Голосовое и световое сопровождение</h3>
+      <p>Pick-by-voice: WMS называет следующую ячейку. Pick-by-light: светодиод у нужной ячейки мигает. AoA контролирует, что сборщик взял именно из неё.</p>
+    </div>
+    <div class="how-step">
+      <h3>Аналитика и оптимизация</h3>
+      <p>Маршрут каждого сборщика, время у каждой ячейки, топ ошибочных позиций. Данные для оптимизации планограммы склада и обучения персонала.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MOCKUP + FEATURES -->
+<section class="mockup">
+  <div class="section-label">Интерфейс диспетчера</div>
+  <h2>Что видит диспетчер склада в реальном времени</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Pick · Склад «Север» · Зона B · 11:42</div>
+        <div class="order-block">
+          <div class="ob-title">Заказ #8841 · Сборщик: Иванова А. (браслет #04)</div>
+          <div class="ob-row"><span class="item">Артикул 4412 · 3 шт</span><span class="cell">B-12-04</span><span class="status ok">✓ взято</span></div>
+          <div class="ob-row"><span class="item">Артикул 7790 · 1 шт</span><span class="cell">B-14-03</span><span class="status active">▶ текущая</span></div>
+          <div class="ob-row"><span class="item">Артикул 0231 · 5 шт</span><span class="cell">B-14-05</span><span class="status todo">○ ожидает</span></div>
+          <div class="ob-row"><span class="item">Артикул 9001 · 2 шт</span><span class="cell">C-03-11</span><span class="status todo">○ ожидает</span></div>
+        </div>
+        <div class="order-block" style="border-color:rgba(248,113,113,.3)">
+          <div class="ob-title" style="color:#f87171">⚠ Инцидент · Заказ #8839 · Сборщик: Сидоров К.</div>
+          <div class="ob-row"><span class="item">Артикул 4413 · 2 шт</span><span class="cell">B-14-04 ← ОШИБКА</span><span class="status err">✗ предотвращено</span></div>
+          <div class="ob-row"><span class="item" style="color:#94a3b8;font-size:.74rem">Сборщик потянулся к ячейке B-14-04 вместо B-14-03</span></div>
+          <div class="ob-row"><span class="item" style="color:#34d399;font-size:.74rem">→ вибросигнал браслета, перенаправлен в нужную ячейку</span></div>
+        </div>
+        <div class="pick-event">
+          <div class="pe-title">— Лог событий</div>
+          <div class="pe-row"><span class="pe-time">11:42</span><span class="pe-text" style="color:#34d399">Иванова А. · B-14-03 · 12 см · взято ✓</span></div>
+          <div class="pe-row"><span class="pe-time">11:41</span><span class="pe-text" style="color:#f87171">Сидоров К. · B-14-04 → СТОП · перенаправлен</span></div>
+          <div class="pe-row"><span class="pe-time">11:40</span><span class="pe-text" style="color:#34d399">Иванова А. · B-12-04 · 8 см · взято ✓</span></div>
+          <div class="pe-row"><span class="pe-time">11:38</span><span class="pe-text">Новый заказ #8841 → назначен Ивановой А.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🎯</div><div class="feat-text"><h3>Контроль без сканера</h3><p>Браслет регистрирует взятие из ячейки автоматически. Сборщик не тратит время на сканирование — производительность растёт на 15–25%.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔴</div><div class="feat-text"><h3>Предупреждение до ошибки</h3><p>Рука у неправильной ячейки → вибрация браслета и световой сигнал. Товар ещё не взят — ошибки нет, штрафа нет, возврата нет.</p></div></div>
+      <div class="feat"><div class="feat-ico">🗣️</div><div class="feat-text"><h3>Pick-by-voice интеграция</h3><p>WMS называет следующую ячейку голосом в наушник. AoA подтверждает, что сборщик взял именно оттуда — без промежуточного сканирования.</p></div></div>
+      <div class="feat"><div class="feat-ico">🆕</div><div class="feat-text"><h3>Онбординг нового сборщика за 2 часа</h3><p>Система знает, где каждая ячейка. Новичок идёт по маршруту от подсказок браслета — не нужно учить планограмму неделями.</p></div></div>
+      <div class="feat"><div class="feat-ico">📊</div><div class="feat-text"><h3>Маршрут оптимизации</h3><p>После накопления данных — предложение по перестановке топ-товаров ближе к зоне сборки. Время маршрута сокращается на 10–20%.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section class="scenarios">
+  <div class="section-label">Применение</div>
+  <h2>Для каких складов DN·Pick даёт максимальный ROI</h2>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="ico">💊</div>
+      <h3>Фармацевтика и медицинские расходники</h3>
+      <p>Ошибка в артикуле — потенциальный вред пациенту и отзыв партии. Полное соответствие каждой строки заказа — требование регулятора.</p>
+      <ul>
+        <li>100% точность — не опциональна</li>
+        <li>Электронный журнал каждого взятия с временной меткой</li>
+        <li>GMP-документация автоматически</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🔩</div>
+      <h3>Запчасти и автокомплектующие</h3>
+      <p>Тысячи похожих деталей, схожие размеры и артикулы. Одна неправильная деталь — возврат со стороны дилера, простой автомобиля у клиента.</p>
+      <ul>
+        <li>Различает ячейки с одинаковыми коробками</li>
+        <li>Интеграция с 1С:TMS, SAP EWM</li>
+        <li>Сканирование штрихкода — только при отгрузке</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">👕</div>
+      <h3>Fashion и e-commerce</h3>
+      <p>Высокая текучка персонала, сотни SKU на полке. Пик — предпраздничные дни, когда ошибки особенно болезненны по срокам доставки.</p>
+      <ul>
+        <li>Новый сборщик продуктивен с первого дня</li>
+        <li>Пиковая нагрузка без роста ошибок</li>
+        <li>Интеграция с системами маркетплейсов</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🥗</div>
+      <h3>Продукты питания и FMCG</h3>
+      <p>Срок годности, температурный режим, ротация FEFO. Взять не тот лоток — нарушение FEFO, потенциальные списания.</p>
+      <ul>
+        <li>AoA + метка на лотке = FEFO-контроль без сканера</li>
+        <li>Интеграция с системами температурного мониторинга</li>
+        <li>Работает в холодном складе −18°C</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics">
+  <div class="section-label">Результаты внедрения</div>
+  <h2>Измеримые показатели после запуска DN·Pick</h2>
+  <p class="subtitle">Типовые результаты на основе пилотных проектов.</p>
+  <div class="m-grid">
+    <div class="m-card"><div class="m-val">~0%</div><div class="m-lbl">Ошибок комплектования (с AoA-контролем)</div><div class="m-delta">↓ с ~1% отраслевой нормы</div></div>
+    <div class="m-card"><div class="m-val">+18%</div><div class="m-lbl">Производительность сборщика</div><div class="m-delta">Без остановок на сканирование</div></div>
+    <div class="m-card"><div class="m-val">−35%</div><div class="m-lbl">Время обучения нового сотрудника</div><div class="m-delta">Браслет ведёт с первого дня</div></div>
+    <div class="m-card"><div class="m-val">2–4 мес</div><div class="m-lbl">Срок окупаемости</div><div class="m-delta">На складе 5 000+ строк/день</div></div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs" id="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Pick</h2>
+  <p class="subtitle">Используется технология BLE AoA (Bluetooth 5.1) — это следующее поколение после стандартного iBeacon, обеспечивающее точность 10–30 см вместо 1–3 м.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Метка на ячейке</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v note">Nordic nRF52833 (BLE 5.1)</span></div>
+      <div class="spec-row"><span class="k">Технология</span><span class="v teal">BLE AoA · CTE transmitter</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">компактный, самоклеящийся</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">CR2032 или ER14505, 10–20 лет</span></div>
+      <div class="spec-row"><span class="k">Монтаж</span><span class="v green">без инструментов, 30 сек/шт</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Браслет сборщика (ридер)</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v note">Nordic nRF52833 LOCATOR</span></div>
+      <div class="spec-row"><span class="k">Технология</span><span class="v teal">AoA antenna array</span></div>
+      <div class="spec-row"><span class="k">Точность</span><span class="v teal">10–30 см</span></div>
+      <div class="spec-row"><span class="k">Виброотдача</span><span class="v green">да (предупреждение)</span></div>
+      <div class="spec-row"><span class="k">Зарядка</span><span class="v green">USB-C, смена/12 ч</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Серверная часть</h3>
+      <div class="spec-row"><span class="k">Развёртывание</span><span class="v green">on-premise / Docker</span></div>
+      <div class="spec-row"><span class="k">WMS-интеграция</span><span class="v green">1С WMS, SAP EWM, Oracle WM</span></div>
+      <div class="spec-row"><span class="k">Интерфейс</span><span class="v green">REST API + веб-дашборд</span></div>
+      <div class="spec-row"><span class="k">Обновление заданий</span><span class="v green">реальное время</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Совместимость</h3>
+      <div class="spec-row"><span class="k">Pick-by-voice</span><span class="v green">Vocollect, Honeywell, Zetes</span></div>
+      <div class="spec-row"><span class="k">Pick-by-light</span><span class="v green">протокол RS-485 / PoE</span></div>
+      <div class="spec-row"><span class="k">Стеллажи</span><span class="v green">любые (металл совместим)</span></div>
+      <div class="spec-row"><span class="k">Температурный режим</span><span class="v green">−25°C…+55°C</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Сборщик ошибиться не может — система не позволит</h2>
+  <p>Расскажите о вашем складе: количество ячеек, WMS, суточный объём строк. Подготовим пилотный проект и расчёт ROI за 1 день.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Pick" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Pick</strong> — решение DN·Beacon · BLE AoA (Bluetooth 5.1, nRF52833) · <a href="mailto:info@dn-beacon.ru" style="color:#5eead4">info@dn-beacon.ru</a></p>
+</footer>
+</body>
+</html>
