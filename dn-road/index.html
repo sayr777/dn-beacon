@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Road — Мониторинг дорожной техники и навигация в закрытых объектах</title>
+<meta name="description" content="BLE-метки для контроля катков и асфальтоукладчиков на объектах, навигации в туннелях и подземных паркингах без GPS.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --orange: #ea580c;
+    --orange-dark: #c2410c;
+    --orange-light: #fff7ed;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--orange); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #fb923c; }
+  .nav-cta { background: var(--orange); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; transition: background .2s; }
+  .nav-cta:hover { background: var(--orange-dark); }
+
+  .hero { background: linear-gradient(135deg, #1c0a02 0%, #1a1200 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(251,146,60,.15); color: #fb923c; border: 1px solid rgba(251,146,60,.3); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 760px; margin-bottom: 20px; }
+  .hero h1 span { color: #fb923c; }
+  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 640px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--orange); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; transition: background .2s; }
+  .btn-primary:hover { background: var(--orange-dark); }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 640px; margin-bottom: 48px; }
+
+  /* MODULES */
+  .modules { background: var(--white); }
+  .mod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; }
+  .mod-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; border-top: 4px solid var(--orange); }
+  .mod-card .icon { font-size: 2rem; margin-bottom: 14px; }
+  .mod-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 10px; }
+  .mod-card p { font-size: .9rem; color: var(--muted); margin-bottom: 14px; }
+  .mod-card ul { font-size: .87rem; color: var(--muted); margin-left: 16px; }
+  .mod-card ul li { margin-bottom: 4px; }
+
+  /* ROAD WORK */
+  .roadwork { background: var(--bg); }
+  .rw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .rw-left h2 { margin-bottom: 20px; }
+  .metric-list { display: flex; flex-direction: column; gap: 16px; }
+  .metric { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .metric .name { font-size: .95rem; font-weight: 600; }
+  .metric .val { font-size: 1.5rem; font-weight: 800; color: var(--orange); }
+  .rw-right { background: linear-gradient(135deg, #1c0a02, #2d1600); border-radius: var(--radius); padding: 32px; color: #fff; }
+  .rw-right h3 { font-size: .85rem; color: #fb923c; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 18px; }
+  .event { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+  .event .dot { width: 10px; height: 10px; background: #fb923c; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .event p { font-size: .88rem; color: #cbd5e1; }
+  .event p strong { color: #fff; display: block; margin-bottom: 2px; }
+
+  /* TUNNEL */
+  .tunnel { background: var(--white); }
+  .tun-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .tun-item { display: flex; gap: 16px; align-items: flex-start; }
+  .tun-item .ico { font-size: 2rem; flex-shrink: 0; }
+  .tun-item h3 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+  .tun-item p { font-size: .88rem; color: var(--muted); }
+
+  /* SPECS */
+  .specs { background: var(--slate); color: #fff; }
+  .specs h2 { color: #fff; }
+  .specs .subtitle { color: #94a3b8; }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .spec-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 26px; }
+  .spec-card h3 { font-size: .82rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .88rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .label { color: #94a3b8; }
+  .spec-row .value { font-weight: 600; color: #fff; text-align: right; }
+  .value.orange { color: #fb923c; }
+  .value.green { color: #34d399; }
+
+  /* WHO */
+  .who { background: var(--bg); }
+  .who-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+  .who-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; text-align: center; }
+  .who-item .ico { font-size: 2rem; margin-bottom: 10px; }
+  .who-item p { font-size: .88rem; font-weight: 600; }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--orange) 0%, var(--orange-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.85); font-size: 1.05rem; max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--orange); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+
+  @media(max-width: 768px) {
+    .rw-grid { grid-template-columns: 1fr; }
+  }
+  @media(max-width: 600px) { .hero-stats { gap: 24px; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Road</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться с нами</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Дорожная отрасль и инфраструктура</div>
+  <h1>Мониторинг техники на объекте<br><span>и навигация без GPS</span></h1>
+  <p>DN·Road — платформа на основе BLE-меток для контроля дорожно-строительной техники, учёта проходов катка и точной навигации в туннелях и подземных паркингах, где спутниковый сигнал недоступен.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить коммерческое предложение</a>
+    <a href="#specs" class="btn-outline">Технические характеристики</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>20 лет</strong><span>без замены батареи</span></div>
+    <div class="hero-stat"><strong>−40°C</strong><span>нижняя рабочая температура</span></div>
+    <div class="hero-stat"><strong>IP67</strong><span>защита на объекте</span></div>
+    <div class="hero-stat"><strong>70 м</strong><span>дальность считывания</span></div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section class="modules">
+  <div class="section-label">Модули решения</div>
+  <h2>Два независимых модуля на одной платформе</h2>
+  <p class="subtitle">Можно внедрять по отдельности или совместно — архитектура модульная, интеграция через единый REST API DN·Road.</p>
+  <div class="mod-grid">
+    <div class="mod-card">
+      <div class="icon">🚧</div>
+      <h3>DN·Road Monitor — Контроль дорожных работ</h3>
+      <p>Метки крепятся на технику (каток, асфальтоукладчик, грузовик). Система фиксирует присутствие каждой единицы на участке, считает проходы и формирует отчёты для заказчика и надзорных органов.</p>
+      <ul>
+        <li>Счётчик проходов катка с привязкой к участку</li>
+        <li>Время работы каждой единицы техники</li>
+        <li>Автоматическая фиксация въезда и выезда с объекта</li>
+        <li>Сигнализация о простое техники</li>
+      </ul>
+    </div>
+    <div class="mod-card">
+      <div class="icon">🚇</div>
+      <h3>DN·Road Navigate — Навигация в закрытых объектах</h3>
+      <p>Сеть BLE-меток расставляется вдоль туннеля или по уровням паркинга. Навигационное приложение в смартфоне или автомобиле определяет позицию и строит маршрут по сигнатурам меток.</p>
+      <ul>
+        <li>Определение текущего положения в тоннеле</li>
+        <li>Маршрутизация к парковочному месту</li>
+        <li>Обозначение аварийных выходов и зон ограниченного доступа</li>
+        <li>Работа без WiFi и мобильного интернета</li>
+      </ul>
+    </div>
+    <div class="mod-card">
+      <div class="icon">🔐</div>
+      <h3>DN·Road Access — Контроль въезда тяжёлой техники</h3>
+      <p>BLE-считыватели на КПП строительного объекта или карьера автоматически идентифицируют подъезжающую технику по метке. Ведётся электронный журнал въездов и выездов с точным временем.</p>
+      <ul>
+        <li>Автоматическая идентификация без участия охранника</li>
+        <li>Журнал въездов/выездов с экспортом в журнал объекта</li>
+        <li>Сигнал при въезде незарегистрированной единицы</li>
+        <li>Интеграция с СКУД и системами охраны</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ROAD WORK -->
+<section class="roadwork">
+  <div class="section-label">Мониторинг дорожных работ</div>
+  <div class="rw-grid">
+    <div class="rw-left">
+      <h2>Что система фиксирует на объекте</h2>
+      <p class="subtitle" style="margin-bottom:28px">Все данные доступны в реальном времени в веб-интерфейсе и через REST API для интеграции с системой управления проектом.</p>
+      <div class="metric-list">
+        <div class="metric"><span class="name">Количество проходов катка</span><span class="val">в реальном времени</span></div>
+        <div class="metric"><span class="name">Присутствие на участке</span><span class="val">каждая единица</span></div>
+        <div class="metric"><span class="name">Время работы смены</span><span class="val">авто-фиксация</span></div>
+        <div class="metric"><span class="name">Простой более N минут</span><span class="val">оповещение</span></div>
+      </div>
+    </div>
+    <div class="rw-right">
+      <h3>Пример событий объекта</h3>
+      <div class="event"><div class="dot"></div><div><p><strong>07:14 — Каток №3 на участке А</strong>Начало смены. Метка DN·Road идентифицирована BLE-ридером на въезде.</p></div></div>
+      <div class="event"><div class="dot"></div><div><p><strong>09:30 — Проход №18</strong>Система фиксирует 18-й проход катка по оси 2. Норма по проекту: 20 проходов.</p></div></div>
+      <div class="event"><div class="dot"></div><div><p><strong>11:05 — Асфальтоукладчик №1 — простой</strong>Техника не движется более 15 мин. Оповещение диспетчеру.</p></div></div>
+      <div class="event"><div class="dot"></div><div><p><strong>16:45 — Все нормативы выполнены</strong>Каток завершил требуемое число проходов. Отчёт сформирован автоматически.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TUNNEL -->
+<section class="tunnel">
+  <div class="section-label">Навигация в закрытых объектах</div>
+  <h2>Туннели и паркинги: навигация без GPS</h2>
+  <p class="subtitle">Сеть BLE-меток создаёт «виртуальную GPS-сетку» внутри любого закрытого пространства.</p>
+  <div class="tun-grid">
+    <div class="tun-item"><div class="ico">🚇</div><div><h3>Автодорожные тоннели</h3><p>Метки через каждые 30–50 м вдоль тоннеля. Водитель видит своё положение, скорость и выход в навигационном приложении даже при полном отсутствии сотовой сети.</p></div></div>
+    <div class="tun-item"><div class="ico">🅿️</div><div><h3>Подземные паркинги</h3><p>Метки на колоннах и въездных пандусах. Приложение строит маршрут до свободного места и выводит обратный путь к выходу на любом уровне.</p></div></div>
+    <div class="tun-item"><div class="ico">🏗️</div><div><h3>Горные выработки и карьеры</h3><p>Навигация для водителей карьерной техники в зонах без уверенного GPS-сигнала. Контроль выхода за периметр разрешённой зоны.</p></div></div>
+    <div class="tun-item"><div class="ico">🏢</div><div><h3>Крупные объекты инфраструктуры</h3><p>Навигация посетителей и персонала в крытых спортивных аренах, аэропортах, вокзалах и крупных ТРЦ — там, где наружный GPS не работает.</p></div></div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs" id="specs">
+  <div class="section-label" style="color:#fb923c">Технические характеристики</div>
+  <h2>DN·Road — аппаратная платформа</h2>
+  <p class="subtitle">Метки выдерживают условия строительной площадки и подземных сооружений.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Радиомодуль</h3>
+      <div class="spec-row"><span class="label">Чипсет</span><span class="value">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="label">Формат</span><span class="value orange">iBeacon (BLE 4.0+)</span></div>
+      <div class="spec-row"><span class="label">Интервал</span><span class="value">2 с (день) / 60 с (ночь)</span></div>
+      <div class="spec-row"><span class="label">Дальность</span><span class="value">2–70 м</span></div>
+      <div class="spec-row"><span class="label">Мощность TX</span><span class="value">настраивается</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Энергопотребление</h3>
+      <div class="spec-row"><span class="label">Батарея</span><span class="value">ER14505H-LD</span></div>
+      <div class="spec-row"><span class="label">Тип</span><span class="value">Li-SOCl₂, 2700 мАч</span></div>
+      <div class="spec-row"><span class="label">Ток (активный)</span><span class="value green">~5.2 µА</span></div>
+      <div class="spec-row"><span class="label">Ток (ночной)</span><span class="value green">~1.1 µА</span></div>
+      <div class="spec-row"><span class="label">Ресурс</span><span class="value green">15–20 лет</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Механика и монтаж</h3>
+      <div class="spec-row"><span class="label">Корпус</span><span class="value">AK-W-70-4</span></div>
+      <div class="spec-row"><span class="label">Размер</span><span class="value">70 × 40 × 20 мм</span></div>
+      <div class="spec-row"><span class="label">Защита</span><span class="value orange">IP67</span></div>
+      <div class="spec-row"><span class="label">Температура</span><span class="value">−40°C … +85°C</span></div>
+      <div class="spec-row"><span class="label">Монтаж на технику</span><span class="value">кронштейн + стяжки</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Безопасность и интеграция</h3>
+      <div class="spec-row"><span class="label">Шифрование</span><span class="value orange">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="label">Смена ID</span><span class="value">каждые 5 мин</span></div>
+      <div class="spec-row"><span class="label">API сервера</span><span class="value green">REST (JSON)</span></div>
+      <div class="spec-row"><span class="label">Мульти-объект</span><span class="value green">поддерживается</span></div>
+      <div class="spec-row"><span class="label">Офлайн-режим</span><span class="value green">локальная AES</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who">
+  <div class="section-label">Заказчики</div>
+  <h2>Кто применяет DN·Road</h2>
+  <p class="subtitle">Решение ориентировано на организации, которые управляют техникой на строительных объектах или эксплуатируют закрытую инфраструктуру.</p>
+  <div class="who-grid">
+    <div class="who-item"><div class="ico">🏗️</div><p>Дорожно-строительные организации</p></div>
+    <div class="who-item"><div class="ico">🛣️</div><p>Государственные заказчики дорожных работ</p></div>
+    <div class="who-item"><div class="ico">🚇</div><p>Операторы автодорожных тоннелей</p></div>
+    <div class="who-item"><div class="ico">🅿️</div><p>Управляющие компании паркингов</p></div>
+    <div class="who-item"><div class="ico">⛏️</div><p>Горнодобывающие предприятия</p></div>
+    <div class="who-item"><div class="ico">🏙️</div><p>Муниципальные заказчики инфраструктуры</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Готовы автоматизировать контроль на вашем объекте?</h2>
+  <p>Опишите задачу — подготовим схему расстановки меток, расчёт стоимости и техническое предложение за 1 рабочий день.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Road" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Road</strong> — решение на базе промышленного образца <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#fb923c">dynamic-iBeacon</a> · Контакт: <a href="mailto:info@dn-beacon.ru" style="color:#fb923c">info@dn-beacon.ru</a></p>
+</footer>
+
+</body>
+</html>

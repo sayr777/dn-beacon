@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Beacon — Решения на базе динамической BLE-метки</title>
+<meta name="description" content="Портфолио коммерческих решений на базе промышленной BLE-метки с AES-128 шифрованием и сроком службы батареи 15–20 лет.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1a56db;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --radius: 16px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .nav-logo { color: #fff; font-weight: 800; font-size: 1.2rem; letter-spacing: .02em; }
+  .nav-logo span { color: #60a5fa; }
+  .nav-link { color: #94a3b8; font-size: .9rem; transition: color .2s; }
+  .nav-link:hover { color: #fff; }
+
+  .hero { background: linear-gradient(135deg, var(--slate) 0%, #0f1e3c 100%); color: #fff; padding: 80px 5% 100px; text-align: center; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(96,165,250,.15); border: 1px solid rgba(96,165,250,.25); color: #93c5fd; border-radius: 20px; padding: 6px 16px; font-size: .8rem; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; margin-bottom: 24px; }
+  .hero-badge .dot { width: 6px; height: 6px; background: #34d399; border-radius: 50%; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900; max-width: 800px; margin: 0 auto 20px; line-height: 1.12; }
+  .hero h1 span { color: #60a5fa; }
+  .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 600px; margin: 0 auto 48px; }
+  .hero-chips { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .chip { background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12); color: #cbd5e1; border-radius: 20px; padding: 6px 14px; font-size: .82rem; }
+  .chip strong { color: #fff; }
+
+  .platform { padding: 64px 5%; background: var(--white); }
+  .platform h2 { font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 800; color: var(--slate); text-align: center; margin-bottom: 12px; }
+  .platform .sub { text-align: center; color: var(--muted); font-size: .95rem; margin-bottom: 40px; }
+  .specs-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .spec-item { background: var(--white); padding: 20px; text-align: center; }
+  .spec-item .val { font-size: 1.5rem; font-weight: 800; color: var(--blue); display: block; }
+  .spec-item .lbl { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+
+  .products { padding: 72px 5%; background: var(--bg); }
+  .products h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 12px; }
+  .products .sub { color: var(--muted); font-size: 1rem; margin-bottom: 48px; }
+  .prod-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .prod-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; transition: box-shadow .2s, transform .2s; display: block; color: inherit; text-decoration: none; }
+  .prod-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.12); transform: translateY(-2px); }
+  .prod-card .card-head { padding: 28px 28px 20px; }
+  .prod-card .label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; opacity: .7; margin-bottom: 8px; }
+  .prod-card h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 10px; }
+  .prod-card p { font-size: .9rem; color: var(--muted); }
+  .prod-card .card-foot { padding: 18px 28px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .prod-card .tag-list { display: flex; gap: 6px; flex-wrap: wrap; }
+  .prod-card .tag { font-size: .72rem; font-weight: 600; padding: 3px 8px; border-radius: 10px; }
+  .prod-card .cta-link { font-size: .85rem; font-weight: 700; white-space: nowrap; }
+  /* Fleet — blue */
+  .card-fleet .card-head { border-top: 4px solid #1a56db; }
+  .card-fleet .label { color: #1a56db; }
+  .card-fleet h3 { color: #1e293b; }
+  .card-fleet .tag { background: #ebf0ff; color: #1a56db; }
+  .card-fleet .cta-link { color: #1a56db; }
+  /* City — teal */
+  .card-city .card-head { border-top: 4px solid #0d9488; }
+  .card-city .label { color: #0d9488; }
+  .card-city .tag { background: #e6faf8; color: #0d9488; }
+  .card-city .cta-link { color: #0d9488; }
+  /* Road — orange */
+  .card-road .card-head { border-top: 4px solid #ea580c; }
+  .card-road .label { color: #ea580c; }
+  .card-road .tag { background: #fff7ed; color: #ea580c; }
+  .card-road .cta-link { color: #ea580c; }
+  /* Pay — violet */
+  .card-pay .card-head { border-top: 4px solid #7c3aed; }
+  .card-pay .label { color: #7c3aed; }
+  .card-pay .tag { background: #f3f0ff; color: #7c3aed; }
+  .card-pay .cta-link { color: #7c3aed; }
+
+  .why { padding: 72px 5%; background: var(--white); }
+  .why h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; text-align: center; margin-bottom: 12px; }
+  .why .sub { text-align: center; color: var(--muted); margin-bottom: 48px; }
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px; }
+  .why-item { text-align: center; padding: 28px 20px; }
+  .why-item .ico { font-size: 2.5rem; margin-bottom: 14px; }
+  .why-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .why-item p { font-size: .88rem; color: var(--muted); }
+
+  .contact { padding: 80px 5%; background: linear-gradient(135deg, var(--slate) 0%, #0f1e3c 100%); color: #fff; text-align: center; }
+  .contact h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 14px; }
+  .contact p { color: #94a3b8; font-size: 1rem; max-width: 520px; margin: 0 auto 36px; }
+  .btn-cta { display: inline-block; background: var(--blue); color: #fff; padding: 16px 40px; border-radius: 8px; font-weight: 700; font-size: 1.05rem; transition: opacity .2s; }
+  .btn-cta:hover { opacity: .9; }
+  .contact-email { margin-top: 20px; color: #60a5fa; font-size: .9rem; }
+
+  footer { background: var(--slate); color: #64748b; text-align: center; padding: 24px 5%; font-size: .82rem; border-top: 1px solid rgba(255,255,255,.06); }
+  footer strong { color: #94a3b8; }
+
+  @media(max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Beacon</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-link">info@dn-beacon.ru</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge"><span class="dot"></span>Промышленный образец · dynamic-iBeacon</div>
+  <h1>Решения на базе<br><span>динамической BLE-метки</span></h1>
+  <p>Автономные маячки с шифрованием AES-128, сроком службы батареи до 20 лет и защитой от клонирования — для транспорта, инфраструктуры и логистики.</p>
+  <div class="hero-chips">
+    <div class="chip"><strong>nRF52832</strong> · Nordic Semiconductor</div>
+    <div class="chip"><strong>IP67</strong> · для улицы и объектов</div>
+    <div class="chip"><strong>AES-128</strong> · динамический ID</div>
+    <div class="chip"><strong>15–20 лет</strong> · без замены батареи</div>
+    <div class="chip"><strong>iBeacon</strong> · стандартный формат</div>
+  </div>
+</section>
+
+<section class="platform">
+  <h2>Единая аппаратная платформа</h2>
+  <p class="sub">Все решения построены на одном промышленном образце — метке с динамически изменяемыми идентификаторами.</p>
+  <div class="specs-strip">
+    <div class="spec-item"><span class="val">15–20 лет</span><span class="lbl">Срок службы батареи ER14505H-LD</span></div>
+    <div class="spec-item"><span class="val">5.2 µА</span><span class="lbl">Ток потребления (день)</span></div>
+    <div class="spec-item"><span class="val">IP67</span><span class="lbl">Защита корпуса AK-W-70-4</span></div>
+    <div class="spec-item"><span class="val">70 м</span><span class="lbl">Дальность считывания</span></div>
+    <div class="spec-item"><span class="val">AES-128</span><span class="lbl">Шифрование идентификатора</span></div>
+    <div class="spec-item"><span class="val">5 мин</span><span class="lbl">Период смены Major/Minor/MAC</span></div>
+  </div>
+</section>
+
+<section class="products">
+  <h2>Коммерческие решения</h2>
+  <p class="sub">Четыре готовых продукта для разных отраслей — с документацией, API и поддержкой интеграции.</p>
+  <div class="prod-grid">
+
+    <a href="dn-fleet/index.html" class="prod-card card-fleet">
+      <div class="card-head">
+        <div class="label">Коммерческий транспорт · Логистика</div>
+        <h3>DN·Fleet</h3>
+        <p>Автоматическая идентификация прицепов и навесного оборудования, авторизация водителей и контроль грузов по BLE-метке.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Прицепы</span>
+          <span class="tag">Водители</span>
+          <span class="tag">TMS</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="dn-city/index.html" class="prod-card card-city">
+      <div class="card-head">
+        <div class="label">Общественный транспорт · Умный город</div>
+        <h3>DN·City</h3>
+        <p>Точная идентификация остановок при деградации GPS, доступная среда для слабовидящих, пассажирское информирование и аналитика потока.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Остановки</span>
+          <span class="tag">БНСО</span>
+          <span class="tag">РНИС</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="dn-road/index.html" class="prod-card card-road">
+      <div class="card-head">
+        <div class="label">Дорожная отрасль · Инфраструктура</div>
+        <h3>DN·Road</h3>
+        <p>Мониторинг дорожно-строительной техники на объекте, счётчик проходов катка и навигация в туннелях и подземных паркингах.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Каток</span>
+          <span class="tag">Тоннели</span>
+          <span class="tag">Паркинг</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+    <a href="https://sayr777.github.io/ble-transit-payment/" class="prod-card card-pay">
+      <div class="card-head">
+        <div class="label">Оплата проезда · Контроль доступа</div>
+        <h3>DN·Pay</h3>
+        <p>Безбарьерная оплата проезда: пассажир проходит через турникет без касания — система считывает BLE-метку автоматически за &lt;200 мс.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">AFC</span>
+          <span class="tag">Турникет</span>
+          <span class="tag">Мультимодально</span>
+        </div>
+        <span class="cta-link">Подробнее →</span>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<section class="why">
+  <h2>Почему DN·Beacon</h2>
+  <p class="sub">Ключевые свойства платформы, которые делают её пригодной для промышленного применения.</p>
+  <div class="why-grid">
+    <div class="why-item">
+      <div class="ico">🔋</div>
+      <h3>Батарея на 20 лет</h3>
+      <p>Ток потребления 5.2 µА позволяет установить метку и забыть об обслуживании на весь срок эксплуатации объекта.</p>
+    </div>
+    <div class="why-item">
+      <div class="ico">🔐</div>
+      <h3>Нельзя скопировать</h3>
+      <p>Идентификатор меняется каждые 5 минут по AES-128. Перехваченный сигнал устаревает быстрее, чем его успевают использовать.</p>
+    </div>
+    <div class="why-item">
+      <div class="ico">🌧️</div>
+      <h3>IP67 для улицы</h3>
+      <p>Корпус AK-W-70-4 выдерживает прямое воздействие осадков, пыли строительной площадки и уличных условий.</p>
+    </div>
+    <div class="why-item">
+      <div class="ico">📡</div>
+      <h3>Стандартный iBeacon</h3>
+      <p>Любой BLE-совместимый смартфон, бортовой трекер или сканер считывает метку без специального оборудования.</p>
+    </div>
+    <div class="why-item">
+      <div class="ico">🔗</div>
+      <h3>Открытый REST API</h3>
+      <p>Сервер идентификации публикует JSON API. Интеграция с TMS, WMS, РНИС, 1С и любой платформой — за часы, не месяцы.</p>
+    </div>
+    <div class="why-item">
+      <div class="ico">🏭</div>
+      <h3>Промышленный образец</h3>
+      <p>Аппаратная платформа прошла полевые испытания. Конструкторская и производственная документация готовы к тиражированию.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact">
+  <h2>Обсудим внедрение</h2>
+  <p>Расскажите о вашей задаче — подготовим техническое предложение и расчёт стоимости за один рабочий день.</p>
+  <a href="mailto:info@dn-beacon.ru" class="btn-cta">Написать нам</a>
+  <p class="contact-email">info@dn-beacon.ru</p>
+</section>
+
+<footer>
+  <p><strong>DN·Beacon</strong> — портфолио решений на базе промышленного образца <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#60a5fa">dynamic-iBeacon</a></p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Fleet — Система идентификации транспортных активов</title>
+<meta name="description" content="Автоматическая идентификация прицепов, навесного оборудования и водителей на базе BLE-меток с защищённым протоколом и сроком службы до 20 лет.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #1a56db;
+    --blue-dark: #1341b0;
+    --blue-light: #ebf0ff;
+    --slate: #1e293b;
+    --slate-mid: #334155;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --amber: #d97706;
+    --radius: 12px;
+    --shadow: 0 4px 24px rgba(26,86,219,.12);
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--blue); text-decoration: none; }
+  img { max-width: 100%; }
+
+  /* NAV */
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; letter-spacing: .02em; }
+  .nav-logo span { color: #60a5fa; }
+  .nav-cta { background: var(--blue); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; transition: background .2s; }
+  .nav-cta:hover { background: var(--blue-dark); }
+
+  /* HERO */
+  .hero { background: linear-gradient(135deg, var(--slate) 0%, #0f2044 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(96,165,250,.2); color: #93c5fd; border: 1px solid rgba(96,165,250,.3); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.15; max-width: 720px; margin-bottom: 20px; }
+  .hero h1 span { color: #60a5fa; }
+  .hero p { font-size: 1.15rem; color: #94a3b8; max-width: 620px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+  .btn-primary { background: var(--blue); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; transition: background .2s; }
+  .btn-primary:hover { background: var(--blue-dark); }
+  .btn-outline { border: 2px solid rgba(255,255,255,.3); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; font-size: 1rem; transition: border-color .2s; }
+  .btn-outline:hover { border-color: #fff; }
+  .hero-stats { display: flex; gap: 40px; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  /* SECTIONS */
+  section { padding: 72px 5%; }
+  .section-label { font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: 12px; }
+  h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: var(--slate); margin-bottom: 16px; }
+  .subtitle { font-size: 1.05rem; color: var(--muted); max-width: 620px; margin-bottom: 48px; }
+
+  /* PROBLEMS */
+  .problems { background: var(--white); }
+  .problems-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .problem-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; background: var(--bg); }
+  .problem-card .icon { font-size: 2rem; margin-bottom: 14px; }
+  .problem-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .problem-card p { font-size: .9rem; color: var(--muted); }
+
+  /* USE CASES */
+  .cases { background: var(--bg); }
+  .cases-list { display: flex; flex-direction: column; gap: 32px; }
+  .case { display: grid; grid-template-columns: 56px 1fr; gap: 20px; align-items: start; }
+  .case-num { width: 56px; height: 56px; background: var(--blue-light); color: var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; }
+  .case-body h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .case-body p { font-size: .95rem; color: var(--muted); }
+
+  /* HOW IT WORKS */
+  .how { background: var(--white); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; counter-reset: steps; }
+  .step { padding: 28px; border-right: 1px solid var(--border); position: relative; }
+  .step:last-child { border-right: none; }
+  .step::before { counter-increment: steps; content: counter(steps); display: block; width: 36px; height: 36px; background: var(--blue); color: #fff; border-radius: 50%; text-align: center; line-height: 36px; font-weight: 700; margin-bottom: 14px; font-size: .9rem; }
+  .step h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: .87rem; color: var(--muted); }
+
+  /* SPECS */
+  .specs { background: var(--slate); color: #fff; }
+  .specs h2 { color: #fff; }
+  .specs .subtitle { color: #94a3b8; }
+  .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+  .spec-card { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 28px; }
+  .spec-card h3 { font-size: .85rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 16px; }
+  .spec-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,.06); font-size: .9rem; }
+  .spec-row:last-child { border-bottom: none; }
+  .spec-row .label { color: #94a3b8; }
+  .spec-row .value { font-weight: 600; color: #fff; text-align: right; }
+  .spec-row .value.green { color: #34d399; }
+  .spec-row .value.blue { color: #60a5fa; }
+
+  /* COMPARISON */
+  .comparison { background: var(--bg); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--slate); color: #fff; padding: 14px 16px; text-align: left; font-weight: 600; }
+  th:first-child { border-radius: 8px 0 0 0; }
+  th:last-child { border-radius: 0 8px 0 0; }
+  td { padding: 13px 16px; border-bottom: 1px solid var(--border); background: var(--white); }
+  tr:hover td { background: var(--blue-light); }
+  .tag-highlight td:first-child { font-weight: 700; color: var(--blue); }
+  .check { color: var(--green); font-weight: 700; }
+  .cross { color: #ef4444; }
+  .mid { color: var(--amber); }
+
+  /* INTEGRATIONS */
+  .integrations { background: var(--white); }
+  .int-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+  .int-item { border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+  .int-item .ico { font-size: 2rem; margin-bottom: 10px; }
+  .int-item p { font-size: .85rem; font-weight: 600; }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--blue) 0%, #1341b0 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.6rem, 4vw, 2.4rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.8); font-size: 1.05rem; max-width: 560px; margin: 0 auto 36px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--blue); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; transition: opacity .2s; }
+  .btn-white:hover { opacity: .92; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .btn-outline-white:hover { border-color: #fff; }
+
+  /* FOOTER */
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+
+  @media(max-width: 600px) {
+    .hero-stats { gap: 24px; }
+    .step { border-right: none; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .case { grid-template-columns: 1fr; }
+    .case-num { width: 40px; height: 40px; font-size: .95rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Fleet</span></div>
+  <a href="mailto:info@dn-beacon.ru" class="nav-cta">Связаться с нами</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Коммерческий транспорт и логистика</div>
+  <h1>Автоматическая идентификация<br><span>транспортных активов</span></h1>
+  <p>BLE-метки DN·Fleet устанавливаются на прицепы, навесное оборудование и выдаются водителям. Бортовой трекер считывает сигнал и автоматически фиксирует, какой прицеп зацеплен, кто за рулём и где находится груз.</p>
+  <div class="hero-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-primary">Запросить коммерческое предложение</a>
+    <a href="#specs" class="btn-outline">Технические характеристики</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>20 лет</strong><span>срок службы батареи</span></div>
+    <div class="hero-stat"><strong>70 м</strong><span>дальность считывания</span></div>
+    <div class="hero-stat"><strong>IP67</strong><span>защита от воды и пыли</span></div>
+    <div class="hero-stat"><strong>AES-128</strong><span>защита от клонирования</span></div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="problems">
+  <div class="section-label">Типичные проблемы</div>
+  <h2>Что происходит без DN·Fleet</h2>
+  <p class="subtitle">Ручной учёт оборудования, ошибки диспетчера и неавторизованные рейсы обходятся парку дороже, чем кажется.</p>
+  <div class="problems-grid">
+    <div class="problem-card">
+      <div class="icon">🔗</div>
+      <h3>Неизвестно, какой прицеп зацеплен</h3>
+      <p>Диспетчер не знает, какое именно оборудование уехало с тягачом. Ошибки документации, споры при ТО, потери при инвентаризации.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🪪</div>
+      <h3>Невозможно подтвердить водителя</h3>
+      <p>PIN-коды и карточки легко передать постороннему. Нет надёжного доказательства того, кто реально сел за руль и начал смену.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">📦</div>
+      <h3>Грузы теряются на терминале</h3>
+      <p>Нет точной фиксации, когда конкретный паллет был погружен или выгружен. Разбор претензий превращается в ручной поиск по записям.</p>
+    </div>
+    <div class="problem-card">
+      <div class="icon">🔋</div>
+      <h3>Метки требуют постоянного обслуживания</h3>
+      <p>Обычные BLE-метки живут 1–2 года. Замена батарей в большом парке — постоянная статья расходов и риск простоев.</p>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="cases">
+  <div class="section-label">Сценарии применения</div>
+  <h2>Как DN·Fleet работает в реальной эксплуатации</h2>
+  <p class="subtitle">Три готовых сценария. Каждый поддерживается серверным программным обеспечением и REST API для интеграции с вашей TMS/WMS.</p>
+  <div class="cases-list">
+    <div class="case">
+      <div class="case-num">1</div>
+      <div class="case-body">
+        <h3>Идентификация навесного оборудования</h3>
+        <p>Метка крепится на прицеп, ковш экскаватора, каток или цистерну. Когда грузовик или трактор подъезжает к оборудованию, бортовой BLE-трекер считывает сигнал метки. Система DN·Fleet расшифровывает зашифрованный идентификатор и за секунды фиксирует в базе: тягач №XXX подцепил прицеп №YYY в 14:32. Никаких QR-кодов, ручного сканирования или участия водителя.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-num">2</div>
+      <div class="case-body">
+        <h3>Авторизация водителей</h3>
+        <p>Каждому водителю выдаётся персональный брелок-метка DN·Fleet. При посадке в кабину трекер автоматически считывает BLE-сигнал брелока. Сервер подтверждает личность, разрешает запуск двигателя и фиксирует начало смены с точным временем и идентификатором водителя. Брелок работает без зарядки до 15 лет — водители не забудут его зарядить.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-num">3</div>
+      <div class="case-body">
+        <h3>Контроль грузов на логистическом терминале</h3>
+        <p>Метки крепятся к контейнерам или паллетам. Стационарные BLE-ридеры на воротах, рампах и складских зонах фиксируют перемещения с точностью до зоны терминала. Система DN·Fleet строит полный маршрут груза: въезд на склад → стеллаж → погрузка в фуру → выезд. Данные доступны в реальном времени через REST API и веб-интерфейс.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Четыре шага от метки до записи в базе</h2>
+  <p class="subtitle">Стандартный стек интеграции — от BLE-сигнала до вашей информационной системы.</p>
+  <div class="steps">
+    <div class="step">
+      <h3>Метка передаёт сигнал</h3>
+      <p>Каждые 2 секунды метка отправляет стандартный iBeacon-пакет. Major и Minor меняются каждые 5 минут по AES-128 — идентификатор нельзя скопировать или подделать без ключа.</p>
+    </div>
+    <div class="step">
+      <h3>Трекер принимает</h3>
+      <p>Бортовой GPS/BLE-трекер (любой совместимый с протоколом БНСО) сканирует эфир и передаёт UUID + Major + Minor + RSSI + timestamp на сервер DN·Fleet.</p>
+    </div>
+    <div class="step">
+      <h3>Сервер идентифицирует</h3>
+      <p>Сервер DN·Fleet расшифровывает пакет и возвращает уникальный TagID — номер прицепа, водителя или паллета. Весь цикл занимает менее 100 мс.</p>
+    </div>
+    <div class="step">
+      <h3>Данные в вашей системе</h3>
+      <p>TagID и метаданные события передаются через REST API в вашу TMS, WMS или собственную базу данных. Готовые коннекторы для 1С, SAP и OpenStreetMap.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs" id="specs">
+  <div class="section-label" style="color:#60a5fa">Технические характеристики</div>
+  <h2>DN·Fleet — аппаратная платформа</h2>
+  <p class="subtitle">Все характеристики подтверждены лабораторными испытаниями и полевым применением.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <h3>Электроника</h3>
+      <div class="spec-row"><span class="label">Чипсет</span><span class="value">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="label">Модуль</span><span class="value">YJ-16013</span></div>
+      <div class="spec-row"><span class="label">Формат сигнала</span><span class="value blue">iBeacon (BLE 4.0+)</span></div>
+      <div class="spec-row"><span class="label">Режим работы</span><span class="value">Broadcaster only</span></div>
+      <div class="spec-row"><span class="label">Интервал передачи</span><span class="value">2 с (день) / 60 с (ночь)</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Энергопотребление</h3>
+      <div class="spec-row"><span class="label">Батарея</span><span class="value">ER14505H-LD (Li-SOCl₂)</span></div>
+      <div class="spec-row"><span class="label">Ёмкость</span><span class="value">2 700 мАч</span></div>
+      <div class="spec-row"><span class="label">Ток (дневной режим)</span><span class="value green">~5.2 µА</span></div>
+      <div class="spec-row"><span class="label">Ток (ночной режим)</span><span class="value green">~1.1 µА</span></div>
+      <div class="spec-row"><span class="label">Срок службы</span><span class="value green">15–20 лет</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Корпус и монтаж</h3>
+      <div class="spec-row"><span class="label">Модель корпуса</span><span class="value">AK-W-70-4</span></div>
+      <div class="spec-row"><span class="label">Габариты</span><span class="value">70 × 40 × 20 мм</span></div>
+      <div class="spec-row"><span class="label">Защита</span><span class="value blue">IP67</span></div>
+      <div class="spec-row"><span class="label">Материал</span><span class="value">ABS-пластик</span></div>
+      <div class="spec-row"><span class="label">Температура</span><span class="value">−40°C … +85°C</span></div>
+    </div>
+    <div class="spec-card">
+      <h3>Безопасность и идентификация</h3>
+      <div class="spec-row"><span class="label">Алгоритм</span><span class="value blue">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="label">Смена идентификатора</span><span class="value">каждые 5 мин</span></div>
+      <div class="spec-row"><span class="label">TagID в эфире</span><span class="value green">не передаётся</span></div>
+      <div class="spec-row"><span class="label">Мульти-оператор</span><span class="value green">поддерживается</span></div>
+      <div class="spec-row"><span class="label">Дальность</span><span class="value">2–70 м (настраивается)</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="comparison">
+  <div class="section-label">Сравнение технологий</div>
+  <h2>DN·Fleet vs. альтернативные решения</h2>
+  <p class="subtitle">Почему BLE-метки выигрывают у RFID и QR-кодов для идентификации подвижного состава.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>DN·Fleet (BLE)</th>
+          <th>RFID UHF</th>
+          <th>QR-код</th>
+          <th>NFC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="tag-highlight">
+          <td>Дальность считывания</td>
+          <td class="check">2–70 м</td>
+          <td class="mid">до 10 м</td>
+          <td class="cross">прямая видимость</td>
+          <td class="cross">до 10 см</td>
+        </tr>
+        <tr>
+          <td>Срок жизни метки</td>
+          <td class="check">15–20 лет</td>
+          <td class="check">пассивная, бессрочно</td>
+          <td class="check">до износа наклейки</td>
+          <td class="mid">пассивная, но изнашивается</td>
+        </tr>
+        <tr class="tag-highlight">
+          <td>Защита от клонирования</td>
+          <td class="check">AES-128, динамический ID</td>
+          <td class="cross">статичный ID, уязвим</td>
+          <td class="cross">отсутствует</td>
+          <td class="mid">зависит от типа карты</td>
+        </tr>
+        <tr>
+          <td>Считывание на ходу</td>
+          <td class="check">Автоматически</td>
+          <td class="mid">Нужна рамка/антенна</td>
+          <td class="cross">Нужна остановка</td>
+          <td class="cross">Нужна остановка</td>
+        </tr>
+        <tr class="tag-highlight">
+          <td>Работа в темноте и грязи</td>
+          <td class="check">Да (IP67, радиосигнал)</td>
+          <td class="check">Да</td>
+          <td class="cross">Требует чистой поверхности</td>
+          <td class="mid">Ограниченно</td>
+        </tr>
+        <tr>
+          <td>Стоимость инфраструктуры</td>
+          <td class="check">Смартфон / штатный BLE-трекер</td>
+          <td class="cross">Дорогие RFID-антенны</td>
+          <td class="check">Смартфон / камера</td>
+          <td class="check">NFC-ридер</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section class="integrations">
+  <div class="section-label">Интеграции</div>
+  <h2>Работает с вашей экосистемой</h2>
+  <p class="subtitle">DN·Fleet предоставляет открытый REST API и готовые коннекторы для основных транспортных платформ.</p>
+  <div class="int-grid">
+    <div class="int-item"><div class="ico">📡</div><p>GPS/GLONASS трекеры (БНСО)</p></div>
+    <div class="int-item"><div class="ico">🔌</div><p>REST API (JSON)</p></div>
+    <div class="int-item"><div class="ico">📱</div><p>Android / iOS SDK</p></div>
+    <div class="int-item"><div class="ico">🗂️</div><p>1С: Транспорт</p></div>
+    <div class="int-item"><div class="ico">🏭</div><p>WMS / TMS системы</p></div>
+    <div class="int-item"><div class="ico">🌐</div><p>Веб-дашборд (браузер)</p></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Готовы автоматизировать учёт активов?</h2>
+  <p>Расскажите о вашем парке — мы подготовим расчёт стоимости и техническое предложение в течение 1 рабочего дня.</p>
+  <div class="cta-btns">
+    <a href="mailto:info@dn-beacon.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:info@dn-beacon.ru?subject=Пилот DN·Fleet" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·Fleet</strong> — решение на базе промышленного образца <a href="https://github.com/sayr777/dynamic-iBeacon" style="color:#60a5fa">dynamic-iBeacon</a> · Контакт: <a href="mailto:info@dn-beacon.ru" style="color:#60a5fa">info@dn-beacon.ru</a></p>
+</footer>
+
+</body>
+</html>
