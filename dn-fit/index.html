@@ -1,0 +1,234 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Fit — Физиологический мониторинг персонала: водители, производство, фарма</title>
+<meta name="description" content="ANT+ датчик ЧСС → nRF52832 → BLE на сервер. Тепловой удар, перегрузка, усталость — алерт до инцидента. Для водителей дальнего следования, горячих цехов и чистых комнат.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#9d174d;--cd:#831843;--cl:#fdf2f8;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#f9a8d4}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#1a0010 0%,#2d0025 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(249,168,212,.08);color:#f9a8d4;border:1px solid rgba(249,168,212,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#f9a8d4}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .sectors-tabs{background:var(--white)}
+  .tabs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .tab-card{border:2px solid var(--border);border-radius:var(--radius);padding:28px}
+  .tab-card.active{border-color:var(--c);background:var(--cl)}
+  .tab-card .badge{display:inline-block;background:var(--c);color:#fff;border-radius:6px;padding:2px 10px;font-size:.75rem;font-weight:700;margin-bottom:14px}
+  .tab-card h3{font-size:1rem;font-weight:700;margin-bottom:10px}
+  .tab-card p{font-size:.88rem;color:var(--muted);margin-bottom:12px}
+  .tab-card ul{display:flex;flex-direction:column;gap:8px}
+  .tab-card li{font-size:.85rem;color:var(--muted);padding-left:16px;position:relative;list-style:none}
+  .tab-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .phone-ui{background:#1a0010;border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .p-title{color:#f9a8d4;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .p-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .p-row .k{color:#94a3b8}.p-row .v{color:#f1f5f9;font-weight:600}
+  .p-row .ok{color:#34d399}.p-row .warn{color:#fbbf24}.p-row .err{color:#f87171}
+  .p-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .pl-title{color:#f9a8d4;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .pl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .pl-time{color:#475569;width:46px;flex-shrink:0}.pl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.green{color:var(--green)}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">DN·<span>Fit</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+<section class="hero">
+  <div class="hero-label">Физиология · ЧСС · ANT+ · Усталость · Безопасность</div>
+  <h1>Тепловой удар, усталость, перегрузка — <span>алерт до инцидента</span></h1>
+  <p>DN·Fit — нагрудный датчик ЧСС по ANT+ или BLE-браслет. Метка собирает данные и транслирует через BLE на ближайший шлюз. Диспетчер видит состояние каждого сотрудника. Высокий пульс + нет движения = тепловой удар. Алерт — до того, как человек упал.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">По секторам</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>−60%</strong><span>несчастных случаев при тепловом ударе в горячих цехах</span></div>
+    <div class="hero-stat"><strong>2 сек</strong><span>задержка от аномалии ЧСС до алерта</span></div>
+    <div class="hero-stat"><strong>ANT+</strong><span>совместимость с Garmin, Polar, Wahoo</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>BLE-ретранслятор на метке без замены</span></div>
+  </div>
+</section>
+
+<section id="sectors" class="sectors-tabs">
+  <div class="section-label">Решения по секторам</div>
+  <h2>DN·Fit для трёх типов производств</h2>
+  <div class="tabs-grid">
+    <div class="tab-card active"><div class="badge">Транспорт</div>
+      <h3>Водители дальнего следования</h3>
+      <p>Фарм. и пищевые перевозки, опасные грузы — водитель за рулём 9–11 часов. Усталость: ЧСС снижается и стабилизируется на фоне монотонной езды.</p>
+      <ul>
+        <li>Браслет на руке водителя</li>
+        <li>BLE шлюз в кабине → GPRS трекер → сервер</li>
+        <li>ЧСС &lt;50 + нет движения рук → алерт логисту</li>
+        <li>Обязательный отдых по алерту</li>
+      </ul>
+    </div>
+    <div class="tab-card active"><div class="badge">Горячие цеха</div>
+      <h3>Металлургия, литейные, кузнечные</h3>
+      <p>Температура воздуха 40–60°C. Тепловой удар: резкий рост ЧСС → потеря сознания. Статистика: до 3 смертей на 100 предприятий ежегодно.</p>
+      <ul>
+        <li>Нагрудный датчик ЧСС (ANT+)</li>
+        <li>ЧСС >150 + нет движения акселерометра → НЕМЕДЛЕННЫЙ алерт</li>
+        <li>Автоматически вызов врача на пост</li>
+        <li>Обязательное кондиционирование зоны</li>
+      </ul>
+    </div>
+    <div class="tab-card active"><div class="badge">Фарма / Пищевое</div>
+      <h3>Чистые комнаты, пищевые зоны</h3>
+      <p>Персонал в защитных костюмах → перегрев за 30–40 минут работы. Регулятор (GMP, HACCP) требует документировать нагрузку персонала в критических зонах.</p>
+      <ul>
+        <li>Датчик в одежде или под костюмом</li>
+        <li>Контроль времени работы в горячей зоне</li>
+        <li>Журнал нагрузки для GMP-аудита</li>
+        <li>Рекомендация на ротацию до перегрева</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как данные физиологии попадают на сервер</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>ANT+ датчик ЧСС на теле работника</h3>
+      <p>Стандартный нагрудный ремень (Garmin, Polar, любой ANT+) или нашивной датчик. ANT+ — стандарт спортивной и медицинской физиологии, точность ±1 удар/мин.</p>
+    </div>
+    <div class="how-step">
+      <h3>nRF52832 принимает ANT+ и ретранслирует BLE</h3>
+      <p>Носимый модуль DN·Fit слушает ANT+-пакеты от датчика ЧСС и упаковывает их в BLE iBeacon-пакет вместе с данными акселерометра. Метка — мост ANT+ → BLE.</p>
+    </div>
+    <div class="how-step">
+      <h3>BLE-шлюзы в зоне работы</h3>
+      <p>Шлюзы на производстве или в кабине транспортного средства подхватывают BLE-пакет и передают на сервер. Данные приходят каждые 2 секунды.</p>
+    </div>
+    <div class="how-step">
+      <h3>Алгоритм усталости/перегрева</h3>
+      <p>Сервер анализирует комбинацию: ЧСС, вариабельность ЧСС (HRV), активность акселерометра, длительность смены. Аномалия → алерт диспетчеру и бригадиру.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Интерфейс</div>
+  <h2>Дашборд физиологии персонала</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="phone-ui">
+        <div class="p-title">DN·Fit · Цех сталелитейный · Смена А · 14:44</div>
+        <div class="p-row"><span class="k">Работников под мониторингом</span><span class="v">18</span></div>
+        <div class="p-row"><span class="k">Петров И. (пост №4)</span><span class="v err">⚠ ЧСС 163 · HIGH!</span></div>
+        <div class="p-row"><span class="k">Активность</span><span class="v err">Нет движения 4 мин</span></div>
+        <div class="p-row"><span class="k">Алерт</span><span class="v err">Отправлен врачу 14:43</span></div>
+        <div class="p-row"><span class="k">Сидоров В. (пост №2)</span><span class="v warn">⚠ ЧСС 142 · 3 ч в зоне</span></div>
+        <div class="p-row"><span class="k">Рекомендация</span><span class="v warn">Ротация через 15 мин</span></div>
+        <div class="p-row"><span class="k">Остальные (16)</span><span class="v ok">Норма ✓</span></div>
+        <div class="p-log">
+          <div class="pl-title">— События</div>
+          <div class="pl-row"><span class="pl-time">14:43</span><span class="pl-text" style="color:#f87171">Петров И. тепловой удар → Вызван врач</span></div>
+          <div class="pl-row"><span class="pl-time">14:30</span><span class="pl-text" style="color:#fbbf24">Сидоров В. превышение нагрузки >3 ч</span></div>
+          <div class="pl-row"><span class="pl-time">12:00</span><span class="pl-text">Смена А начата · 18 работников</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">❤️</div><div class="feat-text"><h3>ЧСС и HRV в реальном времени</h3><p>Частота сердцебиения и вариабельность ЧСС (HRV) — два ключевых маркера усталости и стресса. Снижение HRV предсказывает перегрузку за 15–20 минут до симптомов.</p></div></div>
+      <div class="feat"><div class="feat-ico">🌡️</div><div class="feat-text"><h3>Комбинация с температурой окружающей среды</h3><p>При температуре воздуха >38°C порог ЧСС для алерта автоматически снижается. Система учитывает условия среды, а не только физиологию.</p></div></div>
+      <div class="feat"><div class="feat-ico">📋</div><div class="feat-text"><h3>Журнал для ГИТ и GMP-аудита</h3><p>Автоматическая запись: кто, сколько, в каких условиях работал. Инспектор ГИТ запросил журнал — PDF готов в один клик с графиками нагрузки.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔄</div><div class="feat-text"><h3>Рекомендации по ротации</h3><p>Система предупреждает бригадира «Сидоров — 3 часа в зоне, пора на отдых» до того, как работник почувствует усталость. Профилактика, а не реакция.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="specs" style="padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Fit</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Датчик и связь</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">ANT+</span><span class="v green">ANT/ANT+ · одновременно с BLE</span></div>
+      <div class="spec-row"><span class="k">Акселерометр</span><span class="v green">I2C · 3-осевой</span></div>
+      <div class="spec-row"><span class="k">BLE</span><span class="v green">iBeacon · 2-секундный интервал</span></div>
+    </div>
+    <div class="spec-card"><h3>Носимый модуль</h3>
+      <div class="spec-row"><span class="k">Форм-фактор</span><span class="v accent">браслет / клипса / нагрудный</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v green">−40°C…+85°C</span></div>
+    </div>
+    <div class="spec-card"><h3>ANT+ совместимость</h3>
+      <div class="spec-row"><span class="k">Garmin HRM</span><span class="v green">✓</span></div>
+      <div class="spec-row"><span class="k">Polar H10</span><span class="v green">✓</span></div>
+      <div class="spec-row"><span class="k">Wahoo TICKR</span><span class="v green">✓</span></div>
+      <div class="spec-row"><span class="k">Любой ANT+</span><span class="v green">✓</span></div>
+    </div>
+    <div class="spec-card"><h3>Алертинг</h3>
+      <div class="spec-row"><span class="k">Пороги ЧСС</span><span class="v green">настраиваются</span></div>
+      <div class="spec-row"><span class="k">Каналы</span><span class="v green">Telegram / email / SMS</span></div>
+      <div class="spec-row"><span class="k">Журнал</span><span class="v green">PDF · 90 дней</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Тепловой удар предупреждён — НС не случился</h2>
+  <p>Укажите тип производства и количество работников. Подберём комплект датчиков и схему покрытия.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Fit" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Fit</strong> — решение DN·Beacon · <a href="mailto:sayr@inbox.ru" style="color:#f9a8d4">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

@@ -1,0 +1,250 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Cold — Мониторинг температуры в рефрижераторах и холодовой цепи</title>
+<meta name="description" content="BLE-датчик в кузове рефрижератора — температура и местоположение в одном пакете. Журнал для Россельхознадзора и Росздравнадзора. Алерт за секунды до нарушения нормы.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--ice:#0369a1;--ice-dark:#075985;--ice-light:#f0f9ff;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--ice);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#7dd3fc}
+  .nav-cta{background:var(--ice);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#00060d 0%,#001a2e 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(125,211,252,.1);color:#7dd3fc;border:1px solid rgba(125,211,252,.25);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#7dd3fc}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--ice);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ice);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+
+  .profiles{background:var(--white)}
+  .pf-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .pf-item{background:var(--white);padding:24px;text-align:center}
+  .pf-item .temp{font-size:2rem;font-weight:800;color:var(--ice)}
+  .pf-item .range{font-size:.75rem;color:var(--muted);margin-top:4px}
+  .pf-item .sector{font-size:.85rem;font-weight:600;margin-top:8px}
+  .pf-item .reg{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--ice);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+
+  .mockup-section{background:var(--white)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#7dd3fc;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#7dd3fc;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:46px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--ice-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+
+  .sectors{background:var(--bg)}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--ice)}
+
+  .specs{background:var(--white)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.ice{color:var(--ice)}.v.green{color:var(--green)}
+
+  .cta{background:linear-gradient(135deg,var(--ice) 0%,var(--ice-dark) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--ice);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline-white{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">DN·<span>Cold</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Холодовая цепь · Рефрижераторы · HACCP · Фарма</div>
+  <h1>Температура в рефрижераторе<br><span>и координаты груза — в одном пакете</span></h1>
+  <p>DN·Cold — BLE-датчик температуры в кузове. Каждые 30 секунд: температура, влажность, статус двери. Данные уходят через GPS-трекер водителя на сервер. Нарушение нормы — алерт за минуты, не дни. Журнал — автоматически, в формате регулятора.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">Отраслевые сценарии</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>±0.1°C</strong><span>точность внешнего датчика DS18B20</span></div>
+    <div class="hero-stat"><strong>30 сек</strong><span>интервал передачи данных</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>датчик без замены батареи</span></div>
+    <div class="hero-stat"><strong>100%</strong><span>журнал для Россельхознадзора / Росздравнадзора</span></div>
+  </div>
+</section>
+
+<section class="profiles">
+  <div class="section-label">Температурные профили</div>
+  <h2>Один датчик — любой температурный режим</h2>
+  <div class="pf-grid">
+    <div class="pf-item"><div class="temp">−18°C</div><div class="range">и ниже</div><div class="sector">Глубокая заморозка</div><div class="reg">Мороженое, мясо, рыба</div></div>
+    <div class="pf-item"><div class="temp">−5°C</div><div class="range">−5…0°C</div><div class="sector">Охлаждённое мясо</div><div class="reg">Россельхознадзор</div></div>
+    <div class="pf-item"><div class="temp">0…+4°C</div><div class="range">свежее</div><div class="sector">Молочная продукция</div><div class="reg">ТР ТС 033/2013</div></div>
+    <div class="pf-item"><div class="temp">+2…+8°C</div><div class="range">фармацевтический</div><div class="sector">Лекарства, вакцины</div><div class="reg">ГОСТ Р 52249, GDP</div></div>
+    <div class="pf-item"><div class="temp">+15…+25°C</div><div class="range">комнатная</div><div class="sector">Косметика, химия</div><div class="reg">Производитель</div></div>
+    <div class="pf-item"><div class="temp">−20…+40°C</div><div class="range">весь диапазон</div><div class="sector">Мультизонный кузов</div><div class="reg">До 3 датчиков в кузове</div></div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как данные из кузова попадают на сервер</h2>
+  <p class="subtitle">Без отдельного SIM-модуля в датчике — данные идут через существующий GPS-трекер водителя.</p>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Датчик температуры в кузове</h3>
+      <p>BLE-метка с внешним зондом DS18B20 (±0.1°C) или SHT40 (температура + влажность). IP67-корпус. Крепится к стенке кузова, к паллету или к фармацевтической упаковке.</p>
+    </div>
+    <div class="how-step">
+      <h3>Данные по BLE → GPS-трекер кабины</h3>
+      <p>GPS-трекер с BLE-модулем (Teltonika FMB920, Queclink GV600) подхватывает пакеты датчика через кабину. Температура + координаты уходят на сервер по GPRS/LTE одним пакетом.</p>
+    </div>
+    <div class="how-step">
+      <h3>Сервер строит маршрут + температурный лог</h3>
+      <p>На карте видно: где находится груз и какая там температура прямо сейчас. История — непрерывная линия. Нарушение нормы окрашивает участок маршрута красным.</p>
+    </div>
+    <div class="how-step">
+      <h3>Алерт при выходе за норму</h3>
+      <p>Температура вышла за заданный диапазон → немедленный алерт диспетчеру, логисту и получателю через Telegram / email / SMS. Время реакции — минуты, не часы.</p>
+    </div>
+    <div class="how-step">
+      <h3>Журнал для регулятора — автоматически</h3>
+      <p>PDF-отчёт за рейс: маршрут, температурный график, нарушения, время открытия двери. Подписывается УКЭП. Готов к предъявлению Россельхознадзору или при споре с получателем.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mockup-section">
+  <div class="section-label">Интерфейс диспетчера</div>
+  <h2>Что видит диспетчер в реальном времени</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Cold · Рейс #4471 · Москва → Казань · 14:22</div>
+        <div class="t-row"><span class="k">Водитель</span><span class="v">Сидоров А.П. · Volvo FH-500</span></div>
+        <div class="t-row"><span class="k">Местонахождение</span><span class="v">М7 · 312 км от Москвы</span></div>
+        <div class="t-row"><span class="k">Кузов: секция 1</span><span class="v ok">−18.4°C ✓ (норма ≤ −18)</span></div>
+        <div class="t-row"><span class="k">Кузов: секция 2</span><span class="v ok">+3.1°C ✓ (норма 0…+4)</span></div>
+        <div class="t-row"><span class="k">Дверь кузова</span><span class="v ok">Закрыта · 4 ч 18 мин</span></div>
+        <div class="t-row"><span class="k">Влажность секция 2</span><span class="v ok">78% ✓</span></div>
+        <div class="t-row"><span class="k">Батарея датчика</span><span class="v ok">98% · ~18 лет</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Температурный лог</div>
+          <div class="tl-row"><span class="tl-time">14:21</span><span class="tl-text" style="color:#34d399">Сек.2: −18.3°C ✓</span></div>
+          <div class="tl-row"><span class="tl-time">13:50</span><span class="tl-text" style="color:#fbbf24">⚠ Сек.1: +5.2°C — дверь открыта 4 мин (погрузка)</span></div>
+          <div class="tl-row"><span class="tl-time">13:54</span><span class="tl-text" style="color:#34d399">Сек.1: +3.8°C → норма восстановлена</span></div>
+          <div class="tl-row"><span class="tl-time">11:00</span><span class="tl-text">Рейс начат · Москва, склад «Бирюлёво»</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🗺️</div><div class="feat-text"><h3>Температура на карте маршрута</h3><p>Линия маршрута окрашена по температуре: зелёный — норма, жёлтый — предупреждение, красный — нарушение. Одним взглядом видно где и когда была проблема.</p></div></div>
+      <div class="feat"><div class="feat-ico">🚪</div><div class="feat-text"><h3>Контроль открытия двери</h3><p>Датчик магнита на двери фиксирует каждое открытие с меткой времени. «Дверь открывалась в Рязани на 12 минут» — в отчёте и в споре с получателем.</p></div></div>
+      <div class="feat"><div class="feat-ico">📄</div><div class="feat-text"><h3>Отчёт для регулятора в один клик</h3><p>PDF с температурным графиком и подписью УКЭП. Формат принят Россельхознадзором и GDP-аудиторами. Генерируется автоматически после завершения рейса.</p></div></div>
+      <div class="feat"><div class="feat-ico">📱</div><div class="feat-text"><h3>Алерт водителю и диспетчеру</h3><p>Нарушение нормы → водитель получает вибросигнал на смартфон, диспетчер — Telegram-сообщение. До приезда на склад можно принять меры.</p></div></div>
+      <div class="feat"><div class="feat-ico">📦</div><div class="feat-text"><h3>До 3 датчиков в одном кузове</h3><p>Мультизонный рефрижератор: каждая секция — свой датчик со своим температурным профилем. Все данные в едином интерфейсе.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sectors" id="sectors">
+  <div class="section-label">Применение</div>
+  <h2>Отраслевые сценарии</h2>
+  <div class="sc-grid">
+    <div class="sc-card"><div class="ico">💊</div><h3>Фармацевтика и вакцины</h3><p>GDP-требования к документированию каждого рейса. Нарушение +2/+8 — основание для отказа партии стоимостью миллионы рублей.</p>
+    <ul><li>Непрерывный журнал для GDP-аудита</li><li>УКЭП-подпись отчёта</li><li>Данные хранятся 5 лет</li><li>Алерт фарм-представителю получателя</li></ul></div>
+    <div class="sc-card"><div class="ico">🥩</div><h3>Мясо, рыба, морепродукты</h3><p>Россельхознадзор: при нарушении холодовой цепи — партия на уничтожение. Журнал DN·Cold — доказательство соблюдения режима при споре.</p>
+    <ul><li>Режим −5…0°C или −18°C и ниже</li><li>Контроль размораживания/перемерзания</li><li>Интеграция с ВетИС / ФГИС «Меркурий»</li></ul></div>
+    <div class="sc-card"><div class="ico">🥛</div><h3>Молочная продукция и fresh</h3><p>Короткие сроки годности — нарушение температуры на несколько часов меняет срок реализации товара. Ритейл всё чаще требует温度-сертификат при приёмке.</p>
+    <ul><li>Режим 0…+4°C</li><li>Алерт при открытии двери дольше N минут</li><li>Журнал для ритейл-аудита</li></ul></div>
+    <div class="sc-card"><div class="ico">🌸</div><h3>Цветы и скоропортящиеся</h3><p>Срезанные цветы — жёсткие требования к температуре и влажности. Датчик SHT40 фиксирует оба параметра. Нарушение = претензия к перевозчику.</p>
+    <ul><li>Температура + влажность одним датчиком</li><li>Сертификат перевозки для импортёра</li></ul></div>
+  </div>
+</section>
+
+<section class="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Cold</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>BLE-датчик в кузове</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Зонд температуры</span><span class="v green">DS18B20 · ±0.1°C</span></div>
+      <div class="spec-row"><span class="k">Влажность</span><span class="v green">SHT40 · ±1.8%</span></div>
+      <div class="spec-row"><span class="k">Диапазон</span><span class="v ice">−55°C…+125°C</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67</span></div>
+    </div>
+    <div class="spec-card"><h3>Интеграция с трекером</h3>
+      <div class="spec-row"><span class="k">Протокол</span><span class="v green">iBeacon (BLE)</span></div>
+      <div class="spec-row"><span class="k">Teltonika</span><span class="v green">FMB920, FMC150, FMB630</span></div>
+      <div class="spec-row"><span class="k">Queclink</span><span class="v green">GV600, GV600MG</span></div>
+      <div class="spec-row"><span class="k">Wialon / АвтоГРАФ</span><span class="v green">плагин DN·Cold</span></div>
+      <div class="spec-row"><span class="k">Интервал отправки</span><span class="v ice">30 сек (настраивается)</span></div>
+    </div>
+    <div class="spec-card"><h3>Серверная часть</h3>
+      <div class="spec-row"><span class="k">API</span><span class="v green">REST · Webhook</span></div>
+      <div class="spec-row"><span class="k">Алерты</span><span class="v green">Telegram / email / SMS</span></div>
+      <div class="spec-row"><span class="k">Хранение данных</span><span class="v green">5 лет (GDP-требование)</span></div>
+      <div class="spec-row"><span class="k">Отчёт PDF</span><span class="v green">УКЭП-подпись</span></div>
+    </div>
+    <div class="spec-card"><h3>Соответствие</h3>
+      <div class="spec-row"><span class="k">Фарма</span><span class="v ice">ГОСТ Р 52249, GDP EU</span></div>
+      <div class="spec-row"><span class="k">Продукты питания</span><span class="v green">ТР ТС 021/2011, HACCP</span></div>
+      <div class="spec-row"><span class="k">Ветеринария</span><span class="v green">ВетИС / Меркурий API</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>Холодовая цепь — под контролем от загрузки до приёмки</h2>
+  <p>Укажите тип перевозок, температурный режим и парк. Подготовим схему интеграции и расчёт за 1 день.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Cold" class="btn-outline-white">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Cold</strong> — решение DN·Beacon · dynamic-iBeacon · <a href="mailto:sayr@inbox.ru" style="color:#7dd3fc">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

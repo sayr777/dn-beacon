@@ -1,0 +1,249 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Mesh — BLE Mesh: покрытие без WiFi-инфраструктуры</title>
+<meta name="description" content="BLE Mesh-сеть из маячков — самовосстанавливающаяся топология без WiFi и кабелей. Подземные склады, шахты, тоннели. Один узел вышел — трафик идёт через соседей.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#1e3a8a;--cd:#1e3073;--cl:#eff6ff;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#93c5fd}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#060b1a 0%,#0c1a3a 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(147,197,253,.08);color:#93c5fd;border:1px solid rgba(147,197,253,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#93c5fd}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .compare{background:var(--white)}
+  .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:640px){.cmp-grid{grid-template-columns:1fr}}
+  .cmp-card{border:2px solid var(--border);border-radius:var(--radius);padding:28px}
+  .cmp-card.bad{border-color:#fca5a5;background:#fff5f5}
+  .cmp-card.good{border-color:var(--c);background:var(--cl)}
+  .cmp-card h3{font-size:1rem;font-weight:700;margin-bottom:14px}
+  .cmp-card ul{display:flex;flex-direction:column;gap:10px}
+  .cmp-card li{font-size:.9rem;color:var(--muted);padding-left:18px;position:relative;list-style:none}
+  .cmp-bad li::before{content:'✗';position:absolute;left:0;color:#ef4444}
+  .cmp-good li::before{content:'✓';position:absolute;left:0;color:var(--c)}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:#0c1a3a;border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#93c5fd;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#93c5fd;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:46px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.green{color:var(--green)}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">DN·<span>Mesh</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+<section class="hero">
+  <div class="hero-label">BLE Mesh · Без WiFi · Без кабелей · Self-healing</div>
+  <h1>Покрытие там, где <span>WiFi нет и не будет</span></h1>
+  <p>DN·Mesh — сеть BLE-маячков, которые образуют покрытие без центральной точки доступа. Подземный склад, шахта, тоннель, многоуровневый паркинг: каждая метка передаёт трафик соседей. Один узел отключился — пакеты идут в обход. Сеть восстанавливается сама.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">По отраслям</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>0 кабелей</strong><span>к каждому узлу сети</span></div>
+    <div class="hero-stat"><strong>Self-healing</strong><span>топология восстанавливается при потере узла</span></div>
+    <div class="hero-stat"><strong>200+ м</strong><span>глубина покрытия без единой точки доступа</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>батарея ретранслятора без обслуживания</span></div>
+  </div>
+</section>
+
+<section class="compare">
+  <div class="section-label">Традиционный подход vs DN·Mesh</div>
+  <h2>Почему WiFi не работает под землёй</h2>
+  <p class="subtitle">Развернуть WiFi в шахте или подземном складе — это кабельная трасса, герметичные коробы, ИБП на каждой точке доступа. DN·Mesh — просто вешаем метки.</p>
+  <div class="cmp-grid">
+    <div class="cmp-card bad cmp-bad">
+      <h3>WiFi в подземных пространствах</h3>
+      <ul>
+        <li>Кабельная трасса к каждой точке доступа</li>
+        <li>Герметичные кабельные вводы и короба</li>
+        <li>ИБП для каждой точки (постоянное электропитание)</li>
+        <li>Одна сломанная AP — «мёртвая зона»</li>
+        <li>Полный монтаж 4–8 недель</li>
+        <li>Дорогостоящее обслуживание</li>
+      </ul>
+    </div>
+    <div class="cmp-card good cmp-good">
+      <h3>DN·Mesh — BLE Mesh</h3>
+      <ul>
+        <li>Каждый узел — автономный, батарея 15–20 лет</li>
+        <li>Крепление — 1 дюбель, 5 минут на узел</li>
+        <li>Нет кабелей, нет постоянного питания</li>
+        <li>Один узел вышел — трафик идёт через соседей</li>
+        <li>Развёртывание сети 100 узлов — 1 день</li>
+        <li>Обслуживание — практически нулевое</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как работает BLE Mesh</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Каждый узел — ретранслятор</h3>
+      <p>В режиме BLE Mesh nRF52832 одновременно слушает соседей и ретранслирует их пакеты. Узел не просто маяк — он полноценный участник сети с адресацией и маршрутизацией.</p>
+    </div>
+    <div class="how-step">
+      <h3>Пакет путешествует по графу</h3>
+      <p>Данные от метки в дальнем углу подземного склада передаются хоп за хопом через соседей к шлюзу у выхода. Сеть строит маршруты динамически, как интернет-роутер.</p>
+    </div>
+    <div class="how-step">
+      <h3>Self-healing: узел упал — сеть перестроилась</h3>
+      <p>Если узел разрядился или повреждён, соседи замечают потерю связи и перестраивают маршрутную таблицу. Без участия оператора, за секунды.</p>
+    </div>
+    <div class="how-step">
+      <h3>Шлюз у выхода → интернет</h3>
+      <p>Один шлюз с LTE/Ethernet у входа в тоннель собирает трафик всей сети. Ни один рабочий или актив глубоко под землёй не теряется из виду.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Интерфейс</div>
+  <h2>Мониторинг сети и персонала</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Mesh · Шахта «Угольная» · Горизонт −240 м</div>
+        <div class="t-row"><span class="k">Узлов в сети</span><span class="v ok">48 / 50 ✓</span></div>
+        <div class="t-row"><span class="k">Узел M-31 (горизонт −180)</span><span class="v warn">⚠ Низкий уровень сигнала</span></div>
+        <div class="t-row"><span class="k">Трафик → через M-30 и M-32</span><span class="v ok">Маршрут перестроен ✓</span></div>
+        <div class="t-row"><span class="k">Персонал под землёй</span><span class="v">14 человек · 3 бригады</span></div>
+        <div class="t-row"><span class="k">Бригада А · горизонт −160</span><span class="v ok">Связь ✓</span></div>
+        <div class="t-row"><span class="k">Рабочий Ким В. (бригада Б)</span><span class="v warn">⚠ Нет движения 28 мин</span></div>
+        <div class="t-log">
+          <div class="tl-title">— События сети</div>
+          <div class="tl-row"><span class="tl-time">14:51</span><span class="tl-text" style="color:#fbbf24">M-31 связь ухудшилась → перемаршрутизация</span></div>
+          <div class="tl-row"><span class="tl-time">14:51</span><span class="tl-text" style="color:#34d399">M-30 принял трафик M-31 ✓</span></div>
+          <div class="tl-row"><span class="tl-time">14:22</span><span class="tl-text">Бригада В спустилась на −200 м</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🗺️</div><div class="feat-text"><h3>Карта подземных горизонтов</h3><p>На схеме шахты или склада — каждый рабочий в реальном времени. Диспетчер видит бригады без голосовой связи.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔄</div><div class="feat-text"><h3>Self-healing: нет «мёртвых зон»</h3><p>Если маршрут прерывается — сеть перестраивается автоматически. Оператор получает уведомление, что узел требует обслуживания, но данные не теряются.</p></div></div>
+      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Один шлюз на весь объект</h3><p>Достаточно одного выходного шлюза с LTE. Все узлы глубоко под землёй передают данные через mesh-цепочку к этому шлюзу.</p></div></div>
+      <div class="feat"><div class="feat-ico">⚡</div><div class="feat-text"><h3>Развёртывание за день</h3><p>100 узлов сети — это 100 дюбелей и 100 меток. Без кабеля, без строительных работ. Сеть конфигурируется автоматически после включения.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sectors">
+  <div class="section-label">Сценарии</div>
+  <h2>Где работает DN·Mesh</h2>
+  <div class="sc-grid">
+    <div class="sc-card"><div class="ico">⛏️</div><h3>Горнодобыча</h3><p>Связь с персоналом на глубине −200 м и ниже. Закон требует непрерывного контроля местонахождения людей в горных выработках.</p>
+    <ul><li>Трекинг бригад по горизонтам</li><li>Аварийный сигнал</li><li>Интеграция с man-down (DN·Man)</li></ul></div>
+    <div class="sc-card"><div class="ico">🏢</div><h3>Подземные склады</h3><p>Многоуровневые автоматизированные склады без WiFi. Паллеты, активы, персонал — всё под контролем без единого кабеля.</p>
+    <ul><li>Трекинг активов (DN·Asset)</li><li>Навигация персонала</li><li>Управление погрузчиками</li></ul></div>
+    <div class="sc-card"><div class="ico">🚇</div><h3>Тоннели и метро</h3><p>Контроль бригад техобслуживания в тоннелях. Плановые работы, ремонт — диспетчер всегда знает, где рабочие.</p>
+    <ul><li>Координата вдоль трассы</li><li>Аварийная кнопка</li><li>Интеграция с АСУТП</li></ul></div>
+    <div class="sc-card"><div class="ico">🅿️</div><h3>Многоуровневые парковки</h3><p>GPS не работает под землёй, WiFi дорог. DN·Mesh даёт покрытие на всех уровнях с минимальными затратами на инфраструктуру.</p>
+    <ul><li>Навигация к свободному месту</li><li>«Найти машину»</li><li>Охрана и видеонаблюдение</li></ul></div>
+  </div>
+</section>
+
+<section class="specs" style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Mesh</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Сеть</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Стандарт</span><span class="v green">Bluetooth Mesh 1.0</span></div>
+      <div class="spec-row"><span class="k">Топология</span><span class="v accent">Self-healing mesh</span></div>
+      <div class="spec-row"><span class="k">Макс. узлов</span><span class="v green">32 767 (спецификация)</span></div>
+    </div>
+    <div class="spec-card"><h3>Узел сети</h3>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Монтаж</span><span class="v green">1 дюбель · 5 минут</span></div>
+    </div>
+    <div class="spec-card"><h3>Покрытие</h3>
+      <div class="spec-row"><span class="k">Межузловая дальность</span><span class="v green">до 70 м</span></div>
+      <div class="spec-row"><span class="k">Шлюзов на объект</span><span class="v accent">1</span></div>
+      <div class="spec-row"><span class="k">Шлюз</span><span class="v green">LTE / Ethernet</span></div>
+    </div>
+    <div class="spec-card"><h3>Безопасность</h3>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 (CCM)</span></div>
+      <div class="spec-row"><span class="k">Аутентификация</span><span class="v green">по сети</span></div>
+      <div class="spec-row"><span class="k">Интеграция</span><span class="v green">DN·Man совместима</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Покрытие там, где WiFi невозможен</h2>
+  <p>Пришлите план объекта. Рассчитаем количество узлов, схему покрытия и стоимость развёртывания.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Mesh" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Mesh</strong> — решение DN·Beacon · <a href="mailto:sayr@inbox.ru" style="color:#93c5fd">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

@@ -1,0 +1,214 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Asset — Отслеживание активов с датчиком движения</title>
+<meta name="description" content="BLE-метка с акселерометром: актив не двигался 3 дня — алерт. Покинул периметр — алерт. Логистика, стройка, аренда оборудования. Понятный ROI за 2–3 месяца.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#065f46;--cd:#064e3b;--cl:#ecfdf5;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#6ee7b7}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#011c12 0%,#032e1e 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(110,231,183,.08);color:#6ee7b7;border:1px solid rgba(110,231,183,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#6ee7b7}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#6ee7b7;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#6ee7b7;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:56px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.green{color:var(--green)}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">DN·<span>Asset</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+<section class="hero">
+  <div class="hero-label">Активы · Логистика · Стройка · Motion Detection</div>
+  <h1>Актив не двигался 3 дня — <span>вы уже знаете</span></h1>
+  <p>DN·Asset — BLE-метка с акселерометром на каждом активе. Контейнер, паллет, экскаватор, дрель — неважно. Система видит: объект простаивает, вышел за периметр или пропал. Алерт до того, как срыв срока или кража стали фактом.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#sectors" class="btn-outline">По отраслям</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>−80%</strong><span>потерь оборудования на строй-площадках</span></div>
+    <div class="hero-stat"><strong>30 сек</strong><span>поиск нужного актива на складе</span></div>
+    <div class="hero-stat"><strong>2–3 мес</strong><span>типичный срок окупаемости</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>батарея без обслуживания</span></div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как работает мониторинг активов</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Метка на каждом активе</h3>
+      <p>DN·Asset крепится на контейнер, паллет, инструмент или единицу техники. Внутри — акселерометр I2C, который фиксирует движение и смену ориентации. IP67, работает при −40°C…+85°C.</p>
+    </div>
+    <div class="how-step">
+      <h3>BLE-шлюзы по периметру</h3>
+      <p>Шлюзы на воротах, въезде, в складских секциях получают сигналы всех меток. Координата актива определяется по зоне шлюза с наилучшим RSSI. Покинул периметр — алерт немедленно.</p>
+    </div>
+    <div class="how-step">
+      <h3>Акселерометр: движется или нет</h3>
+      <p>Метка сообщает: «я двигалась», «я повернулась», «я не двигаюсь N часов». Экскаватор простаивает больше заданного порога — диспетчер видит предупреждение ещё до звонка от подрядчика.</p>
+    </div>
+    <div class="how-step">
+      <h3>Алерт и история перемещений</h3>
+      <p>Нарушение правила (нет движения/выход из зоны/потеря связи) → алерт в Telegram или email. История: где был актив каждый час за последние 90 дней. Для споров с арендаторами и подрядчиками.</p>
+    </div>
+    <div class="how-step">
+      <h3>Интеграция с ERP/WMS</h3>
+      <p>REST API → 1С, SAP, Oracle WMS. Статус актива отображается в карточке номенклатуры. Отгрузка из WMS автоматически создаёт задачу «проверить, что актив у ворот».</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white)">
+  <div class="section-label">Интерфейс</div>
+  <h2>Дашборд активов в реальном времени</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Asset · Склад №3 · Активы онлайн: 247/250</div>
+        <div class="t-row"><span class="k">Актив A-1047 · Экскаватор JD 310L</span><span class="v warn">⚠ Простой 18 ч</span></div>
+        <div class="t-row"><span class="k">Зона</span><span class="v">Секция C · ворота 4</span></div>
+        <div class="t-row"><span class="k">Последнее движение</span><span class="v">Вчера 09:14</span></div>
+        <div class="t-row"><span class="k">Актив B-0331 · Паллет EUR 12</span><span class="v ok">В движении ✓</span></div>
+        <div class="t-row"><span class="k">Зона</span><span class="v">Погрузочная рампа 2</span></div>
+        <div class="t-row"><span class="k">Актив C-9912 · Сварочный агрегат</span><span class="v err">✗ Вне периметра!</span></div>
+        <div class="t-row"><span class="k">Последний сигнал</span><span class="v err">14:22 · ворота 1</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Алерты за сегодня</div>
+          <div class="tl-row"><span class="tl-time">14:23</span><span class="tl-text" style="color:#f87171">C-9912 вышел за периметр → Уведомлён охранник</span></div>
+          <div class="tl-row"><span class="tl-time">13:10</span><span class="tl-text" style="color:#fbbf24">A-1047 простаивает >12 ч → Уведомлён прораб</span></div>
+          <div class="tl-row"><span class="tl-time">08:45</span><span class="tl-text" style="color:#34d399">B-0331 перемещён на рампу 2</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🗺️</div><div class="feat-text"><h3>Карта активов в реальном времени</h3><p>На плане склада или строй-площадки каждый актив — точка с цветовой индикацией: зелёный — в норме, жёлтый — простой, красный — нарушение зоны.</p></div></div>
+      <div class="feat"><div class="feat-ico">📊</div><div class="feat-text"><h3>Отчёт об использовании</h3><p>Экскаватор работал 3 часа из 8 смены — KPI видно сразу. Аренда оборудования: журнал реального использования против выставленного счёта.</p></div></div>
+      <div class="feat"><div class="feat-ico">🚨</div><div class="feat-text"><h3>Алерт о краже в секунды</h3><p>Актив пересёк периметр → немедленный алерт на телефон охраны. До приезда злоумышленника на точку с оборудованием — есть время среагировать.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔗</div><div class="feat-text"><h3>Интеграция с 1С и SAP</h3><p>Физическое местонахождение актива синхронизируется с карточкой в ERP. Инвентаризация — автоматически, без ручного сканирования.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sectors">
+  <div class="section-label">Отраслевые сценарии</div>
+  <h2>Логистика и стройка — большой рынок с понятным ROI</h2>
+  <div class="sc-grid">
+    <div class="sc-card"><div class="ico">🏗️</div><h3>Строительство</h3><p>Кража инструментов — до 5% от сметы. Простой техники стоит 15–30 тыс. руб./час. DN·Asset решает оба.</p>
+    <ul><li>Мониторинг простоя техники</li><li>Алерт при выносе инструмента</li><li>Ежедневный отчёт по КТГ</li><li>Контроль субподрядчиков</li></ul></div>
+    <div class="sc-card"><div class="ico">📦</div><h3>Складская логистика</h3><p>«Потерянный» паллет — это часы поиска. Просроченный срок хранения из-за неизвестного местонахождения — это списание.</p>
+    <ul><li>Поиск паллета за 30 секунд</li><li>Контроль FIFO/FEFO автоматически</li><li>Инвентаризация без сканирования</li></ul></div>
+    <div class="sc-card"><div class="ico">🚢</div><h3>Портовые терминалы</h3><p>Тысячи контейнеров на площадке. Поиск нужного без DN·Asset — экскаватор катается по полю часами.</p>
+    <ul><li>Координата каждого контейнера</li><li>История перемещений</li><li>Интеграция с TOS (terminal operating system)</li></ul></div>
+    <div class="sc-card"><div class="ico">🔧</div><h3>Аренда оборудования</h3><p>Клиент говорит: «работали 4 часа». Вы знаете: 12 часов по данным акселерометра. Документированный журнал — ваша защита.</p>
+    <ul><li>Журнал реального использования</li><li>Геозона арендатора</li><li>Алерт при вывозе с объекта</li></ul></div>
+  </div>
+</section>
+
+<section class="specs" style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Asset</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Датчик движения</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Акселерометр</span><span class="v green">I2C · ADXL345 / LIS2DH</span></div>
+      <div class="spec-row"><span class="k">Режимы</span><span class="v accent">движение / покой / падение</span></div>
+      <div class="spec-row"><span class="k">Порог простоя</span><span class="v green">настраивается</span></div>
+    </div>
+    <div class="spec-card"><h3>Корпус и питание</h3>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Крепление</span><span class="v green">винт, магнит, стяжка</span></div>
+    </div>
+    <div class="spec-card"><h3>BLE</h3>
+      <div class="spec-row"><span class="k">Формат</span><span class="v green">iBeacon</span></div>
+      <div class="spec-row"><span class="k">Дальность</span><span class="v green">до 70 м</span></div>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v accent">каждые 5 мин</span></div>
+    </div>
+    <div class="spec-card"><h3>Интеграция</h3>
+      <div class="spec-row"><span class="k">API</span><span class="v green">REST · Webhook</span></div>
+      <div class="spec-row"><span class="k">Алерты</span><span class="v green">Telegram / email</span></div>
+      <div class="spec-row"><span class="k">ERP</span><span class="v green">1С · SAP · Oracle WMS</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Знайте, где каждый актив — прямо сейчас</h2>
+  <p>Укажите тип активов и масштаб площадки. Рассчитаем количество меток и шлюзов, окупаемость — за 1 день.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Asset" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Asset</strong> — решение DN·Beacon · <a href="mailto:sayr@inbox.ru" style="color:#6ee7b7">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

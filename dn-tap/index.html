@@ -1,0 +1,264 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Tap — NFC + BLE двойной интерфейс на одной метке</title>
+<meta name="description" content="Одна метка — два протокола одновременно: NFC для касания смартфоном, BLE для фонового отслеживания. Гостиничный ресепшн без стойки, медицинский браслет, контроль допуска к оборудованию.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--tap:#5b21b6;--tap-dark:#4c1d95;--tap-light:#f5f3ff;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--tap);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#c4b5fd}
+  .nav-cta{background:var(--tap);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#0d0520 0%,#1a0533 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(196,181,253,.1);color:#c4b5fd;border:1px solid rgba(196,181,253,.25);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#c4b5fd}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--tap);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tap);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+
+  .compare{background:var(--white)}
+  .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:640px){.cmp-grid{grid-template-columns:1fr}}
+  .cmp-card{border:2px solid var(--border);border-radius:var(--radius);padding:28px}
+  .cmp-card.active{border-color:var(--tap);background:var(--tap-light)}
+  .cmp-card h3{font-size:1rem;font-weight:700;margin-bottom:14px}
+  .cmp-card ul{display:flex;flex-direction:column;gap:10px}
+  .cmp-card li{font-size:.9rem;color:var(--muted);padding-left:18px;position:relative;list-style:none}
+  .cmp-card li::before{content:'→';position:absolute;left:0;color:var(--tap)}
+  .cmp-badge{display:inline-block;background:var(--tap);color:#fff;border-radius:6px;padding:2px 10px;font-size:.75rem;font-weight:700;margin-left:10px;vertical-align:middle}
+
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--tap);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+
+  .mockup-section{background:var(--white)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .phone-ui{background:#0d0520;border-radius:24px;padding:28px;color:#fff;box-shadow:0 20px 60px rgba(91,33,182,.2)}
+  .ph-title{color:#c4b5fd;font-size:.85rem;font-weight:700;margin-bottom:18px;font-family:monospace}
+  .ph-tap{text-align:center;padding:24px 0;border:2px dashed rgba(196,181,253,.3);border-radius:12px;margin-bottom:16px}
+  .ph-tap .ico{font-size:2.5rem;display:block;margin-bottom:8px}
+  .ph-tap .label{color:#c4b5fd;font-size:.9rem;font-weight:600}
+  .ph-tap .sub{color:#64748b;font-size:.78rem;margin-top:4px}
+  .ph-row{display:flex;justify-content:space-between;padding:9px 12px;background:rgba(255,255,255,.04);border-radius:8px;margin-bottom:6px;font-size:.83rem}
+  .ph-row .k{color:#94a3b8}.ph-row .v{color:#f1f5f9;font-weight:600}
+  .ph-row .ok{color:#34d399}.ph-row .tap-col{color:#c4b5fd}
+  .ph-channel{margin-top:16px}
+  .ph-ch-title{color:#c4b5fd;font-size:.78rem;font-weight:700;margin-bottom:10px;font-family:monospace}
+  .ph-ch-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .ph-ch-icon{width:22px;text-align:center}.ph-ch-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--tap-light);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--tap)}
+
+  .specs{background:var(--white)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.tap{color:var(--tap)}.v.green{color:var(--green)}
+
+  .cta{background:linear-gradient(135deg,var(--tap) 0%,var(--tap-dark) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--tap);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline-white{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">DN·<span>Tap</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">NFC + BLE · Двойной интерфейс · Доступ · Идентификация</div>
+  <h1>Одна метка — <span>NFC и BLE одновременно</span></h1>
+  <p>DN·Tap работает в двух режимах параллельно: BLE транслирует зашифрованный динамический маяк в фоне — для автоматического отслеживания присутствия. NFC отвечает на касание смартфоном — мгновенный URL, ID, действие. Один чип, два протокола, нет необходимости выбирать.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#scenarios" class="btn-outline">Сценарии применения</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>2 в 1</strong><span>NFC и BLE одновременно на одном чипе</span></div>
+    <div class="hero-stat"><strong>&lt;1 сек</strong><span>срабатывание при касании NFC</span></div>
+    <div class="hero-stat"><strong>20 лет</strong><span>батарея без обслуживания</span></div>
+    <div class="hero-stat"><strong>0 сети</strong><span>NFC работает без интернета и GSM</span></div>
+  </div>
+</section>
+
+<section class="compare">
+  <div class="section-label">NFC и BLE — разные задачи</div>
+  <h2>Почему нужны оба протокола</h2>
+  <p class="subtitle">NFC требует намеренного касания — человек управляет взаимодействием. BLE работает пассивно — система видит присутствие без действий.</p>
+  <div class="cmp-grid">
+    <div class="cmp-card active">
+      <h3>NFC — касание смартфона <span class="cmp-badge">DN·Tap</span></h3>
+      <ul>
+        <li>Расстояние: до 4 см — физическое касание</li>
+        <li>Только умышленное действие человека</li>
+        <li>Статический ID/URL/контакт — не меняется</li>
+        <li>Не требует Bluetooth на смартфоне</li>
+        <li>Работает с любым NFC-смартфоном без приложения</li>
+        <li>Скорость: &lt;1 секунды на передачу данных</li>
+      </ul>
+    </div>
+    <div class="cmp-card active">
+      <h3>BLE — фоновый маяк <span class="cmp-badge">DN·Tap</span></h3>
+      <ul>
+        <li>Расстояние: до 70 м — без касания</li>
+        <li>Пассивное присутствие: система видит метку автоматически</li>
+        <li>Динамический ID: меняется каждые 5 мин (AES-128)</li>
+        <li>Читается шлюзами, нет необходимости в смартфоне</li>
+        <li>Постоянная трансляция: контроль местонахождения 24/7</li>
+        <li>Подходит для автоматизации без участия человека</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как DN·Tap работает в двух каналах</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Метка в покое — BLE маяк работает в фоне</h3>
+      <p>Метка непрерывно транслирует iBeacon-пакет с динамическим зашифрованным ID. Шлюзы в помещении фиксируют присутствие и передают на сервер: объект здесь, вот его ID, вот RSSI.</p>
+    </div>
+    <div class="how-step">
+      <h3>Человек прикладывает телефон — NFC отвечает</h3>
+      <p>NFC-чип nRF52832 хранит статическую запись: NDEF-URL, ID объекта, контакт. Смартфон считывает за &lt;1 секунды. Не нужно приложение, не нужен Bluetooth — стандартный NFC Android/iOS.</p>
+    </div>
+    <div class="how-step">
+      <h3>Сервер сопоставляет оба канала</h3>
+      <p>BLE говорит «объект находится в зоне B». NFC говорит «этот же объект только что просканировали в 14:22». Два независимых подтверждения одного факта — двойная верификация без дополнительного оборудования.</p>
+    </div>
+    <div class="how-step">
+      <h3>Действие — по любому каналу</h3>
+      <p>Подошёл к двери — BLE открыл шлагбаум. Хочешь узнать детали — приложил телефон к NFC. Нужна двухфакторная авторизация — оба канала подтвердили личность. Логика на стороне сервера.</p>
+    </div>
+  </div>
+</section>
+
+<section class="mockup-section">
+  <div class="section-label">Интерфейс</div>
+  <h2>Два события — одна консоль</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="phone-ui">
+        <div class="ph-title">DN·Tap · Событийный лог · 15:44</div>
+        <div class="ph-tap"><span class="ico">📱</span><span class="label">NFC сканирование</span><div class="sub">Прикоснитесь к метке или ждите BLE</div></div>
+        <div class="ph-row"><span class="k">Событие</span><span class="v tap-col">NFC прикосновение</span></div>
+        <div class="ph-row"><span class="k">Объект</span><span class="v">Нуркасов А. · Стажёр #18</span></div>
+        <div class="ph-row"><span class="k">Местонахождение BLE</span><span class="v ok">Секция B-3 · 3.2 м</span></div>
+        <div class="ph-row"><span class="k">Допуск</span><span class="v ok">Разрешён ✓</span></div>
+        <div class="ph-channel">
+          <div class="ph-ch-title">— Последние события</div>
+          <div class="ph-ch-row"><span class="ph-ch-icon">📶</span><span class="ph-ch-text">15:44 · BLE присутствие · зона B-3</span></div>
+          <div class="ph-ch-row"><span class="ph-ch-icon">📱</span><span class="ph-ch-text">15:44 · NFC касание · метка 00A7</span></div>
+          <div class="ph-ch-row"><span class="ph-ch-icon">🔓</span><span class="ph-ch-text">15:44 · Дверь B-3 · открыта</span></div>
+          <div class="ph-ch-row"><span class="ph-ch-icon">📶</span><span class="ph-ch-text">15:41 · BLE · вход в здание</span></div>
+          <div class="ph-ch-row"><span class="ph-ch-icon">📶</span><span class="ph-ch-text">09:00 · BLE · начало смены</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🏨</div><div class="feat-text"><h3>Гостиничный ресепшн без стойки</h3><p>Бронирование подтверждено → BLE-браслет выдан. Гость подходит к номеру — BLE открывает дверь. Хочет узнать Wi-Fi или услуги — прикладывает телефон к NFC-табличке в комнате.</p></div></div>
+      <div class="feat"><div class="feat-ico">💊</div><div class="feat-text"><h3>Медицинский браслет пациента</h3><p>BLE показывает, где находится пациент в отделении. Медсестра прикладывает сканер к браслету — NFC мгновенно открывает карту пациента в МИС. Без ввода ID, без ошибок.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔧</div><div class="feat-text"><h3>Допуск к оборудованию</h3><p>Рабочий подходит к станку — BLE видит наличие допуска. Нажимает «Пуск» — NFC-касание как второй фактор подтверждения. Без NFC-касания опасная операция не запускается.</p></div></div>
+      <div class="feat"><div class="feat-ico">📦</div><div class="feat-text"><h3>«Тап за деталями» на оборудовании</h3><p>На каждой единице оборудования — DN·Tap. Любой сотрудник прикладывает телефон — открывается паспорт техники, последнее ТО, QR-инструкция. Без QR-кодов, без приложения.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="scenarios">
+  <div class="section-label">Сценарии</div>
+  <h2>Где применяется DN·Tap</h2>
+  <div class="sc-grid">
+    <div class="sc-card"><div class="ico">🏢</div><h3>Офис и бизнес-центры</h3><p>BLE-контроль присутствия в зонах. NFC — вход в переговорную без бронирования через телефон.</p>
+    <ul><li>Автоматический табель присутствия</li><li>Управление переговорными</li><li>Двухфакторный доступ в серверную</li></ul></div>
+    <div class="sc-card"><div class="ico">🏭</div><h3>Производство и склад</h3><p>NFC-подтверждение опасных операций. BLE-отслеживание персонала в зонах с ограниченным доступом.</p>
+    <ul><li>Допуск к оборудованию</li><li>Контроль присутствия в цехах</li><li>Инструкции и паспорта машин по NFC</li></ul></div>
+    <div class="sc-card"><div class="ico">🏥</div><h3>Медицина</h3><p>Браслет пациента: BLE показывает локацию, NFC открывает карту при касании сканера медсестры.</p>
+    <ul><li>Исключение ошибок идентификации</li><li>Трекинг пациентов и персонала</li><li>Интеграция с МИС (1С:Медицина)</li></ul></div>
+    <div class="sc-card"><div class="ico">🚗</div><h3>Автосервисы и ТО</h3><p>Метка на ключах клиента: BLE сигнализирует о приезде, NFC открывает заказ-наряд в 1С на телефоне механика.</p>
+    <ul><li>Статус ремонта на экране</li><li>Уведомление клиенту</li><li>Подпись приёмки на смартфоне</li></ul></div>
+  </div>
+</section>
+
+<section class="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Tap</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Чипсет</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v tap">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">NFC</span><span class="v green">NFC-A (ISO 14443-A), NDEF</span></div>
+      <div class="spec-row"><span class="k">NFC дальность</span><span class="v green">до 4 см</span></div>
+      <div class="spec-row"><span class="k">BLE</span><span class="v green">iBeacon, BLE 5.0</span></div>
+      <div class="spec-row"><span class="k">BLE дальность</span><span class="v green">до 70 м</span></div>
+      <div class="spec-row"><span class="k">Оба протокола</span><span class="v green">одновременно</span></div>
+    </div>
+    <div class="spec-card"><h3>Корпус и питание</h3>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD</span></div>
+      <div class="spec-row"><span class="k">Срок службы</span><span class="v green">15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v tap">−40°C…+85°C</span></div>
+    </div>
+    <div class="spec-card"><h3>NFC формат</h3>
+      <div class="spec-row"><span class="k">Тип записи</span><span class="v green">NDEF (URL / Text / vCard)</span></div>
+      <div class="spec-row"><span class="k">Поддержка</span><span class="v green">Android / iOS (NFC)</span></div>
+      <div class="spec-row"><span class="k">Приложение</span><span class="v tap">не требуется</span></div>
+    </div>
+    <div class="spec-card"><h3>BLE формат</h3>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v tap">каждые 5 минут</span></div>
+      <div class="spec-row"><span class="k">TagID</span><span class="v green">не передаётся в эфире</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta" style="background:linear-gradient(135deg,var(--tap) 0%,var(--tap-dark) 100%);color:#fff;text-align:center;padding:80px 5%">
+  <h2 style="color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px">NFC + BLE — двойная верификация без двойных затрат</h2>
+  <p style="color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px">Опишите, какой канал нужен для каких задач. Подготовим схему интеграции и пилот за 1 неделю.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+    <a href="mailto:sayr@inbox.ru" class="btn-white" style="background:#fff;color:var(--tap);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Tap" style="border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Tap</strong> — решение DN·Beacon · dynamic-iBeacon · <a href="mailto:sayr@inbox.ru" style="color:#c4b5fd">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

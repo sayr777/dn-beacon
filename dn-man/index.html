@@ -1,0 +1,240 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Man — Обнаружение падения работника: горнодобыча, высотные работы</title>
+<meta name="description" content="Акселерометр на работнике фиксирует падение и отсутствие движения. Экстренный сигнал на диспетчера за секунды. Законодательное требование для горнодобычи и высотных работ.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#7c2d12;--cd:#6c1f09;--cl:#fff7ed;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--red:#dc2626;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#fdba74}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#0d0402 0%,#1c0a04 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(253,186,116,.08);color:#fdba74;border:1px solid rgba(253,186,116,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#fdba74}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+  .law-box{background:#fff7ed;border:2px solid #fed7aa;border-radius:var(--radius);padding:24px;margin-bottom:48px}
+  .law-box h3{font-size:.9rem;font-weight:700;color:#7c2d12;margin-bottom:12px}
+  .law-box ul{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px}
+  .law-box li{font-size:.86rem;color:#9a3412;padding-left:16px;position:relative;list-style:none}
+  .law-box li::before{content:'§';position:absolute;left:0;color:var(--c);font-weight:700}
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:#1c0a04;border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#fdba74;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}
+  .alarm{background:#7c2d12;border-radius:8px;padding:14px;margin:12px 0;text-align:center}
+  .alarm-title{color:#fff;font-weight:700;font-size:.9rem;margin-bottom:6px}
+  .alarm-sub{color:#fdba74;font-size:.8rem}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#fdba74;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem}
+  .tl-time{color:#475569;width:46px;flex-shrink:0}.tl-text{color:#cbd5e1}
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.green{color:var(--green)}
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">DN·<span>Man</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+<section class="hero">
+  <div class="hero-label">Man-down · Падение · Одиночные смены · Горнодобыча · Высота</div>
+  <h1>Работник упал и не встаёт — <span>диспетчер знает через 30 секунд</span></h1>
+  <p>DN·Man — носимое устройство с акселерометром. Алгоритм распознаёт паттерн падения: резкое ускорение → нет движения N секунд → экстренный маяк. Работник нажимает «OK» — ложная тревога. Не нажимает — диспетчер отправляет спасателей. Законодательно обязательно в горнодобыче, работах на высоте и в одиночных сменах.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#law" class="btn-outline">Законодательная база</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>30 сек</strong><span>от падения до сигнала диспетчеру</span></div>
+    <div class="hero-stat"><strong>≤1 мин</strong><span>для отмены ложного срабатывания самим работником</span></div>
+    <div class="hero-stat"><strong>24/7</strong><span>мониторинг без участия человека</span></div>
+    <div class="hero-stat"><strong>Законодательно</strong><span>обязательно в ряде отраслей</span></div>
+  </div>
+</section>
+
+<section id="law" style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Законодательство</div>
+  <h2>Правовая база для внедрения</h2>
+  <div class="law-box">
+    <h3>Российские нормативные акты, требующие мониторинга работника</h3>
+    <ul>
+      <li>РД-15-08-2006 — охрана труда в горнодобывающей промышленности</li>
+      <li>ФНП «Правила безопасности в угольных шахтах» — персональные сигнализаторы обязательны</li>
+      <li>Приказ Минтруда №590н — работы на высоте, одиночные наряды</li>
+      <li>ГОСТ Р 59007-2020 — персональные сигнализаторы для горноспасательных работ</li>
+      <li>ТК РФ ст. 227 — обязанность фиксировать несчастные случаи на производстве</li>
+      <li>Требования страховщиков ФСС при оформлении льготных тарифов</li>
+    </ul>
+  </div>
+</section>
+
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Как работает обнаружение падения</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Акселерометр фиксирует паттерн падения</h3>
+      <p>Резкое ускорение (удар при падении) + переход в горизонтальное положение + отсутствие движения более N секунд. Алгоритм отличает падение от наклона, присаживания, вибрации техники.</p>
+    </div>
+    <div class="how-step">
+      <h3>Запрос подтверждения — 60 секунд</h3>
+      <p>Устройство вибрирует и мигает. Работник нажимает кнопку — ложная тревога. Не нажимает в течение 60 секунд — система фиксирует реальный инцидент.</p>
+    </div>
+    <div class="how-step">
+      <h3>Экстренный маяк — частые пакеты</h3>
+      <p>При подтверждённом инциденте метка переходит в режим экстренной трансляции: пакет каждые 100 мс вместо стандартных 2 сек. Ближайший шлюз или DN·Mesh узел мгновенно поднимает сигнал.</p>
+    </div>
+    <div class="how-step">
+      <h3>Диспетчер — координата и личность</h3>
+      <p>На экране: «Иванов П.П., шахта горизонт −180 м, узел M-23, последнее движение 14:52». Диспетчер видит кто, где и когда. Звонок + отправка бригады.</p>
+    </div>
+    <div class="how-step">
+      <h3>Кнопка SOS — ручной вызов</h3>
+      <p>Дополнительно: работник может нажать кнопку SOS вручную. Ситуация: человек не упал, но попал в ловушку, получил отравление, ему нужна помощь — кнопка работает в любом состоянии.</p>
+    </div>
+  </div>
+</section>
+
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Интерфейс</div>
+  <h2>Экран диспетчера при инциденте</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Man · Карьер «Восточный» · 15:03</div>
+        <div class="alarm">
+          <div class="alarm-title">🚨 ЭКСТРЕННЫЙ СИГНАЛ · Иванов П.П.</div>
+          <div class="alarm-sub">Горизонт −160 м · Узел M-18 · 15:02:47</div>
+        </div>
+        <div class="t-row"><span class="k">Работник</span><span class="v err">Иванов П.П. · Бурильщик</span></div>
+        <div class="t-row"><span class="k">Зона</span><span class="v err">Горизонт −160 · Блок 3Б</span></div>
+        <div class="t-row"><span class="k">Тип события</span><span class="v err">Падение + нет движения 90 сек</span></div>
+        <div class="t-row"><span class="k">Подтверждение от работника</span><span class="v err">Нет</span></div>
+        <div class="t-row"><span class="k">Бригада АСС</span><span class="v warn">Вызвана · ETA 8 мин</span></div>
+        <div class="t-row"><span class="k">Персонал в зоне</span><span class="v">Климов К. · 40 м ·  связь ✓</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Хронология</div>
+          <div class="tl-row"><span class="tl-time">15:02</span><span class="tl-text" style="color:#f87171">Паттерн падения. Запрос отмены отправлен</span></div>
+          <div class="tl-row"><span class="tl-time">15:03</span><span class="tl-text" style="color:#f87171">Отмена не получена. ТРЕВОГА!</span></div>
+          <div class="tl-row"><span class="tl-time">15:03</span><span class="tl-text">Диспетчер Смирнов А. принял сигнал</span></div>
+          <div class="tl-row"><span class="tl-time">15:03</span><span class="tl-text">АСС уведомлена. Выдвигается.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">🗺️</div><div class="feat-text"><h3>Точная локализация через DN·Mesh</h3><p>В сочетании с DN·Mesh работает в шахтах и тоннелях без GPS. Диспетчер видит координату работника по ближайшему mesh-узлу: «узел M-18, примерно 40 м южнее».</p></div></div>
+      <div class="feat"><div class="feat-ico">📳</div><div class="feat-text"><h3>Вибросигнал и кнопка «OK»</h3><p>При срабатывании — вибрация и световой сигнал. Работник жив и в порядке — нажимает кнопку за 60 секунд. Исключает ложные тревоги при наклоне, падении инструмента, вибрации.</p></div></div>
+      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Экстренный режим трансляции</h3><p>При инциденте метка увеличивает частоту пакетов в 20 раз. Даже если один mesh-узел вышел, сигнал найдёт путь к диспетчеру через соседние узлы.</p></div></div>
+      <div class="feat"><div class="feat-ico">📋</div><div class="feat-text"><h3>Автоматический акт НС</h3><p>Время падения, координата, хронология событий, кто принял вызов и когда прибыла помощь — всё автоматически в журнал. Форма Н-1 заполнена до 80%.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="sectors" style="background:var(--bg);padding:72px 5%">
+  <div class="section-label">Применение</div>
+  <h2>Где требуется DN·Man</h2>
+  <div class="sc-grid">
+    <div class="sc-card"><div class="ico">⛏️</div><h3>Горнодобывающая промышленность</h3><p>Обязательно по ФНП для подземных работ. Одиночные смены под землёй — без контроля man-down нельзя выдать наряд по действующим нормам.</p>
+    <ul><li>Угольные шахты</li><li>Рудники и карьеры</li><li>Соляные выработки</li><li>Нефтяные шахтные выработки</li></ul></div>
+    <div class="sc-card"><div class="ico">🏗️</div><h3>Высотные работы</h3><p>Монтажники, промышленные альпинисты, обслуживание антенн — одиночные работы на высоте. Падение с высоты часто ведёт к потере сознания.</p>
+    <ul><li>Промышленный альпинизм</li><li>Обслуживание вышек и мачт</li><li>Работы на кровле</li></ul></div>
+    <div class="sc-card"><div class="ico">⚡</div><h3>Энергетика и нефтегаз</h3><p>Ночные смены на подстанциях, одиночные осмотры оборудования в опасных зонах. ЧС может произойти без свидетелей.</p>
+    <ul><li>Обходы оборудования</li><li>Работы в газоопасных зонах</li><li>Одиночные ночные смены</li></ul></div>
+    <div class="sc-card"><div class="ico">🌲</div><h3>Лесозаготовка и удалённые работы</h3><p>Вальщики леса, геологи, нефтяники в поле — без мобильной связи, один на один с лесом или болотом. DN·Mesh + DN·Man даёт покрытие без вышек.</p>
+    <ul><li>Лесные делянки</li><li>Геологические партии</li><li>Объекты без GSM-покрытия</li></ul></div>
+  </div>
+</section>
+
+<section class="specs" style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Man</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>Датчик движения</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Акселерометр</span><span class="v green">I2C · ADXL345 / LIS2DH</span></div>
+      <div class="spec-row"><span class="k">Определение падения</span><span class="v accent">ускорение + ориентация</span></div>
+      <div class="spec-row"><span class="k">Порог неподвижности</span><span class="v green">настраивается (20–300 сек)</span></div>
+    </div>
+    <div class="spec-card"><h3>Интерфейс работника</h3>
+      <div class="spec-row"><span class="k">Вибросигнал</span><span class="v green">при обнаружении падения</span></div>
+      <div class="spec-row"><span class="k">Кнопка «OK»</span><span class="v green">отмена ложной тревоги</span></div>
+      <div class="spec-row"><span class="k">Кнопка SOS</span><span class="v green">ручной вызов помощи</span></div>
+    </div>
+    <div class="spec-card"><h3>Корпус и питание</h3>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · ударостойкий</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · 15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+    </div>
+    <div class="spec-card"><h3>Сеть</h3>
+      <div class="spec-row"><span class="k">Стандартный режим</span><span class="v green">iBeacon · 2 сек</span></div>
+      <div class="spec-row"><span class="k">Экстренный режим</span><span class="v accent">iBeacon · 100 мс</span></div>
+      <div class="spec-row"><span class="k">DN·Mesh совместимость</span><span class="v green">✓ для подземных работ</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Жизнь работника — не повод экономить на сигнализации</h2>
+  <p>Опишите условия работы и численность персонала. Подготовим расчёт и схему совместимости с DN·Mesh для подземных работ.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Man" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Man</strong> — решение DN·Beacon · <a href="mailto:sayr@inbox.ru" style="color:#fdba74">sayr@inbox.ru</a></p></footer>
+</body>
+</html>
