@@ -135,7 +135,7 @@
   <div class="hero-stats">
     <div class="hero-stat"><strong>&lt;200 мс</strong><span>полный цикл валидации</span></div>
     <div class="hero-stat"><strong>AES-128</strong><span>защита от клонирования</span></div>
-    <div class="hero-stat"><strong>15 лет</strong><span>брелок без зарядки</span></div>
+    <div class="hero-stat"><strong>до 10 лет</strong><span>брелок без зарядки</span></div>
     <div class="hero-stat"><strong>офлайн</strong><span>работает без интернета</span></div>
   </div>
 </section>
@@ -233,7 +233,7 @@
       <div class="spec-row"><span class="label">Формат</span><span class="value violet">iBeacon · Eddystone · AltBeacon</span></div>
       <div class="spec-row"><span class="label">Смена ID</span><span class="value">каждые 5 мин (AES-128)</span></div>
       <div class="spec-row"><span class="label">Дальность</span><span class="value">0.5–5 м</span></div>
-      <div class="spec-row"><span class="label">Ресурс батареи</span><span class="value green">до 15 лет</span></div>
+      <div class="spec-row"><span class="label">Ресурс батареи</span><span class="value green">до 10 лет</span></div>
     </div>
     <div class="spec-card">
       <h3>Считыватель (валидатор)</h3>
@@ -274,6 +274,107 @@
     <div class="case-card"><div class="tag">Контроль доступа</div><h3>Парковки и объекты</h3><p>BLE-считыватель на въезде паркинга. Шлагбаум открывается автоматически при приближении зарегистрированного автомобиля с меткой DN·Pay.</p></div>
     <div class="case-card"><div class="tag">Учебные заведения</div><h3>Студенческие карты</h3><p>Брелок или мобильное приложение заменяет студенческий билет: вход в кампус, проездной, доступ в библиотеку — один носитель для всего.</p></div>
     <div class="case-card"><div class="tag">Льготы</div><h3>Льготный проезд</h3><p>Метка персонифицирована. Льготный тариф применяется автоматически при идентификации метки без необходимости предъявлять дополнительные документы.</p></div>
+  </div>
+</section>
+
+<!-- INTEGRATION -->
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Интеграция</div>
+  <h2>Подключение к АСОП и региональным биллинговым системам</h2>
+  <p class="subtitle">DN·Pay проектировался как открытая платформа — не замкнутая экосистема. Интеграция через стандартный REST API занимает от 2 до 10 рабочих дней.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Система / Платформа</th>
+          <th>Протокол</th>
+          <th>Передаваемые данные</th>
+          <th>Срок интеграции</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Региональный АСОП</strong></td><td class="check">REST/JSON</td><td>транзакции, баланс, тариф</td><td>5–10 р.д.</td></tr>
+        <tr><td><strong>Wialon / СКАУТ</strong></td><td class="check">REST/JSON</td><td>факт поездки, ID метки, маршрут</td><td>2–5 р.д.</td></tr>
+        <tr><td><strong>1С: Транспорт</strong></td><td class="check">REST + COM/HTTP</td><td>ведомость присутствия, лицевые счета</td><td>3–7 р.д.</td></tr>
+        <tr><td><strong>ОТП / «Тройка» / «Подорожник»</strong></td><td class="mid">по согласованию</td><td>кросс-идентификация, пересадочный тариф</td><td>индивидуально</td></tr>
+        <tr><td><strong>Собственный биллинг заказчика</strong></td><td class="check">REST/JSON</td><td>полный транзакционный лог (XML/JSON)</td><td>2–5 р.д.</td></tr>
+        <tr><td><strong>Мобильное приложение (iOS/Android)</strong></td><td class="check">BLE + REST</td><td>эмуляция брелока, пополнение баланса</td><td>SDK поставляется</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="feat-grid" style="margin-top:36px">
+    <div class="feat-card"><h3><span class="ico">🔄</span>Офлайн-синхронизация</h3><p>Валидатор накапливает транзакции в локальном кэше при отсутствии связи. При восстановлении соединения — автоматическая выгрузка в АСОП без потери данных. Гарантированная доставка через очередь с повторными попытками.</p></div>
+    <div class="feat-card"><h3><span class="ico">🏗️</span>Мульти-оператор</h3><p>Один сервер DN·Pay обслуживает нескольких перевозчиков с изолированными биллинговыми контурами. Межоператорный роуминг и пересадочный тариф конфигурируются без изменения прошивки метки.</p></div>
+    <div class="feat-card"><h3><span class="ico">📋</span>Транзакционный журнал</h3><p>Каждая транзакция: ID метки (псевдоним, не реальный), метка времени, ID валидатора, маршрут/остановка, тариф, результат. Журнал хранится 5 лет; выгрузка в форматах CSV, XML, JSON по расписанию или запросу.</p></div>
+  </div>
+</section>
+
+<!-- COMPLIANCE -->
+<section style="background:var(--bg);padding:72px 5%">
+  <div class="section-label">Нормативная база</div>
+  <h2>Соответствие требованиям законодательства РФ</h2>
+  <p class="subtitle">DN·Pay разработан с учётом российской регуляторики в сфере транспортных платежей, безопасности и персональных данных.</p>
+  <div class="feat-grid">
+    <div class="feat-card"><h3><span class="ico">📄</span>44-ФЗ / 223-ФЗ</h3><p>Платформа поставляется как программно-аппаратный комплекс. Технические характеристики оформляются в виде ТЗ для государственных закупок. Документация: ТЗ, технический проект, паспорт изделия, схемы данных.</p></div>
+    <div class="feat-card"><h3><span class="ico">🚌</span>Приказ Минтранса № 473</h3><p>Оснащение общественного транспорта системами оплаты проезда. DN·Pay реализует требования к регистрации факта оплаты, дистанционной проверке и офлайн-режиму работы валидатора.</p></div>
+    <div class="feat-card"><h3><span class="ico">🔒</span>152-ФЗ «О персональных данных»</h3><p>Настоящий TagID пассажира никогда не передаётся в эфире. В транзакционном журнале — только псевдоним (хэш). Персонификация выполняется только на защищённом сервере оператора с разграниченным доступом.</p></div>
+    <div class="feat-card"><h3><span class="ico">🛡️</span>ФЗ-16 «О транспортной безопасности»</h3><p>Метка — идентификатор пассажира или транспортного средства. Система ведёт журнал прохождений с timestamp и ID валидатора, что обеспечивает ретроспективный анализ инцидентов для органов транспортной безопасности.</p></div>
+    <div class="feat-card"><h3><span class="ico">🇷🇺</span>Реестр отечественного ПО</h3><p>Серверная часть DN·Pay разработана на российском стеке. Совместимость с российскими СУБД (PostgreSQL, Postgres Pro) и серверами на базе отечественных процессоров (Эльбрус, Байкал) — по запросу.</p></div>
+    <div class="feat-card"><h3><span class="ico">📡</span>ГК РФ / Связь</h3><p>BLE работает в ISM-диапазоне 2.4 ГГц и не требует лицензирования в РФ. Мощность излучения метки (≤ 4 дБм) не превышает допустимых норм СанПиН и регламентов Роскомнадзора.</p></div>
+  </div>
+</section>
+
+<!-- TIMELINE + TCO -->
+<section style="background:var(--white);padding:72px 5%">
+  <div class="section-label">Внедрение</div>
+  <h2>Этапы развёртывания и стоимость владения</h2>
+  <p class="subtitle">Пилот запускается за 4 недели. Переход на промышленную эксплуатацию — по согласованному графику без остановки движения.</p>
+  <div class="flow-steps" style="margin-bottom:56px">
+    <div class="flow-step">
+      <div class="ico">🔬</div>
+      <h3>Пилот</h3>
+      <p>1 маршрут, 2–5 валидаторов, 50–500 меток. Интеграция с тестовым контуром АСОП. Сбор статистики и корректировка настроек.</p>
+      <div class="ms">2–4 недели</div>
+    </div>
+    <div class="flow-step">
+      <div class="ico">🔗</div>
+      <h3>Интеграция биллинга</h3>
+      <p>Подключение к продуктивному АСОП / биллингу заказчика. Настройка тарифов, зон, льгот. Обучение операторов.</p>
+      <div class="ms">2–4 недели</div>
+    </div>
+    <div class="flow-step">
+      <div class="ico">🚌</div>
+      <h3>Тираж</h3>
+      <p>Поэтапный перевод маршрутов. Замена или дооснащение существующих турникетов. Параллельная работа со старой системой в переходный период.</p>
+      <div class="ms">по графику</div>
+    </div>
+    <div class="flow-step">
+      <div class="ico">🛠️</div>
+      <h3>Сопровождение</h3>
+      <p>SLA 99,5% uptime. Мониторинг валидаторов 24/7. Замена вышедших из строя меток на следующий рабочий день.</p>
+      <div class="ms">бессрочно</div>
+    </div>
+  </div>
+  <h3 style="font-size:1.15rem;font-weight:700;margin-bottom:16px">TCO: сравнение с классическими RFID-системами</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Статья расходов</th>
+          <th>DN·Pay (BLE)</th>
+          <th>Классическая RFID / NFC-система</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hl"><td>Носитель (брелок/карта)</td><td class="check">до 10 лет без замены</td><td class="mid">3–5 лет, плановая замена</td></tr>
+        <tr><td>Считыватель (валидатор)</td><td class="check">стандартный BLE-модуль</td><td class="mid">специализированный NFC/RF</td></tr>
+        <tr class="hl"><td>Комиссия платёжной системы</td><td class="check">отсутствует</td><td class="cross">1–2% с транзакции</td></tr>
+        <tr><td>Обслуживание парка меток</td><td class="check">OTA, без демонтажа</td><td class="mid">физический сбор и перепрограммирование</td></tr>
+        <tr class="hl"><td>Интеграция с АСОП</td><td class="check">REST API, 2–10 р.д.</td><td class="mid">проприетарный протокол, недели</td></tr>
+        <tr><td>Масштабирование</td><td class="check">линейное, без доп. лицензий</td><td class="mid">лицензирование по устройствам</td></tr>
+        <tr class="hl"><td>Работа при отключении сети</td><td class="check">до 24 часов офлайн</td><td class="cross">требует постоянного соединения</td></tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
