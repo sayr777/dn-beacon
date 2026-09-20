@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DN·Mesh — BLE Mesh: покрытие без WiFi-инфраструктуры</title>
-<meta name="description" content="BLE Mesh-сеть из маячков — самовосстанавливающаяся топология без WiFi и кабелей. Подземные склады, шахты, тоннели. Один узел вышел — трафик идёт через соседей.">
+<meta name="description" content="BLE Mesh-сеть из маячков — самовосстанавливающаяся топология без WiFi и кабелей. Relay-узлы на сменной батарее, замена раз в 1–2 года. Подземные склады, шахты, тоннели.">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--c:#1e3a8a;--cd:#1e3073;--cl:#eff6ff;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
@@ -28,7 +28,27 @@
   .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
   h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
   .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
-  .compare{background:var(--white)}
+
+  /* Architecture two-role cards */
+  .arch{background:var(--white)}
+  .arch-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:640px){.arch-grid{grid-template-columns:1fr}}
+  .arch-card{border:2px solid var(--border);border-radius:var(--radius);padding:28px}
+  .arch-card.relay{border-color:#f59e0b;background:#fffbeb}
+  .arch-card.lpn{border-color:var(--c);background:var(--cl)}
+  .arch-badge{display:inline-block;border-radius:6px;padding:3px 10px;font-size:.75rem;font-weight:700;margin-bottom:14px}
+  .badge-relay{background:#f59e0b;color:#fff}
+  .badge-lpn{background:var(--c);color:#fff}
+  .arch-card h3{font-size:1rem;font-weight:700;margin-bottom:12px}
+  .arch-card ul{display:flex;flex-direction:column;gap:9px}
+  .arch-card li{font-size:.9rem;color:var(--muted);padding-left:18px;position:relative;list-style:none}
+  .arch-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+  .arch-card.relay li::before{color:#d97706}
+  .battery-life{margin-top:16px;padding:14px;background:rgba(245,158,11,.1);border-radius:8px;border:1px solid rgba(245,158,11,.25)}
+  .battery-life p{font-size:.86rem;color:#92400e}
+  .battery-life strong{color:#7c2d12}
+
+  .compare{background:var(--bg)}
   .cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   @media(max-width:640px){.cmp-grid{grid-template-columns:1fr}}
   .cmp-card{border:2px solid var(--border);border-radius:var(--radius);padding:28px}
@@ -39,13 +59,15 @@
   .cmp-card li{font-size:.9rem;color:var(--muted);padding-left:18px;position:relative;list-style:none}
   .cmp-bad li::before{content:'✗';position:absolute;left:0;color:#ef4444}
   .cmp-good li::before{content:'✓';position:absolute;left:0;color:var(--c)}
-  .how{background:var(--bg)}
+
+  .how{background:var(--white)}
   .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
   .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
   .how-step:last-child{border-right:none}
   .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
   .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
   .how-step p{font-size:.84rem;color:var(--muted)}
+
   .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
   @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
   .terminal{background:#0c1a3a;border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
@@ -62,6 +84,7 @@
   .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
   .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
   .feat-text p{font-size:.84rem;color:var(--muted)}
+
   .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
   .sc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
   .sc-card .ico{font-size:2rem;margin-bottom:12px}
@@ -70,13 +93,15 @@
   .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
   .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
   .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+
   .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
   .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
   .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
   .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
   .spec-row:last-child{border-bottom:none}
   .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
-  .v.accent{color:var(--c)}.v.green{color:var(--green)}
+  .v.accent{color:var(--c)}.v.green{color:var(--green)}.v.warn{color:#d97706}
+
   .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
   .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
   .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
@@ -93,47 +118,84 @@
   <div class="nav-logo">DN·<span>Mesh</span></div>
   <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
 </nav>
+
 <section class="hero">
   <div class="hero-label">BLE Mesh · Без WiFi · Без кабелей · Self-healing</div>
   <h1>Покрытие там, где <span>WiFi нет и не будет</span></h1>
-  <p>DN·Mesh — сеть BLE-маячков, которые образуют покрытие без центральной точки доступа. Подземный склад, шахта, тоннель, многоуровневый паркинг: каждая метка передаёт трафик соседей. Один узел отключился — пакеты идут в обход. Сеть восстанавливается сама.</p>
+  <p>DN·Mesh — сеть BLE-узлов без WiFi и кабельной разводки. Relay-узлы на сменной батарее расставляются по тоннелю или шахте за один день. Конечные устройства на работниках — долгоживущие маячки. Один узел отключился — пакеты идут в обход. Сеть восстанавливается сама.</p>
   <div class="hero-btns">
     <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
     <a href="#sectors" class="btn-outline">По отраслям</a>
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><strong>0 кабелей</strong><span>к каждому узлу сети</span></div>
+    <div class="hero-stat"><strong>0 кабелей</strong><span>к каждому relay-узлу сети</span></div>
     <div class="hero-stat"><strong>Self-healing</strong><span>топология восстанавливается при потере узла</span></div>
     <div class="hero-stat"><strong>200+ м</strong><span>глубина покрытия без единой точки доступа</span></div>
-    <div class="hero-stat"><strong>20 лет</strong><span>батарея ретранслятора без обслуживания</span></div>
+    <div class="hero-stat"><strong>1–2 года</strong><span>батарея relay-узла, замена за 2 минуты</span></div>
+  </div>
+</section>
+
+<section class="arch">
+  <div class="section-label">Архитектура сети</div>
+  <h2>Два типа узлов — разные роли и срок батареи</h2>
+  <p class="subtitle">Relay-узел слушает эфир и ретранслирует пакеты — это десятки-сотни мкА. End-устройство только отправляет — пять мкА. Батарея на 20 лет только у конечных маячков.</p>
+  <div class="arch-grid">
+    <div class="arch-card relay">
+      <span class="arch-badge badge-relay">Relay-узел · инфраструктура</span>
+      <h3>Ретранслятор сети</h3>
+      <ul>
+        <li>Постоянное прослушивание эфира + ретрансляция</li>
+        <li>Ток потребления: 50–300 мкА в среднем</li>
+        <li>Монтаж: 1 дюбель, 5 минут</li>
+        <li>Расстановка с шагом 30–50 м вдоль выработки</li>
+        <li>Нет кабеля питания — только батарея</li>
+      </ul>
+      <div class="battery-life">
+        <p><strong>Батарея ER14505H-LD — сменная.</strong> При среднем токе 100–200 мкА: 1–2 года работы. Замена: открыть крышку корпуса, вставить новый элемент. Без инструментов, без настройки.</p>
+      </div>
+    </div>
+    <div class="arch-card lpn">
+      <span class="arch-badge badge-lpn">End-устройство · на работнике / активе</span>
+      <h3>Low Power Node (маяк)</h3>
+      <ul>
+        <li>Только отправляет пакеты, не ретранслирует</li>
+        <li>Ток потребления: 5 мкА (день), 1 мкА (ночь)</li>
+        <li>Данные уходят через ближайший relay-узел</li>
+        <li>Крепится к каске, жилету, технике, активу</li>
+        <li>Стандартный iBeacon-протокол</li>
+      </ul>
+      <div style="margin-top:16px;padding:14px;background:rgba(30,58,138,.08);border-radius:8px;border:1px solid rgba(30,58,138,.2)">
+        <p style="font-size:.86rem;color:#1e3a8a"><strong>Батарея ER14505H-LD — 15–20 лет</strong> без замены. Стандартная долгоживущая метка DN·Beacon.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="compare">
-  <div class="section-label">Традиционный подход vs DN·Mesh</div>
-  <h2>Почему WiFi не работает под землёй</h2>
-  <p class="subtitle">Развернуть WiFi в шахте или подземном складе — это кабельная трасса, герметичные коробы, ИБП на каждой точке доступа. DN·Mesh — просто вешаем метки.</p>
+  <div class="section-label">DN·Mesh vs WiFi в подземных объектах</div>
+  <h2>Почему WiFi сложно развернуть под землёй</h2>
+  <p class="subtitle">Развернуть WiFi в шахте — это кабельная трасса, герметичные коробы, постоянное питание к каждой точке доступа. DN·Mesh — узлы на батарее, установка за часы.</p>
   <div class="cmp-grid">
     <div class="cmp-card bad cmp-bad">
       <h3>WiFi в подземных пространствах</h3>
       <ul>
-        <li>Кабельная трасса к каждой точке доступа</li>
+        <li>Кабельная трасса питания к каждой AP</li>
         <li>Герметичные кабельные вводы и короба</li>
-        <li>ИБП для каждой точки (постоянное электропитание)</li>
+        <li>Постоянное электропитание 220В/48В PoE</li>
         <li>Одна сломанная AP — «мёртвая зона»</li>
-        <li>Полный монтаж 4–8 недель</li>
-        <li>Дорогостоящее обслуживание</li>
+        <li>Полный монтаж: 4–8 недель строительных работ</li>
+        <li>Обслуживание кабельной инфраструктуры</li>
       </ul>
     </div>
     <div class="cmp-card good cmp-good">
-      <h3>DN·Mesh — BLE Mesh</h3>
+      <h3>DN·Mesh — BLE Mesh на батарее</h3>
       <ul>
-        <li>Каждый узел — автономный, батарея 15–20 лет</li>
-        <li>Крепление — 1 дюбель, 5 минут на узел</li>
-        <li>Нет кабелей, нет постоянного питания</li>
-        <li>Один узел вышел — трафик идёт через соседей</li>
-        <li>Развёртывание сети 100 узлов — 1 день</li>
-        <li>Обслуживание — практически нулевое</li>
+        <li>Relay-узлы — только 1 дюбель, без кабелей</li>
+        <li>Нет строительных работ, нет кабельного ввода</li>
+        <li>Питание — сменная батарея, замена 1–2 раза в год</li>
+        <li>Один узел упал — трафик идёт через соседей</li>
+        <li>Развёртывание 100 узлов — 1 рабочий день</li>
+        <li>Обслуживание — плановая замена батарей</li>
       </ul>
     </div>
   </div>
@@ -144,20 +206,20 @@
   <h2>Как работает BLE Mesh</h2>
   <div class="how-grid">
     <div class="how-step">
-      <h3>Каждый узел — ретранслятор</h3>
-      <p>В режиме BLE Mesh nRF52832 одновременно слушает соседей и ретранслирует их пакеты. Узел не просто маяк — он полноценный участник сети с адресацией и маршрутизацией.</p>
+      <h3>Каждый relay-узел слушает и ретранслирует</h3>
+      <p>Relay-узел постоянно принимает BLE-пакеты от соседей и от end-устройств, и отправляет их дальше по цепочке. Нагрузка выше, чем у маяка — отсюда замена батареи раз в 1–2 года.</p>
     </div>
     <div class="how-step">
-      <h3>Пакет путешествует по графу</h3>
-      <p>Данные от метки в дальнем углу подземного склада передаются хоп за хопом через соседей к шлюзу у выхода. Сеть строит маршруты динамически, как интернет-роутер.</p>
+      <h3>Пакет путешествует по цепочке к шлюзу</h3>
+      <p>Данные от маяка работника на горизонте −160 м передаются хоп за хопом через relay-узлы до шлюза у выхода из шахты. Шлюз отдаёт трафик в интернет по LTE или Ethernet.</p>
     </div>
     <div class="how-step">
       <h3>Self-healing: узел упал — сеть перестроилась</h3>
-      <p>Если узел разрядился или повреждён, соседи замечают потерю связи и перестраивают маршрутную таблицу. Без участия оператора, за секунды.</p>
+      <p>Если relay-узел разрядился или повреждён, соседи перестраивают маршруты. Система автоматически уведомляет о разрядке батареи — плановая замена вместо аварийного простоя.</p>
     </div>
     <div class="how-step">
-      <h3>Шлюз у выхода → интернет</h3>
-      <p>Один шлюз с LTE/Ethernet у входа в тоннель собирает трафик всей сети. Ни один рабочий или актив глубоко под землёй не теряется из виду.</p>
+      <h3>Батарея relay-узла: уведомление заранее</h3>
+      <p>При заряде &lt;20% узел добавляет флаг в пакет — диспетчер видит «M-18: заменить батарею через ~1 месяц». Маршрут строится через соседей. Замена — 2 минуты, без настройки.</p>
     </div>
   </div>
 </section>
@@ -169,41 +231,42 @@
     <div>
       <div class="terminal">
         <div class="t-header">DN·Mesh · Шахта «Угольная» · Горизонт −240 м</div>
-        <div class="t-row"><span class="k">Узлов в сети</span><span class="v ok">48 / 50 ✓</span></div>
-        <div class="t-row"><span class="k">Узел M-31 (горизонт −180)</span><span class="v warn">⚠ Низкий уровень сигнала</span></div>
-        <div class="t-row"><span class="k">Трафик → через M-30 и M-32</span><span class="v ok">Маршрут перестроен ✓</span></div>
-        <div class="t-row"><span class="k">Персонал под землёй</span><span class="v">14 человек · 3 бригады</span></div>
-        <div class="t-row"><span class="k">Бригада А · горизонт −160</span><span class="v ok">Связь ✓</span></div>
-        <div class="t-row"><span class="k">Рабочий Ким В. (бригада Б)</span><span class="v warn">⚠ Нет движения 28 мин</span></div>
+        <div class="t-row"><span class="k">Relay-узлов онлайн</span><span class="v ok">47 / 50 ✓</span></div>
+        <div class="t-row"><span class="k">M-18 · горизонт −160</span><span class="v warn">⚡ Батарея 18% · ~3 нед.</span></div>
+        <div class="t-row"><span class="k">Трафик M-18</span><span class="v ok">Перенаправлен через M-17 ✓</span></div>
+        <div class="t-row"><span class="k">M-31 · горизонт −200</span><span class="v err">✗ Нет связи (разряд)</span></div>
+        <div class="t-row"><span class="k">Трафик M-31</span><span class="v ok">M-30 → M-32 · авторут ✓</span></div>
+        <div class="t-row"><span class="k">Маяки (end-узлы)</span><span class="v">14 работников онлайн</span></div>
+        <div class="t-row"><span class="k">Бригада А · горизонт −120</span><span class="v ok">Связь ✓</span></div>
         <div class="t-log">
-          <div class="tl-title">— События сети</div>
-          <div class="tl-row"><span class="tl-time">14:51</span><span class="tl-text" style="color:#fbbf24">M-31 связь ухудшилась → перемаршрутизация</span></div>
-          <div class="tl-row"><span class="tl-time">14:51</span><span class="tl-text" style="color:#34d399">M-30 принял трафик M-31 ✓</span></div>
-          <div class="tl-row"><span class="tl-time">14:22</span><span class="tl-text">Бригада В спустилась на −200 м</span></div>
+          <div class="tl-title">— Обслуживание батарей</div>
+          <div class="tl-row"><span class="tl-time">Сег.</span><span class="tl-text" style="color:#f87171">M-31 разряжен → замена назначена</span></div>
+          <div class="tl-row"><span class="tl-time">+3 нед</span><span class="tl-text" style="color:#fbbf24">M-18 предупреждение (18%)</span></div>
+          <div class="tl-row"><span class="tl-time">Сен.</span><span class="tl-text">M-07, M-12, M-19 плановая замена</span></div>
         </div>
       </div>
     </div>
     <div class="features">
-      <div class="feat"><div class="feat-ico">🗺️</div><div class="feat-text"><h3>Карта подземных горизонтов</h3><p>На схеме шахты или склада — каждый рабочий в реальном времени. Диспетчер видит бригады без голосовой связи.</p></div></div>
-      <div class="feat"><div class="feat-ico">🔄</div><div class="feat-text"><h3>Self-healing: нет «мёртвых зон»</h3><p>Если маршрут прерывается — сеть перестраивается автоматически. Оператор получает уведомление, что узел требует обслуживания, но данные не теряются.</p></div></div>
-      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Один шлюз на весь объект</h3><p>Достаточно одного выходного шлюза с LTE. Все узлы глубоко под землёй передают данные через mesh-цепочку к этому шлюзу.</p></div></div>
-      <div class="feat"><div class="feat-ico">⚡</div><div class="feat-text"><h3>Развёртывание за день</h3><p>100 узлов сети — это 100 дюбелей и 100 меток. Без кабеля, без строительных работ. Сеть конфигурируется автоматически после включения.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔋</div><div class="feat-text"><h3>Плановая замена вместо аварий</h3><p>Система предупреждает о разрядке за 3–4 недели. Обходчик меняет батарею по плану, а не в аварийном порядке. Замена — открыть крышку, вставить новый элемент ER14505H-LD, закрыть. Без настройки.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔄</div><div class="feat-text"><h3>Self-healing при любом сбое</h3><p>Разряженный, повреждённый, потерянный узел — сеть перестраивает маршруты через соседей автоматически. Персонал под землёй не теряет связи из-за одного севшего relay.</p></div></div>
+      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Один шлюз на весь объект</h3><p>Достаточно одного выходного шлюза с LTE у входа в тоннель. Все узлы глубоко под землёй передают данные через mesh-цепочку к этому шлюзу.</p></div></div>
+      <div class="feat"><div class="feat-ico">⚡</div><div class="feat-text"><h3>Развёртывание за день</h3><p>100 relay-узлов — это 100 дюбелей. Без кабеля, без строительных работ. Сеть самонастраивается после включения каждого узла.</p></div></div>
     </div>
   </div>
 </section>
 
-<section id="sectors">
+<section id="sectors" style="background:var(--bg);padding:72px 5%">
   <div class="section-label">Сценарии</div>
   <h2>Где работает DN·Mesh</h2>
   <div class="sc-grid">
-    <div class="sc-card"><div class="ico">⛏️</div><h3>Горнодобыча</h3><p>Связь с персоналом на глубине −200 м и ниже. Закон требует непрерывного контроля местонахождения людей в горных выработках.</p>
-    <ul><li>Трекинг бригад по горизонтам</li><li>Аварийный сигнал</li><li>Интеграция с man-down (DN·Man)</li></ul></div>
-    <div class="sc-card"><div class="ico">🏢</div><h3>Подземные склады</h3><p>Многоуровневые автоматизированные склады без WiFi. Паллеты, активы, персонал — всё под контролем без единого кабеля.</p>
-    <ul><li>Трекинг активов (DN·Asset)</li><li>Навигация персонала</li><li>Управление погрузчиками</li></ul></div>
-    <div class="sc-card"><div class="ico">🚇</div><h3>Тоннели и метро</h3><p>Контроль бригад техобслуживания в тоннелях. Плановые работы, ремонт — диспетчер всегда знает, где рабочие.</p>
+    <div class="sc-card"><div class="ico">⛏️</div><h3>Горнодобыча</h3><p>Связь с персоналом на глубине −200 м и ниже. Электрокабель в шахте есть, но тянуть питание к каждому relay — трудоёмко. DN·Mesh проще и дешевле.</p>
+    <ul><li>Трекинг бригад по горизонтам</li><li>Аварийный сигнал · интеграция с DN·Man</li><li>Плановая замена батарей relay раз в год</li></ul></div>
+    <div class="sc-card"><div class="ico">🏢</div><h3>Подземные склады</h3><p>Многоуровневые склады без WiFi. Relay-узлы расставляются вдоль стеллажных рядов за один день, данные о паллетах и персонале — в режиме реального времени.</p>
+    <ul><li>Трекинг активов совместно с DN·Asset</li><li>Навигация персонала</li><li>Замена батарей по расписанию ТО</li></ul></div>
+    <div class="sc-card"><div class="ico">🚇</div><h3>Тоннели и метро</h3><p>Контроль бригад техобслуживания в тоннелях. Relay-узлы вешаются на стены — батарею менять при плановом обходе.</p>
     <ul><li>Координата вдоль трассы</li><li>Аварийная кнопка</li><li>Интеграция с АСУТП</li></ul></div>
-    <div class="sc-card"><div class="ico">🅿️</div><h3>Многоуровневые парковки</h3><p>GPS не работает под землёй, WiFi дорог. DN·Mesh даёт покрытие на всех уровнях с минимальными затратами на инфраструктуру.</p>
-    <ul><li>Навигация к свободному месту</li><li>«Найти машину»</li><li>Охрана и видеонаблюдение</li></ul></div>
+    <div class="sc-card"><div class="ico">🅿️</div><h3>Многоуровневые парковки</h3><p>GPS не работает под землёй, WiFi дорог. DN·Mesh — relay-узлы на батарее на каждом пролёте, без кабельного монтажа.</p>
+    <ul><li>Навигация к свободному месту</li><li>«Найти машину»</li><li>Батареи relay меняются при обслуживании парковки</li></ul></div>
   </div>
 </section>
 
@@ -211,34 +274,39 @@
   <div class="section-label">Технические характеристики</div>
   <h2>Платформа DN·Mesh</h2>
   <div class="specs-grid">
-    <div class="spec-card"><h3>Сеть</h3>
+    <div class="spec-card"><h3>Relay-узел (ретранслятор)</h3>
       <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
       <div class="spec-row"><span class="k">Стандарт</span><span class="v green">Bluetooth Mesh 1.0</span></div>
-      <div class="spec-row"><span class="k">Топология</span><span class="v accent">Self-healing mesh</span></div>
-      <div class="spec-row"><span class="k">Макс. узлов</span><span class="v green">32 767 (спецификация)</span></div>
+      <div class="spec-row"><span class="k">Средний ток</span><span class="v warn">50–300 мкА</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v warn">ER14505H-LD · сменная</span></div>
+      <div class="spec-row"><span class="k">Срок батареи</span><span class="v warn">1–2 года</span></div>
+      <div class="spec-row"><span class="k">Замена</span><span class="v green">без инструментов · 2 мин</span></div>
     </div>
-    <div class="spec-card"><h3>Узел сети</h3>
-      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · 15–20 лет</span></div>
+    <div class="spec-card"><h3>End-устройство (маяк)</h3>
+      <div class="spec-row"><span class="k">Роль</span><span class="v accent">Low Power Node · только отправляет</span></div>
+      <div class="spec-row"><span class="k">Средний ток</span><span class="v green">5.2 мкА (день) / 1.1 мкА (ночь)</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · несменная</span></div>
+      <div class="spec-row"><span class="k">Срок батареи</span><span class="v green">15–20 лет</span></div>
+      <div class="spec-row"><span class="k">Протокол</span><span class="v green">iBeacon + BLE Mesh LPN</span></div>
+    </div>
+    <div class="spec-card"><h3>Корпус (оба типа)</h3>
       <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
       <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
-      <div class="spec-row"><span class="k">Монтаж</span><span class="v green">1 дюбель · 5 минут</span></div>
-    </div>
-    <div class="spec-card"><h3>Покрытие</h3>
+      <div class="spec-row"><span class="k">Монтаж relay</span><span class="v green">1 дюбель · 5 минут</span></div>
       <div class="spec-row"><span class="k">Межузловая дальность</span><span class="v green">до 70 м</span></div>
-      <div class="spec-row"><span class="k">Шлюзов на объект</span><span class="v accent">1</span></div>
-      <div class="spec-row"><span class="k">Шлюз</span><span class="v green">LTE / Ethernet</span></div>
     </div>
-    <div class="spec-card"><h3>Безопасность</h3>
-      <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 (CCM)</span></div>
-      <div class="spec-row"><span class="k">Аутентификация</span><span class="v green">по сети</span></div>
-      <div class="spec-row"><span class="k">Интеграция</span><span class="v green">DN·Man совместима</span></div>
+    <div class="spec-card"><h3>Сеть и шлюз</h3>
+      <div class="spec-row"><span class="k">Топология</span><span class="v accent">Self-healing mesh</span></div>
+      <div class="spec-row"><span class="k">Макс. relay-узлов</span><span class="v green">32 767 (спецификация)</span></div>
+      <div class="spec-row"><span class="k">Шлюз</span><span class="v green">1 · LTE / Ethernet</span></div>
+      <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 CCM</span></div>
     </div>
   </div>
 </section>
 
 <section class="cta-section">
-  <h2>Покрытие там, где WiFi невозможен</h2>
-  <p>Пришлите план объекта. Рассчитаем количество узлов, схему покрытия и стоимость развёртывания.</p>
+  <h2>Покрытие там, где WiFi невозможен — без кабельных работ</h2>
+  <p>Пришлите план объекта. Рассчитаем количество relay-узлов, схему покрытия, график замены батарей и стоимость развёртывания.</p>
   <div class="cta-btns">
     <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
     <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Mesh" class="btn-ow">Обсудить пилот</a>
