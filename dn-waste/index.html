@@ -81,6 +81,29 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.88rem}
+  th{background:var(--slate);color:#fff;padding:12px 16px;text-align:left;font-weight:600}
+  td{padding:11px 16px;border-bottom:1px solid var(--border);background:var(--white)}
+  tr:hover td{background:var(--cl)}
+  .hl td:first-child{font-weight:700;color:var(--c)}
+  .chk{color:#16a34a;font-weight:700}.crs{color:#ef4444}.mid{color:#d97706}
+  .norm-block{background:var(--cl);border:1px solid #bbf7d0;border-radius:12px;padding:28px;margin-top:32px}
+  .norm-block h3{font-size:.9rem;font-weight:700;color:var(--c);margin-bottom:12px}
+  .norm-block ul{display:flex;flex-direction:column;gap:8px}
+  .norm-block li{font-size:.85rem;color:var(--muted);padding-left:16px;position:relative;list-style:none}
+  .norm-block li::before{content:'§';position:absolute;left:0;color:var(--c);font-weight:700}
+  .eco-block{background:var(--slate);color:#fff;border-radius:12px;padding:32px;margin-top:32px}
+  .eco-block h3{color:#86efac;font-size:1rem;font-weight:700;margin-bottom:20px}
+  .eco-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.08);font-size:.88rem}
+  .eco-row:last-child{border-bottom:none}
+  .eco-row .ek{color:#94a3b8}.eco-row .ev{color:#f1f5f9;font-weight:700}
+  .eco-total{margin-top:16px;padding:14px;background:rgba(134,239,172,.1);border:1px solid rgba(134,239,172,.25);border-radius:8px;text-align:center;color:#86efac;font-weight:700;font-size:.95rem}
+  .mount-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:32px}
+  .mount-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:20px}
+  .mount-card h3{font-size:.88rem;font-weight:700;color:var(--slate);margin-bottom:8px}
+  .mount-card p{font-size:.82rem;color:var(--muted)}
+  .mount-card .tag{display:inline-block;background:var(--cl);color:var(--c);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px}
 </style>
 </head>
 <body>
@@ -261,6 +284,74 @@
       <div class="spec-row"><span class="k">Учётные системы</span><span class="v green">1С · SAP</span></div>
       <div class="spec-row"><span class="k">Алерты</span><span class="v green">Telegram · email · SMS</span></div>
     </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>DN·Waste vs альтернативы</h2>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Параметр</th><th class="hl">DN·Waste</th><th>GPS-мониторинг мусоровоза</th><th>RFID-чип на контейнере</th><th>Бумажный журнал</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>Факт касания манипулятора</td><td><span class="chk">✔ подтверждается</span></td><td><span class="crs">✘ маршрут, не событие</span></td><td><span class="chk">✔ подтверждается</span></td><td><span class="crs">✘ вручную</span></td></tr>
+        <tr><td>Работа без GSM / Wi-Fi</td><td><span class="chk">✔ BLE автономно</span></td><td><span class="crs">✘ нужен GSM</span></td><td><span class="chk">✔ считыватель локально</span></td><td><span class="chk">✔ бумага</span></td></tr>
+        <tr class="hl"><td>Замена батареи</td><td><span class="chk">✔ до 10 лет</span></td><td>—</td><td><span class="mid">~ 2–3 года</span></td><td>—</td></tr>
+        <tr><td>Цена метки/контейнер</td><td><span class="chk">~800 руб.</span></td><td><span class="crs">нет (всё в машине)</span></td><td><span class="mid">~1 500 руб.</span></td><td><span class="chk">0 руб.</span></td></tr>
+        <tr class="hl"><td>Интеграция с ГИС ЖКХ</td><td><span class="chk">✔ API Webhook</span></td><td><span class="mid">частично</span></td><td><span class="mid">частично</span></td><td><span class="crs">✘</span></td></tr>
+        <tr><td>Доказательная база 89-ФЗ</td><td><span class="chk">✔ лог + фото</span></td><td><span class="mid">только трек</span></td><td><span class="mid">только отметка</span></td><td><span class="crs">✘</span></td></tr>
+        <tr class="hl"><td>Защита от «приписок»</td><td><span class="chk">✔ AES-128, смена ID</span></td><td><span class="crs">✘ возможна правка</span></td><td><span class="mid">средняя</span></td><td><span class="crs">✘</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Типы контейнеров и способы монтажа</h2>
+  <div class="mount-grid">
+    <div class="mount-card">
+      <span class="tag">120/240 л</span>
+      <h3>Бытовые контейнеры ТКО</h3>
+      <p>Метка крепится на внутреннюю сторону крышки или ребро жёсткости сбоку. IP67 выдерживает мойку кузова, ударные нагрузки манипулятора. Дальность считывания: 30–50 см.</p>
+    </div>
+    <div class="mount-card">
+      <span class="tag">1 100 л</span>
+      <h3>Евроконтейнеры («бункеры»)</h3>
+      <p>Двойная метка — внутри и снаружи — для надёжного считывания при любой ориентации захвата. Подходит для раздельного сбора: каждая фракция имеет уникальный UUID.</p>
+    </div>
+    <div class="mount-card">
+      <span class="tag">8–32 м³</span>
+      <h3>Крупногабаритные бункеры</h3>
+      <p>Метка в защитном металлическом кожухе на боковой стенке. TxPower подбирается под расстояние захватного механизма конкретной модели КО-440, Faun, Zoeller.</p>
+    </div>
+    <div class="mount-card">
+      <span class="tag">подземные</span>
+      <h3>Заглублённые контейнеры</h3>
+      <p>Метка монтируется у уровня земли на шахту. Считыватель в кабине погрузчика активируется при подъезде. Интервал вещания сокращается до 0.1 с в момент подъёма.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Нормативная база</h2>
+  <div class="norm-block">
+    <h3>Законодательство, которое делает DN·Waste обязательным</h3>
+    <ul>
+      <li><strong>89-ФЗ «Об отходах производства и потребления»</strong> — региональные операторы обязаны подтверждать факт вывоза в государственных системах учёта.</li>
+      <li><strong>ПП РФ №2877 (ГИС ЖКХ)</strong> — данные о вывозе ТКО передаются в ФГИС ЖКХ. Интеграция через REST-webhook DN·Waste.</li>
+      <li><strong>ФККО (Федеральный классификационный каталог отходов)</strong> — раздельный сбор по UUID позволяет автоматически маркировать фракции по кодам ФККО.</li>
+      <li><strong>Приказ Минприроды №1028</strong> — электронный учёт движения отходов I–IV класса. DN·Waste формирует журнал для модуля ФГИС ОПВК.</li>
+      <li><strong>44-ФЗ / 223-ФЗ</strong> — тендерные закупки систем контроля ТКО. Вся документация, ТЗ и КП предоставляются по запросу.</li>
+    </ul>
+  </div>
+  <div class="eco-block">
+    <h3>Экономический эффект · пример: город 200 000 жителей</h3>
+    <div class="eco-row"><span class="ek">Количество контейнеров</span><span class="ev">8 000 шт.</span></div>
+    <div class="eco-row"><span class="ek">Мусоровозы в парке</span><span class="ev">40 ед.</span></div>
+    <div class="eco-row"><span class="ek">Стоимость меток и считывателей</span><span class="ev">~6,5 млн руб.</span></div>
+    <div class="eco-row"><span class="ek">Экономия на «серых» рейсах (15%)</span><span class="ev">~4,2 млн руб./год</span></div>
+    <div class="eco-row"><span class="ek">Снижение претензий жителей (штрафы)</span><span class="ev">~1,8 млн руб./год</span></div>
+    <div class="eco-row"><span class="ek">Оптимизация маршрутов (−12% топлива)</span><span class="ev">~2,1 млн руб./год</span></div>
+    <div class="eco-total">Срок окупаемости — 8–10 месяцев · ROI первого года &gt;120%</div>
   </div>
 </section>
 

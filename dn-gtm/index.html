@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Карта рынка DN·Beacon — Go-to-Market в России</title>
+<meta name="description" content="Стратегия выхода на рынок промышленной BLE-метки в России: АО ГЛОНАСС, ТКО/ФГИС УТКО, телематика Wialon, РНИС, промбезопасность. 9 треков, 5 lighthouse-контактов.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --c: #1e40af;
+    --cd: #1e3a8a;
+    --cl: #eff6ff;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --red: #991b1b;
+    --red-bg: #fef2f2;
+    --green: #166534;
+    --green-bg: #f0fdf4;
+    --violet: #6d28d9;
+    --violet-bg: #f5f3ff;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--c); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #93c5fd; }
+  .nav-back { color: #94a3b8; font-size: .85rem; transition: color .2s; }
+  .nav-back:hover { color: #fff; }
+  .nav-cta { background: var(--c); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; }
+  .nav-cta:hover { background: var(--cd); }
+
+  /* ── Hero ── */
+  .hero { background: linear-gradient(135deg, #060d24 0%, #1e3a8a 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(147,197,253,.1); color: #93c5fd; border: 1px solid rgba(147,197,253,.22); border-radius: 20px; padding: 4px 14px; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1.12; max-width: 860px; margin-bottom: 20px; }
+  .hero h1 span { color: #60a5fa; }
+  .hero-sub { font-size: 1.05rem; color: #94a3b8; max-width: 680px; margin-bottom: 48px; }
+
+  .tldr-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 52px; }
+  .tldr-card { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: var(--radius); padding: 22px; }
+  .tldr-badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 12px; }
+  .hot { background: rgba(251,191,36,.18); color: #fbbf24; }
+  .fast { background: rgba(52,211,153,.18); color: #34d399; }
+  .money { background: rgba(167,139,250,.18); color: #a78bfa; }
+  .tldr-card p { font-size: .88rem; color: #d1d5db; line-height: 1.65; }
+  .tldr-card strong { color: #fff; }
+
+  .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; border-top: 1px solid rgba(255,255,255,.1); padding-top: 36px; }
+  .hero-stat strong { display: block; font-size: 1.7rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .8rem; color: #94a3b8; }
+
+  /* ── Sections ── */
+  section { padding: 72px 5%; }
+  .sec-label { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--c); margin-bottom: 10px; }
+  h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; color: var(--slate); margin-bottom: 14px; }
+  .subtitle { font-size: 1rem; color: var(--muted); max-width: 660px; margin-bottom: 44px; }
+
+  /* ── Key Findings ── */
+  .findings { background: var(--white); }
+  .findings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; counter-reset: fc; }
+  .finding { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 22px 22px 18px; display: flex; gap: 14px; }
+  .finding::before { counter-increment: fc; content: counter(fc); display: flex; align-items: center; justify-content: center; min-width: 30px; height: 30px; background: var(--c); color: #fff; border-radius: 50%; font-size: .82rem; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .finding.urgent { border-left: 4px solid var(--amber); }
+  .finding h3 { font-size: .9rem; font-weight: 700; color: var(--slate); margin-bottom: 6px; }
+  .finding p { font-size: .84rem; color: var(--muted); line-height: 1.65; }
+
+  /* ── Priority ── */
+  .priority { background: var(--bg); }
+  .pr-list { display: grid; gap: 12px; }
+  .pr-row { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 14px; }
+  .pr-row:nth-child(1) { border-left: 4px solid #dc2626; }
+  .pr-row:nth-child(2) { border-left: 4px solid var(--amber); }
+  .pr-row:nth-child(3) { border-left: 4px solid #d97706; }
+  .pr-row:nth-child(4) { border-left: 4px solid var(--green); }
+  .pr-row:nth-child(5) { border-left: 4px solid var(--c); }
+  .pr-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; font-weight: 800; flex-shrink: 0; }
+  .pr-row:nth-child(1) .pr-num { background: #fef2f2; color: #dc2626; }
+  .pr-row:nth-child(2) .pr-num { background: var(--amber-bg); color: var(--amber); }
+  .pr-row:nth-child(3) .pr-num { background: #fffbeb; color: #d97706; }
+  .pr-row:nth-child(4) .pr-num { background: var(--green-bg); color: var(--green); }
+  .pr-row:nth-child(5) .pr-num { background: var(--cl); color: var(--c); }
+  .pr-body h3 { font-size: .92rem; font-weight: 700; color: var(--slate); margin-bottom: 3px; }
+  .pr-body p { font-size: .82rem; color: var(--muted); }
+  .pr-tag { font-size: .7rem; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; }
+  .tag-urgent { background: #fef2f2; color: #dc2626; }
+  .tag-high { background: var(--amber-bg); color: var(--amber); }
+  .tag-med { background: var(--cl); color: var(--c); }
+
+  /* ── Tracks ── */
+  .tracks { background: var(--white); }
+  .track-list { display: grid; gap: 20px; }
+  .track { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .track-head { padding: 18px 22px; display: flex; align-items: center; gap: 14px; }
+  .track-num { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 800; flex-shrink: 0; }
+  .ph { background: #fef2f2; color: #dc2626; }
+  .pmh { background: var(--amber-bg); color: var(--amber); }
+  .pm { background: var(--cl); color: var(--c); }
+  .pl { background: #f1f5f9; color: #64748b; }
+  .track-info { flex: 1; }
+  .track-title { font-size: .98rem; font-weight: 700; color: var(--slate); }
+  .track-title small { font-size: .78rem; color: var(--muted); font-weight: 400; display: block; margin-top: 1px; }
+  .prio-pill { font-size: .7rem; font-weight: 700; padding: 4px 10px; border-radius: 10px; white-space: nowrap; flex-shrink: 0; }
+  .prio-pill.ph { border-radius: 10px; }
+  .prio-pill.pmh { background: var(--amber-bg); color: var(--amber); border-radius: 10px; }
+  .prio-pill.pm { background: var(--cl); color: var(--c); border-radius: 10px; }
+  .prio-pill.pl { background: #f1f5f9; color: #64748b; border-radius: 10px; }
+  .track-body { padding: 0 22px 24px; border-top: 1px solid var(--border); }
+  .track-ctx { font-size: .88rem; color: var(--muted); margin: 16px 0 20px; line-height: 1.7; }
+  .track-ctx strong { color: var(--slate); }
+  .track-h { font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--c); margin-bottom: 10px; }
+  .addr-list { display: grid; gap: 8px; margin-bottom: 16px; }
+  .addr { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+  .addr .aname { font-size: .88rem; font-weight: 700; color: var(--slate); }
+  .addr .adesc { font-size: .82rem; color: var(--muted); margin-top: 2px; }
+  .addr .amodel { font-size: .75rem; font-weight: 600; color: var(--c); margin-top: 6px; }
+  .track-why { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; }
+  .track-why p { font-size: .85rem; color: var(--muted); line-height: 1.65; }
+  .track-why strong { color: var(--slate); }
+
+  /* ── Recommendations ── */
+  .recs { background: var(--bg); }
+  .stages { display: grid; gap: 20px; }
+  .stage { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px 26px 26px 30px; border-left: 4px solid var(--c); }
+  .stage.s0 { border-left-color: var(--green); }
+  .stage.s1 { border-left-color: var(--amber); }
+  .stage.s2 { border-left-color: var(--c); }
+  .stage.s3 { border-left-color: var(--violet); }
+  .stage-lbl { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 6px; }
+  .s0 .stage-lbl { color: var(--green); }
+  .s1 .stage-lbl { color: var(--amber); }
+  .s2 .stage-lbl { color: var(--c); }
+  .s3 .stage-lbl { color: var(--violet); }
+  .stage h3 { font-size: .98rem; font-weight: 700; color: var(--slate); margin-bottom: 10px; }
+  .stage p, .stage li { font-size: .88rem; color: var(--muted); line-height: 1.7; }
+  .stage ul { padding-left: 18px; margin-top: 8px; }
+  .stage li { margin-bottom: 5px; }
+  .stage strong { color: var(--slate); }
+  .benchmarks { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; margin-top: 20px; }
+  .benchmarks h3 { font-size: .98rem; font-weight: 700; color: var(--slate); margin-bottom: 14px; }
+  .bm-list { display: grid; gap: 8px; }
+  .bm { background: var(--bg); border-radius: 8px; padding: 11px 14px; font-size: .86rem; color: var(--muted); }
+  .bm strong { color: var(--slate); }
+
+  /* ── Caveats ── */
+  .caveats { background: var(--white); }
+  .caveat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; }
+  .caveat { background: var(--red-bg); border: 1px solid #fecaca; border-radius: var(--radius); padding: 20px; }
+  .caveat .ico { font-size: 1.4rem; margin-bottom: 10px; }
+  .caveat h3 { font-size: .88rem; font-weight: 700; color: #7f1d1d; margin-bottom: 8px; }
+  .caveat p { font-size: .83rem; color: #991b1b; line-height: 1.6; }
+  .caveat strong { color: #7f1d1d; }
+
+  /* ── CTA ── */
+  .cta-sect { background: linear-gradient(135deg, #0a0f2c 0%, var(--cd) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta-sect h2 { color: #fff; font-size: clamp(1.5rem, 3.5vw, 2.2rem); margin-bottom: 14px; }
+  .cta-sect p { color: rgba(255,255,255,.75); font-size: 1rem; max-width: 520px; margin: 0 auto 36px; }
+  .btn-white { background: #fff; color: var(--cd); padding: 14px 36px; border-radius: 8px; font-weight: 700; font-size: 1rem; display: inline-block; transition: opacity .2s; }
+  .btn-white:hover { opacity: .9; }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .84rem; }
+  footer strong { color: #fff; }
+  footer a { color: #7dd3fc; }
+
+  @media(max-width:640px) {
+    .track-head { flex-wrap: wrap; }
+    .pr-row { grid-template-columns: 40px 1fr; }
+    .pr-tag { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>GTM</span></div>
+  <a href="../index.html" class="nav-back">← Все решения</a>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Обсудить стратегию</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Go-to-Market · Россия · 2026</div>
+  <h1>Карта рынка<br><span>DN·Beacon</span></h1>
+  <p class="hero-sub">Куда продавать промышленную динамическую BLE-метку в России: 9 треков, 5 приоритетных lighthouse-контактов и поэтапная стратегия входа на рынок.</p>
+
+  <div class="tldr-grid">
+    <div class="tldr-card">
+      <div class="tldr-badge hot">Стратегически важно</div>
+      <p><strong>Самый тёплый адресат — АО «ГЛОНАСС»</strong>: с 01.09.2026 тестирует в Калуге BLE-метки у остановок при глушении ГЛОНАСС/GPS — полная валидация концепции на государственном уровне. Заходить как OEM-поставщик метки/технологии, а не как конкурент. Действовать немедленно — роль поставщика может занять другой игрок.</p>
+    </div>
+    <div class="tldr-card">
+      <div class="tldr-badge fast">3 быстрых трека</div>
+      <p><strong>ТКО + ФГИС УТКО</strong> — обязательная навигация с 01.09.2025 (ПП №293), доказанная боль приписок; <strong>интеграторы телематики</strong>, мигрирующие с уходящего Wialon (доля >40%, блокировка 01.01.2026) — OEM/бандл; <strong>операторы РНИС субъектов</strong> — тёплый госзаказчик, уже строит навигационные системы при РЭБ.</p>
+    </div>
+    <div class="tldr-card">
+      <div class="tldr-badge money">Деньги без продажи железа</div>
+      <p>Резидентство <strong>«Сколково»</strong>, гранты ФСИ («Старт-1», «Старт-2», «Развитие-СТ» — приём до 30.03.2026), реестры Минпромторга <strong>ЕРРРП/ТОРП</strong> под импортозамещение — одновременно финансирование R&D и «пропуск» в госзакупки.</p>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>>22 млрд ₽</strong><span>трансферты на ИТС агломераций 2020–2024</span></div>
+    <div class="hero-stat"><strong>~23 тыс. ТС</strong><span>мусоровозов под ПП №293 / ФГИС УТКО</span></div>
+    <div class="hero-stat"><strong>>40%</strong><span>доля рынка Wialon, покидающего РФ</span></div>
+    <div class="hero-stat"><strong>01.09.2026</strong><span>старт пилота АО «ГЛОНАСС» в Калуге</span></div>
+  </div>
+</section>
+
+<!-- KEY FINDINGS -->
+<section class="findings">
+  <div class="sec-label">Анализ рынка</div>
+  <h2>Ключевые выводы</h2>
+  <p class="subtitle">Рыночные факторы, открывающие окно для промышленной BLE-метки прямо сейчас.</p>
+  <div class="findings-grid">
+    <div class="finding urgent">
+      <div class="body">
+        <h3>Рыночное окно открыто регуляторикой и геополитикой</h3>
+        <p>Массовое глушение ГЛОНАСС/GPS средствами РЭБ в городах России (активно с 2024 г.) ломает мониторинг транспорта, зачёт проездов, «Платон», РНИС/ОССИГ. Появился явный спрос на локальное позиционирование без спутника — ровно то, что делает DN·Beacon.</p>
+      </div>
+    </div>
+    <div class="finding urgent">
+      <div class="body">
+        <h3>Концепция подтверждена крупнейшим отраслевым игроком</h3>
+        <p>АО «ГЛОНАСС» строит идентичную по логике систему (автономные метки у остановок + идентификаторы на ТС, работа при РЭБ, российские компоненты и шифрование). Это снимает вопрос «а нужно ли это рынку» и задаёт роль поставщика/партнёра.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="body">
+        <h3>Уход Wialon создаёт окно для OEM-бандла</h3>
+        <p>Wialon (Gurtam) — абсолютный лидер рынка ПО для транспортной телематики с долей >40%; финальная блокировка объектов в РФ намечена на 1 января 2026 г. Сотни интеграторов ищут чем дополнить/заменить платформу. BLE-якорь — готовая «фича-отстройка» в OEM-бандле.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="body">
+        <h3>ТКО — самый «горячий» и обязательный рынок</h3>
+        <p>ПП РФ №293 требует навигацию на всех мусоровозах и передачу данных во ФГИС УТКО. ~23 тыс. ТС, из них >15 тыс. мусоровозов; на 15.05.2026 к онлайн-мониторингу подключено 19 000 мусоровозов (РЭО). Приписки вывоза — доказанная боль, «метка на контейнере + считыватель на манипуляторе» бьёт точно в неё.</p>
+      </div>
+    </div>
+    <div class="finding">
+      <div class="body">
+        <h3>ИТС/АСУДД агломераций — крупные бюджеты</h3>
+        <p>По данным Росавтодора, с 2020 по 2024 гг. регионы получили межбюджетные трансферты на ИТС суммарно >22 млрд ₽; ИТС применяются в 56 регионах и 64 агломерациях (>44 млн чел.). Контракты — 154–541 млн ₽ на агломерацию. Долгий цикл, вход через подрядчиков и ГКУ.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIGHTHOUSE PRIORITY -->
+<section class="priority">
+  <div class="sec-label">С кого начать</div>
+  <h2>Сводная приоритизация: 5 lighthouse-контактов</h2>
+  <p class="subtitle">Первые контакты с максимальным ROI на начальном этапе. Ресурсы концентрировать именно здесь.</p>
+  <div class="pr-list">
+    <div class="pr-row">
+      <div class="pr-num">1</div>
+      <div class="pr-body">
+        <h3>АО «ГЛОНАСС» — направление «Единая система идентификации автономного транспорта» (С. Кукарев)</h3>
+        <p>Пилот в Калуге с 01.09.2026 — идентичная концепция уже работает. Стратегический OEM/партнёрский вход. Наивысшая срочность: они могут выбрать другого поставщика метки.</p>
+      </div>
+      <span class="pr-tag tag-urgent">Срочно</span>
+    </div>
+    <div class="pr-row">
+      <div class="pr-num">2</div>
+      <div class="pr-body">
+        <h3>Региональный оператор ТКО + интегратор (Ситиматик/МСК-НТ + Globars/Axenta)</h3>
+        <p>Самый быстрый доказуемый ROI-пилот под ПП №293. «Метка на контейнере» — измеримое снижение приписок за 2–4 недели.</p>
+      </div>
+      <span class="pr-tag tag-high">Высокий</span>
+    </div>
+    <div class="pr-row">
+      <div class="pr-num">3</div>
+      <div class="pr-body">
+        <h3>Телематический вендор OEM-бандл (ГдеМои «ГМ Телематика» или Omnicomm)</h3>
+        <p>Мультипликатор через сотни интеграторов. Использует окно ухода Wialon (блокировка 01.01.2026). Модель: OEM/бандл.</p>
+      </div>
+      <span class="pr-tag tag-high">Высокий</span>
+    </div>
+    <div class="pr-row">
+      <div class="pr-num">4</div>
+      <div class="pr-body">
+        <h3>Оператор РНИС / РНИЦ субъекта (через СпейсТим)</h3>
+        <p>Тёплый госзаказчик, пилот на маршрутах при РЭБ, путь к тендеру РНИС. СпейсТим — разработчик «РНИС-Интеграция», техсопровождение ряда регионов.</p>
+      </div>
+      <span class="pr-tag tag-med">Средний</span>
+    </div>
+    <div class="pr-row">
+      <div class="pr-num">5</div>
+      <div class="pr-body">
+        <h3>Промбезопасность/склад: «Навигационные решения» или WMS-интегратор (Axelot/LogistiX)</h3>
+        <p>Высокомаржинальный кейс на AoA-точности 10–30 см. Законодательные требования к позиционированию персонала в шахтах и на складах.</p>
+      </div>
+      <span class="pr-tag tag-med">Средний</span>
+    </div>
+  </div>
+</section>
+
+<!-- TRACKS -->
+<section class="tracks">
+  <div class="sec-label">Детальный анализ</div>
+  <h2>9 треков выхода на рынок</h2>
+  <p class="subtitle">Конкретные адресаты, модели входа и обоснование приоритета по каждому направлению.</p>
+  <div class="track-list">
+
+    <!-- Track 1 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num pmh">1</div>
+        <div class="track-info">
+          <div class="track-title">Интеграторы телематики и GPS/ГЛОНАСС-мониторинга
+            <small>OEM/бандл — мультипликатор, быстрый вход</small>
+          </div>
+        </div>
+        <span class="prio-pill pmh">Приоритет высокий</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx"><strong>Контекст:</strong> Wialon (Gurtam), лидер рынка с долей >40%, уходит из РФ — финальная блокировка объектов 1 января 2026 г. Его партнёрская сеть (сотни интеграторов) мигрирует на отечественные платформы. Идеальный момент предложить BLE-якорь как отличительную фичу в OEM-бандле.</p>
+        <div class="track-h">Конкретные адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">ГдеМои / платформа «ГМ Телематика»</div>
+            <div class="adesc">Позиционируются как российская альтернатива Wialon, есть партнёрская программа PaaS/On-Premise. Прямой кандидат на встраивание BLE-якоря в платформу.</div>
+            <div class="amodel">Модель: OEM/технологическое партнёрство</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Omnicomm</div>
+            <div class="adesc">Собственное ПО Omnicomm Online, поддержка чужих терминалов (GalileoSky, Форт-Телеком, Teltonika), сильная тема контроля топлива.</div>
+            <div class="amodel">Модель: OEM-бандл + пилот на контроле топлива/парковке техники</div>
+          </div>
+          <div class="addr">
+            <div class="aname">ГК СКАУТ</div>
+            <div class="adesc">Производитель собственных трекеров/датчиков, партнёрская сеть по регионам.</div>
+            <div class="amodel">Модель: бандл «трекер СКАУТ + BLE-якорь», продажа через дилеров</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Форт-Телеком, Навтелеком, GalileoSky, Вега-Абсолют</div>
+            <div class="adesc">Вендоры трекеров с уже заявленной совместимостью с DN·Beacon.</div>
+            <div class="amodel">Модель: сертификация совместимости + совместные решения</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Виалон-Сервис, Montrans, Axenta, Globars</div>
+            <div class="adesc">Крупные интеграторы/операторы, обслуживающие автопарки и ТКО. Обслуживают клиентов, которым нужен BLE-якорь.</div>
+            <div class="amodel">Модель: партнёрская перепродажа + пилоты у их клиентов</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> у них есть каналы, автопарки-клиенты и потребность в отстройке; вам нужен мультипликатор, а не прямые продажи по одной метке. Цель — OEM/бандл-соглашение, дающее доступ к сотням клиентов партнёра.</p></div>
+      </div>
+    </div>
+
+    <!-- Track 2 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num ph">2</div>
+        <div class="track-info">
+          <div class="track-title">РНИС / Общественный транспорт / БНСО
+            <small>Тёплый трек — госзаказчик при РЭБ</small>
+          </div>
+        </div>
+        <span class="prio-pill ph">Приоритет высокий</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx"><strong>Ключевой адресат — АО «ГЛОНАСС»</strong> (направление «Единая система идентификации автономного транспорта», рук. Сергей Кукарев). Уже строит систему меток у остановок при РЭБ. Пилот оформлен соглашением между Минцифры Калужской области, АО «ГЛОНАСС», ГБУ КО «Калугаинформтех» и ООО «Сфера Телематики». С <strong>01.09.2026</strong> система тестируется на трёх троллейбусных маршрутах Калуги, далее — коммунальная техника и экстренные службы. Метки автономны, не требуют внешнего питания, рассчитаны на 5 лет; производство — российские компоненты, ПО, алгоритмы шифрования. <strong>Это ваш самый стратегический контакт — но и главный конкурент.</strong></p>
+        <div class="track-h">Конкретные адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">АО «ГЛОНАСС»</div>
+            <div class="adesc">Направление «Единая система идентификации автономного транспорта». Одновременно валидация рынка и стратегический партнёр/конкурент.</div>
+            <div class="amodel">Модель: OEM-поставка метки/резолв-технологии, лицензирование, субпоставщик</div>
+          </div>
+          <div class="addr">
+            <div class="aname">СпейсТим (SpaceTeam)</div>
+            <div class="adesc">Разработчик «РНИС-Интеграция», техсопровождение РНИС ряда регионов (Смоленская обл. — подключён весь транспорт региона).</div>
+            <div class="amodel">Модель: встраивание позиционирования в РНИС, партнёрство</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Региональные навигационно-информационные центры (РНИЦ)</div>
+            <div class="adesc">ГКУ/ГАУ субъектов: АО «РНИЦ по Ленинградской области», ГКУ «ЦОБДД Московской области», ГКУ ЦОДД (Москва), ГКУ Саратовской обл. «РНИЦ».</div>
+            <div class="amodel">Модель: пилот + госзакупка</div>
+          </div>
+          <div class="addr">
+            <div class="aname">ГУП «Мосгортранс» и региональные ГУП/МУП</div>
+            <div class="adesc">Проблема зачёта проездов и идентификации остановок при глушении — прямая боль.</div>
+            <div class="amodel">Модель: пилот на 1–3 маршрутах</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> заказчик уже строит навигационную систему и уже столкнулся с РЭБ; у вас — готовое решение. Цель: пилот → тендер, либо OEM через АО «ГЛОНАСС»/СпейсТим.</p></div>
+      </div>
+    </div>
+
+    <!-- Track 3 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num ph">3</div>
+        <div class="track-info">
+          <div class="track-title">ЖКХ / ТКО — обязательная регуляторика
+            <small>Доказательная боль + ПП №293</small>
+          </div>
+        </div>
+        <span class="prio-pill ph">Приоритет высокий</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx"><strong>Регуляторный драйвер:</strong> ПП РФ №293 — с 01.09.2025 транспортирование ТКО без ГЛОНАСС запрещено, данные обязательно передаются во <strong>ФГИС УТКО</strong> (оператор — ППК РЭО) и в региональные ГИС. В обороте ТКО ~23 тыс. ТС (>15 тыс. мусоровозов); на 15.05.2026 к онлайн-мониторингу подключено 19 000 мусоровозов. Приписки вывоза — доказанная боль. В Приморье уже установлено 12,5 тыс. RFID-меток на контейнерах — BLE даёт больший радиус и защищённый динамический ID.</p>
+        <div class="track-h">Конкретные адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">Региональные операторы ТКО</div>
+            <div class="adesc">«МСК-НТ» (Москва/Тульская/Нижегородская обл.), «Ситиматик» (в т.ч. «Ситиматик Чувашия»), региональные САХ.</div>
+            <div class="amodel">Модель: пилот «метка на контейнере + считыватель на мусоровозе» → тираж</div>
+          </div>
+          <div class="addr">
+            <div class="aname">ППК «Российский экологический оператор» (РЭО)</div>
+            <div class="adesc">Федеральный оператор ФГИС УТКО. Вход для стандартизации и масштабирования по всей стране.</div>
+            <div class="amodel">Модель: эндорсмент/пилот</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Интеграторы контроля ТКО: Globars, Axenta, «Форпост» (fpst.ru), sputnic.tech</div>
+            <div class="adesc">Уже продают GPS-контроль мусоровозов под ПП №293. BLE-метка — дополнительная ценность: факт выгрузки конкретного контейнера, а не только координата площадки.</div>
+            <div class="amodel">Модель: OEM-дополнение к их существующему продукту</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> регуляторика обязывает, боль измерима (приписки — деньги), спутник у контейнерной площадки часто недостаточен или глушится. Цель: пилот у регоператора → тираж через интегратора.</p></div>
+      </div>
+    </div>
+
+    <!-- Track 4 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num pm">4</div>
+        <div class="track-info">
+          <div class="track-title">Дорожная отрасль и АСУДД (V2I, дорожная техника, знаки)
+            <small>Крупные бюджеты, длинный цикл</small>
+          </div>
+        </div>
+        <span class="prio-pill pm">Приоритет средний</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx">По данным Росавтодора, с 2020 по 2024 гг. регионы получили межбюджетные трансферты на ИТС >22 млрд ₽; ИТС применяются в 56 регионах и 64 агломерациях. Отдельные контракты — 154–541 млн ₽ на агломерацию. Применение DN·Beacon: якоря на дорожной технике (учёт работы при глушении), у знаков/ремонтных зон (V2I-телеметрия).</p>
+        <div class="track-h">Конкретные адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">Концерн «Телематика», СМАРТС (V2X), Ситроникс/подрядчики ИТС</div>
+            <div class="adesc">Игроки рынка V2X/умных дорог, участвующие в тендерах агломерационных ИТС.</div>
+            <div class="amodel">Модель: субпоставка в проект, тендер</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Заказчики агломерационных ИТС</div>
+            <div class="adesc">Комитет дорожного хозяйства Челябинска (НМЦК 541,3 млн ₽), ЦОБДД Чувашии (154,6 млн ₽), ГКУ Саратовской обл. «РНИЦ», МКУ «Цифра.Фт» (ФТ «Сириус»).</div>
+            <div class="amodel">Модель: участие в тендере через подрядчика/проектировщика</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> большие бюджеты нацпроекта «Инфраструктура для жизни», потребность в позиционировании техники при РЭБ. Но цикл продаж долгий — вход только через подрядчиков/проектировщиков. <strong>Не первый приоритет на старте.</strong></p></div>
+      </div>
+    </div>
+
+    <!-- Track 5 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num pmh">5</div>
+        <div class="track-info">
+          <div class="track-title">Складская логистика, WMS, промышленная безопасность (BLE AoA)
+            <small>Высокая маржа, регуляторные требования</small>
+          </div>
+        </div>
+        <span class="prio-pill pmh">Приоритет средний-высокий</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx">Точность BLE AoA 10–30 см — уникальное конкурентное преимущество. Два подрынка: <strong>WMS</strong> (позиционирование персонала/техники/тары на складе) и <strong>промышленная безопасность</strong> (законодательные требования к позиционированию в шахтах — погрешность ≤2 м).</p>
+        <div class="track-h">Конкретные адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">WMS-интеграторы: Axelot (WMS X5), LogistiX (LEAD WMS), «Первый Бит» (BIT WMS), Клеверенс (Склад 15)</div>
+            <div class="adesc">Лидеры рынка WMS в России. Позиционирование персонала/тары — недостающая функция, которую дополняет BLE AoA.</div>
+            <div class="amodel">Модель: OEM для задач позиционирования</div>
+          </div>
+          <div class="addr">
+            <div class="aname">«Навигационные решения» (nvgn.ru)</div>
+            <div class="adesc">BLE-позиционирование на обогатительных фабриках/металлургии. Прямой конкурент и потенциальный партнёр.</div>
+            <div class="amodel">Модель: пилот на 1 объекте (man-down/эвакуация)</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Горнодобыча и металлургия</div>
+            <div class="adesc">Законодательные требования к позиционированию персонала в шахтах и обнаружению под завалом. Заказчики: металлургия, золотодобыча.</div>
+            <div class="amodel">Модель: пилот на 1 объекте (МФСБ/DN·Man + DN·Evac)</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> высокая маржа, чёткие регуляторные требования, точность AoA — ваше конкурентное преимущество. Цель: OEM через WMS/МФСБ-интегратора + пилот на высокомаржинальном кейсе.</p></div>
+      </div>
+    </div>
+
+    <!-- Track 6 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num pm">6</div>
+        <div class="track-info">
+          <div class="track-title">Паркинги, каршеринг, топливо/АЗС
+            <small>Доказанная боль GPS-глушения</small>
+          </div>
+        </div>
+        <span class="prio-pill pm">Приоритет средний</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx">Признанная боль: «в определённых зонах Москвы отсутствует связь как со спутниками, так и с сотовыми операторами» (Parkomatica) — авто-старт парковочной сессии срывается. BLE-метка = точка привязки зоны. Каршеринг: проблема завершения аренды в зонах без сигнала/на подземных парковках.</p>
+        <div class="track-h">Конкретные адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">ГКУ «АМПП» (Москва, «Московский паркинг»), Parkomatica</div>
+            <div class="adesc">Боль прямо признана оператором. Авто-старт сессии в зонах РЭБ — прямой кейс для BLE-метки у парковочной зоны.</div>
+            <div class="amodel">Модель: пилот с оператором авто-парковки</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Каршеринг: Яндекс Драйв (>16,9 тыс. машин), Ситидрайв, Делимобиль, Белка</div>
+            <div class="adesc">Завершение аренды и определение зоны парковки в подземных паркингах без сотовой связи.</div>
+            <div class="amodel">Модель: пилот на определение зоны парковки / подземный паркинг</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Топливо/АЗС через телематических вендоров (Omnicomm, «Технотон», «Эскорт»)</div>
+            <div class="adesc">Контроль топлива с интеграцией в 1С — идёт через тех же телематических партнёров.</div>
+            <div class="amodel">Модель: бандл с контролем топлива (DN·Fuel)</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> боль существует и признана публично, но у игроков каршеринга сильные incumbent-команды. Реалистичная первая цель — пилот у паркинг-оператора или через телематического партнёра.</p></div>
+      </div>
+    </div>
+
+    <!-- Track 7 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num pl">7</div>
+        <div class="track-info">
+          <div class="track-title">Платформы и экосистема (Яндекс, 2GIS, операторы связи)
+            <small>Эндорсмент, долгий цикл</small>
+          </div>
+        </div>
+        <span class="prio-pill pl">Приоритет низкий-средний</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx">Яндекс «Локатор» (геолокация без GPS по Wi-Fi/сотам, база >50 млн Wi-Fi-точек в РФ) — смежная технология, возможна интеграция BLE-якорей как источника. Яндекс Карты (indoor), 2GIS (indoor), операторы связи (МТС, билайн, МегаФон — LBS-сервисы), Ростелеком (IIoT).</p>
+        <div class="track-h">Адресаты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">Яндекс (Локатор, Карты, Такси/Доставка/Драйв)</div>
+            <div class="adesc">Заходить через Yandex Cloud/партнёрские программы и «Яндекс для стартапов». Реалистичная цель — эндорсмент или включение в маркетплейс решений.</div>
+            <div class="amodel">Модель: технологическое партнёрство/эндорсмент</div>
+          </div>
+          <div class="addr">
+            <div class="aname">2GIS, МТС, Мегафон, Ростелеком IIoT</div>
+            <div class="adesc">Аналогичная стратегия — не быстрый доход, а видимость и канал.</div>
+            <div class="amodel">Модель: эндорсмент, пилот, маркетплейс</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Осторожно:</strong> гиганты чаще строят своё. Реалистичная цель — эндорсмент, пилот или включение в маркетплейс, а не быстрый доход. <strong>Не распылять ресурсы на этом треке на старте.</strong></p></div>
+      </div>
+    </div>
+
+    <!-- Track 8 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num ph">8</div>
+        <div class="track-info">
+          <div class="track-title">Гранты, фонды, институты развития и выставки
+            <small>Деньги + видимость + пропуск в госзакупки</small>
+          </div>
+        </div>
+        <span class="prio-pill ph">Приоритет высокий</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx">Этот трек идёт параллельно с коммерческими треками. Инструменты финансирования и доступа к рынку, которые не требуют продажи железа прямо сейчас.</p>
+        <div class="track-h">Инструменты</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">Фонд «Сколково» — статус резидента</div>
+            <div class="adesc">Кластер ИТ/промтех, гранты и налоговые льготы, пилоты с корпорациями. ЦК НТИ на базе Сколтеха по беспроводной связи и IoT — профильно для BLE-железа.</div>
+            <div class="amodel">Действие: подать заявку на резидентство</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Фонд содействия инновациям (ФСИ)</div>
+            <div class="adesc">«Старт-1» (до 5 млн ₽), «Старт-2» (до 10 млн ₽, sofin. ≥30%), «Развитие-СТ» (до 18 млн ₽ на оборудование/сертификацию/лизинг, приём заявок — до 30.03.2026). Высокий TRL (промышленный образец) — хорошо ложится в «Развитие». С 2025 г. ФСИ отдаёт приоритет проектам под нацпроекты технологического лидерства.</div>
+            <div class="amodel">Действие: подать «Развитие-СТ» до 30.03.2026</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Фонд развития промышленности (ФРП)</div>
+            <div class="adesc">Льготные займы под производство партий (импортозамещение электроники).</div>
+            <div class="amodel">Действие: проработать условия для серийного производства</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Реестры Минпромторга (ЕРРРП/ТОРП, ПП №719)</div>
+            <div class="adesc">«Пропуск» в приоритет госзакупок. Учесть ужесточение 2026 г.: перечень критической промышленной продукции от 11.08.2026 — вопросы к «отечественной электронике с импортной начинкой» (чип Nordic — импортный).</div>
+            <div class="amodel">Действие: начать процедуру + проработать позиционирование (российское ПО/шифрование/сборка в РФ)</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Выставки и форумы</div>
+            <div class="adesc">«Транспортная неделя» / Transport of Russia (Минтранс), ЦИПР, форумы ЖКХ/ТКО, ИТС-конференции, форум «Цифровая эволюция» (где подписано калужское соглашение).</div>
+            <div class="amodel">Действие: демо lighthouse-кейса, нетворкинг с ГКУ и регоператорами</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Почему подходит:</strong> финансирование R&D без продажи железа + пропуск в госзакупки через реестры. Этот трек запускать параллельно с треками 1–3, не откладывая.</p></div>
+      </div>
+    </div>
+
+    <!-- Track 9 -->
+    <div class="track">
+      <div class="track-head">
+        <div class="track-num pm">9</div>
+        <div class="track-info">
+          <div class="track-title">Открытые тендеры и госзакупки — характер и объём спроса
+            <small>Справочно: примеры закупок</small>
+          </div>
+        </div>
+        <span class="prio-pill pm">Справочно</span>
+      </div>
+      <div class="track-body">
+        <p class="track-ctx">Спрос устойчивый по трём направлениям — ИТС агломераций (крупные контракты), РНИС/БНСО субъектов (регулярные закупки) и ТКО (новый обязательный рынок). Прямое участие в тендере требует наличия в реестрах Минпромторга и опыта работы по 44-ФЗ/223-ФЗ.</p>
+        <div class="track-h">Примеры конкретных закупок</div>
+        <div class="addr-list">
+          <div class="addr">
+            <div class="aname">ИТС/АСУДД агломераций</div>
+            <div class="adesc">Челябинск (НМЦК 541,3 млн ₽, аукцион 09.2026, 169 светофоров); Чебоксары (154,6 млн ₽); Пермь (ЕПУТС/ИТС, 508,3 млн ₽); Орёл (~239 млн ₽); ФТ «Сириус» (5,7 млн ₽).</div>
+            <div class="amodel">Вход: через подрядчика/интегратора ИТС</div>
+          </div>
+          <div class="addr">
+            <div class="aname">РНИС/БНСО субъектов</div>
+            <div class="adesc">Ленинградская обл. (БНСО, 2025); Смоленская обл. (СОГАУ ЦИТ, исполнитель СпейсТим); Кабардино-Балкария (ГКУ «Безопасный город», 216 ₽/мес за ТС).</div>
+            <div class="amodel">Вход: через РНИЦ или СпейсТим</div>
+          </div>
+          <div class="addr">
+            <div class="aname">ТКО</div>
+            <div class="adesc">«Ситиматик Чувашия» (18 лотов на транспортирование ТКО с обязательной ГЛОНАСС-навигацией и ФГИС УТКО); Башкортостан (Минэкологии, ГИС «ТКО-Башкортостан»); Тверская обл. (мусоровозы с ГЛОНАСС).</div>
+            <div class="amodel">Вход: через интегратора ТКО (Globars, Axenta)</div>
+          </div>
+          <div class="addr">
+            <div class="aname">Смежное</div>
+            <div class="adesc">ГУП «Мосгортранс» — мониторинг состояния водителей, НМЦК ~1,97 млрд ₽ (06.2026).</div>
+            <div class="amodel">Контекст для переговоров с Мосгортрансом</div>
+          </div>
+        </div>
+        <div class="track-why"><p><strong>Примечание:</strong> цены/НМЦК взяты преимущественно из СМИ и региональных источников — перед участием сверять карточки на zakupki.gov.ru. Госканал (РНИС/ИТС/ТКО) — длинные циклы и 44-ФЗ/223-ФЗ: пилот часто требует бесплатного/льготного входа.</p></div>
+      </div>
+    </div>
+
+  </div><!-- /track-list -->
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section class="recs">
+  <div class="sec-label">Стратегия</div>
+  <h2>Поэтапные рекомендации</h2>
+  <p class="subtitle">Последовательность действий от получения «пропуска» до масштабирования через мультипликаторов.</p>
+  <div class="stages">
+    <div class="stage s0">
+      <div class="stage-lbl">Этап 0 · 0–2 месяца</div>
+      <h3>Статус и «пропуск»</h3>
+      <ul>
+        <li>Подать на резидентство «Сколково» (кластер ИТ/промтех) — финансирование + доступ к корпоративным пилотам.</li>
+        <li>Подать грант ФСИ <strong>«Развитие-СТ»</strong> до 30.03.2026 (до 18 млн ₽) или «Старт-2» — R&D и оборудование.</li>
+        <li>Начать процедуру включения в реестры Минпромторга (ЕРРРП/ТОРП) — «пропуск» в приоритет госзакупок.</li>
+        <li>Порог смены решения: если из-за импортного чипа Nordic не проходите в реестр — заранее прорабатывать план локализации ЭКБ или позиционирование как «российское ПО/шифрование + сборка в РФ».</li>
+      </ul>
+    </div>
+    <div class="stage s1">
+      <div class="stage-lbl">Этап 1 · 0–4 месяца</div>
+      <h3>3–5 lighthouse-контактов (из приоритизации выше)</h3>
+      <ul>
+        <li><strong>АО «ГЛОНАСС»</strong> — выйти на контакт с направлением «Единая система идентификации автономного транспорта» (С. Кукарев). Предложить OEM-поставку метки/технологии для масштабирования калужского пилота.</li>
+        <li><strong>Региональный оператор ТКО</strong> (Ситиматик или МСК-НТ) + интегратор (Globars/Axenta) — запустить пилот «метка на контейнере + считыватель на манипуляторе». Срок: 2–4 недели от подписания.</li>
+        <li><strong>Телематический вендор</strong> (ГдеМои или Omnicomm) — предложить OEM-бандл, использовать окно ухода Wialon (блокировка 01.01.2026).</li>
+      </ul>
+    </div>
+    <div class="stage s2">
+      <div class="stage-lbl">Этап 2 · 4–9 месяцев</div>
+      <h3>Масштабирование через мультипликаторов</h3>
+      <ul>
+        <li>Подписать 1–2 OEM-соглашения с телематическими вендорами (ГдеМои/Omnicomm/СКАУТ) и 1 интегратором ТКО.</li>
+        <li>Выйти на «Транспортную неделю» / ЦИПР с готовым кейсом (измеримые результаты пилота ТКО).</li>
+        <li>Начать переговоры с РНИЦ субъектов и СпейсТим — подготовка к тендеру РНИС.</li>
+      </ul>
+    </div>
+    <div class="stage s3">
+      <div class="stage-lbl">Этап 3 · 9–18 месяцев</div>
+      <h3>Госканал — РНИС, ИТС, тиражирование ТКО</h3>
+      <ul>
+        <li>Через РНИЦ/СпейсТим и АО «ГЛОНАСС» заходить в тендеры РНИС/ИТС агломераций.</li>
+        <li>Масштабировать тираж ТКО: если пилот даёт снижение приписок >10–15% — тиражировать агрессивно.</li>
+        <li>Параллельно: пилот в промбезопасности (горнодобыча, DN·Man + DN·Evac).</li>
+      </ul>
+    </div>
+  </div>
+  <div class="benchmarks">
+    <h3>Бенчмарки, меняющие стратегию</h3>
+    <div class="bm-list">
+      <div class="bm"><strong>Если АО «ГЛОНАСС» готово к OEM</strong> — это приоритет №1, все ресурсы туда. Остальные треки — вторичны до закрытия сделки.</div>
+      <div class="bm"><strong>Если пилот ТКО даёт измеримое снижение приписок (>10–15%)</strong> — тиражировать агрессивно, выходить на все региональные операторы параллельно.</div>
+      <div class="bm"><strong>Если реестр Минпромторга недостижим из-за ЭКБ</strong> — сместить фокус с госзакупок на частных мультипликаторов (телематика, WMS, каршеринг). Госканал не единственный путь.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CAVEATS -->
+<section class="caveats">
+  <div class="sec-label">Ограничения и риски</div>
+  <h2>Важные оговорки</h2>
+  <p class="subtitle">Факторы, которые могут изменить стратегию — учитывать при принятии решений.</p>
+  <div class="caveat-grid">
+    <div class="caveat">
+      <div class="ico">⚙️</div>
+      <h3>Импортный чип Nordic nRF52832</h3>
+      <p>Риск для включения в реестры отечественной радиоэлектроники — ужесточение правил Минпромторга в 2026 г. (перечень критической промышленной продукции от 11.08.2026). Требует проработки локализации или юридического позиционирования: <strong>российское ПО / шифрование / сборка в РФ</strong>.</p>
+    </div>
+    <div class="caveat">
+      <div class="ico">⚔️</div>
+      <h3>АО «ГЛОНАСС» — одновременно канал и конкурент</h3>
+      <p>В калужском пилоте уже участвует ООО «Сфера Телематики» как поставщик. Если роль поставщика метки будет закреплена за другим игроком, окно закроется. <strong>Действовать немедленно.</strong></p>
+    </div>
+    <div class="caveat">
+      <div class="ico">📊</div>
+      <h3>Достоверность данных по Wialon</h3>
+      <p>Оценки доли рынка (>40%, местами >50%) и сроков ухода — из отраслевых публикаций, часть принадлежит конкурентам (ГдеМои и др.). Возможна ангажированность — <strong>проверить актуальный статус блокировки</strong>.</p>
+    </div>
+    <div class="caveat">
+      <div class="ico">🏛️</div>
+      <h3>Госканал — длинные циклы и ФЗ</h3>
+      <p>РНИС/ИТС/ТКО работают по 44-ФЗ/223-ФЗ: пилот часто требует бесплатного/льготного входа. <strong>Закладывать это в модель</strong> и не рассчитывать на быстрый доход из госсектора.</p>
+    </div>
+    <div class="caveat">
+      <div class="ico">📋</div>
+      <h3>Цены тендеров — проверять актуальность</h3>
+      <p>НМЦК закупок взяты из СМИ и региональных источников. Перед участием — сверять карточки на <strong>zakupki.gov.ru</strong>. Часть «27 решений» (музеи, каршеринг) — рынки с длинным циклом или сильными incumbents.</p>
+    </div>
+    <div class="caveat">
+      <div class="ico">🎯</div>
+      <h3>Фокус, а не распыление</h3>
+      <p>Начинать с 3–5 приоритетных треков. <strong>Не распылять ресурсы</strong> на все 9 направлений одновременно — глубина входа важнее ширины охвата на первом этапе.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sect">
+  <h2>Обсудить стратегию и пилот</h2>
+  <p>Готовы проработать конкретный трек: lighthouse-контакт, KPI пилота, архитектуру и расчёт стоимости — за один рабочий день.</p>
+  <a href="mailto:sayr@inbox.ru?subject=Go-to-Market DN·Beacon" class="btn-white">Написать нам</a>
+  <p style="margin-top:20px;font-size:.88rem;color:rgba(255,255,255,.5)">sayr@inbox.ru</p>
+</section>
+
+<footer>
+  <p><strong>DN·GTM</strong> — карта рынка Go-to-Market · DN·Beacon · <a href="../index.html">все решения</a> · <a href="mailto:sayr@inbox.ru">sayr@inbox.ru</a></p>
+</footer>
+
+</body>
+</html>

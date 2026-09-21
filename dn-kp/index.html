@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Коммерческое предложение — DN·Beacon | BLE-метки для промышленности</title>
+<meta name="description" content="Структура коммерческого предложения DN·Beacon для интеграторов и заказчиков систем мониторинга на BLE-метках.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0f4c75;
+    --navy-dark: #0a3457;
+    --navy-light: #e8f1f8;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --amber: #d97706;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--navy); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #7dd3fc; }
+  .nav-back { color: #94a3b8; font-size: .88rem; transition: color .2s; }
+  .nav-back:hover { color: #fff; }
+  .nav-cta { background: var(--navy); color: #fff; padding: 8px 20px; border-radius: 6px; font-size: .9rem; font-weight: 600; transition: background .2s; }
+  .nav-cta:hover { background: var(--navy-dark); }
+
+  .hero { background: linear-gradient(135deg, #071e34 0%, #0f3358 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(125,211,252,.12); color: #7dd3fc; border: 1px solid rgba(125,211,252,.25); border-radius: 20px; padding: 4px 14px; font-size: .8rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(1.9rem, 4.5vw, 3rem); font-weight: 800; line-height: 1.15; max-width: 760px; margin-bottom: 18px; }
+  .hero h1 span { color: #7dd3fc; }
+  .hero p { font-size: 1.1rem; color: #94a3b8; max-width: 600px; margin-bottom: 36px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 60px; }
+  .btn-primary { background: var(--navy); color: #fff; padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; border: 2px solid rgba(255,255,255,.15); transition: background .2s; }
+  .btn-primary:hover { background: #1565a0; }
+  .btn-outline { border: 2px solid rgba(255,255,255,.25); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .hero-stats { display: flex; gap: 48px; flex-wrap: wrap; }
+  .hero-stat strong { display: block; font-size: 2rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .85rem; color: #94a3b8; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
+  h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; color: var(--slate); margin-bottom: 14px; }
+  .subtitle { font-size: 1rem; color: var(--muted); max-width: 620px; margin-bottom: 44px; }
+
+  /* STEPS */
+  .steps { background: var(--white); }
+  .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; }
+  .step { padding: 32px 28px; border-right: 1px solid var(--border); position: relative; }
+  .step:last-child { border-right: none; }
+  .step-num { display: inline-block; width: 28px; height: 28px; background: var(--navy); color: #fff; border-radius: 50%; font-size: .78rem; font-weight: 700; line-height: 28px; text-align: center; margin-bottom: 14px; }
+  .step .ico { font-size: 2rem; display: block; margin-bottom: 12px; }
+  .step h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: .85rem; color: var(--muted); }
+
+  /* TABLE */
+  .delivery { background: var(--bg); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--slate); color: #fff; padding: 14px 18px; text-align: left; font-weight: 600; }
+  th:not(:first-child) { text-align: center; }
+  td { padding: 13px 18px; border-bottom: 1px solid var(--border); background: var(--white); }
+  td:not(:first-child) { text-align: center; }
+  tr:hover td { background: var(--navy-light); }
+  tr.hl td:first-child { font-weight: 600; }
+  .check { color: var(--green); font-weight: 700; font-size: 1.1rem; }
+  .note { color: var(--muted); font-size: .82rem; }
+
+  /* SCENARIOS */
+  .scenarios { background: var(--white); }
+  .sc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .sc-card { background: var(--bg); border: 1px solid var(--border); border-left: 4px solid var(--navy); border-radius: var(--radius); padding: 26px; }
+  .sc-card .ico { font-size: 2rem; margin-bottom: 14px; display: block; }
+  .sc-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 6px; }
+  .sc-card .tag-line { font-size: .8rem; color: var(--navy); font-weight: 600; margin-bottom: 10px; }
+  .sc-card p { font-size: .88rem; color: var(--muted); }
+
+  /* PRICING */
+  .pricing { background: var(--bg); }
+  .price-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
+  .price-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; }
+  .price-card.featured { border-color: var(--navy); box-shadow: 0 0 0 2px var(--navy); }
+  .price-card .badge { display: inline-block; background: var(--navy); color: #fff; font-size: .72rem; font-weight: 700; padding: 2px 10px; border-radius: 10px; margin-bottom: 16px; }
+  .price-card .badge.amber { background: var(--amber); }
+  .price-card h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 10px; }
+  .price-card .desc { font-size: .9rem; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+  .price-card ul { list-style: none; }
+  .price-card ul li { font-size: .88rem; padding: 6px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; }
+  .price-card ul li:last-child { border-bottom: none; }
+  .price-card ul li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+  /* DOCS */
+  .docs { background: var(--white); }
+  .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .doc-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 24px; display: flex; align-items: center; gap: 16px; }
+  .doc-item .ico { font-size: 2rem; flex-shrink: 0; }
+  .doc-item h3 { font-size: .9rem; font-weight: 700; margin-bottom: 4px; }
+  .doc-item p { font-size: .82rem; color: var(--muted); }
+  .doc-req { display: inline-block; margin-top: 8px; font-size: .75rem; font-weight: 600; color: var(--navy); background: var(--navy-light); padding: 2px 8px; border-radius: 8px; }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.5rem, 3.5vw, 2.2rem); margin-bottom: 14px; }
+  .cta p { color: rgba(255,255,255,.8); font-size: 1rem; max-width: 540px; margin: 0 auto 36px; }
+  .cta-form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--navy); padding: 14px 32px; border-radius: 8px; font-weight: 700; font-size: 1rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.4); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
+  .cta-detail { margin-top: 28px; font-size: .85rem; color: rgba(255,255,255,.55); }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
+  footer strong { color: #fff; }
+
+  @media(max-width:640px) {
+    .steps-grid { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .hero-stats { gap: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>KP</span></div>
+  <a href="../index.html" class="nav-back">← Все решения</a>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Запросить КП</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Коммерческое предложение</div>
+  <h1>Структура сделки<br><span>DN·Beacon</span></h1>
+  <p>Для интеграторов и заказчиков систем мониторинга на промышленных BLE-метках. Опишите задачу — КП под ваш контур готово за 1 рабочий день.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru?subject=Запрос КП DN·Beacon" class="btn-primary">Запросить КП</a>
+    <a href="#delivery" class="btn-outline">Что входит в поставку</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>от 2 недель</strong><span>запуск пилота</span></div>
+    <div class="hero-stat"><strong>1 рабочий день</strong><span>КП под вашу задачу</span></div>
+    <div class="hero-stat"><strong>REST API</strong><span>интеграция с любой платформой</span></div>
+  </div>
+</section>
+
+<!-- STEPS -->
+<section class="steps">
+  <div class="section-label">Процесс</div>
+  <h2>Как строится коммерческое предложение</h2>
+  <p class="subtitle">Четыре шага от задачи до подписанного договора и работающего пилота.</p>
+  <div class="steps-grid">
+    <div class="step">
+      <span class="step-num">1</span>
+      <span class="ico">📋</span>
+      <h3>Описание задачи</h3>
+      <p>Заказчик описывает контур: количество объектов, тип отслеживаемых активов, требуемые интеграции (TMS, WMS, 1С, РНИС, АСОП). Достаточно письма в свободной форме.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <span class="ico">🏗️</span>
+      <h3>Архитектурное решение</h3>
+      <p>Подбирается конфигурация: какой продукт DN·* закрывает задачу, сколько нужно меток, BLE-шлюзов и серверных компонентов. Схема данных и точки интеграции.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <span class="ico">💰</span>
+      <h3>Расчёт стоимости</h3>
+      <p>Фиксированная стоимость пилота + масштабируемая цена тиража (за единицу оборудования). ROI-модель в Excel по запросу.</p>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <span class="ico">🤝</span>
+      <h3>Подписание и старт</h3>
+      <p>NDA по запросу. Договор поставки оборудования + договор сопровождения. SLA фиксируется в приложении к договору. Пилот стартует через 1–2 недели после подписания.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DELIVERY -->
+<section class="delivery" id="delivery">
+  <div class="section-label">Комплектация</div>
+  <h2>Что входит в поставку</h2>
+  <p class="subtitle">Пилот и тираж — два отдельных договора или единый поэтапный контракт.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Компонент</th>
+          <th>Пилот</th>
+          <th>Тираж</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="hl"><td>BLE-метки промышленные (nRF52832, IP67)</td><td>50–500 шт.</td><td>от 500 шт.</td></tr>
+        <tr><td>BLE-шлюзы / считыватели</td><td>2–10 шт.</td><td class="note">по проекту</td></tr>
+        <tr class="hl"><td>Серверная часть (self-hosted или cloud)</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>REST API + документация</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr class="hl"><td>Интеграция с 1 внешней системой</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Обучение операторов и администраторов</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr class="hl"><td>Гарантия на оборудование</td><td>2 года</td><td>2 года</td></tr>
+        <tr><td>SLA (uptime сервера)</td><td>99%</td><td>99,5%</td></tr>
+        <tr class="hl"><td>Обновления прошивки OTA</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+        <tr><td>Дополнительные интеграции</td><td class="note">по договорённости</td><td class="note">по договорённости</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section class="scenarios">
+  <div class="section-label">Примеры КП</div>
+  <h2>Типовые сценарии</h2>
+  <p class="subtitle">Реальные конфигурации для разных типов заказчиков — отправная точка для вашего КП.</p>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <span class="ico">🚚</span>
+      <h3>Транспортная компания</h3>
+      <div class="tag-line">200 прицепов · DN·Fleet · Wialon</div>
+      <p>Метки на прицепах, считыватели на тягачах или на воротах склада. Интеграция с Wialon: факт сцепки/расцепки, зона нахождения прицепа, уведомления при несанкционированном движении.</p>
+    </div>
+    <div class="sc-card">
+      <span class="ico">🏗️</span>
+      <h3>Строительный подрядчик</h3>
+      <div class="tag-line">50 объектов · DN·Staff + DN·Rent · 1С</div>
+      <p>Метки на касках и инструменте. Контроль СИЗ при входе в зону, инвентаризация оборудования через смартфон, интеграция с 1С: ведомость присутствия и журнал выдачи инструмента.</p>
+    </div>
+    <div class="sc-card">
+      <span class="ico">🚌</span>
+      <h3>Городской транспорт</h3>
+      <div class="tag-line">500 маршрутных ТС · DN·Pay · АСОП</div>
+      <p>Брелоки-метки для пассажиров. Валидаторы на входных дверях автобусов. Офлайн-валидация, интеграция с региональным АСОП через REST API, поддержка льготных тарифов.</p>
+    </div>
+    <div class="sc-card">
+      <span class="ico">🏭</span>
+      <h3>Промышленное предприятие</h3>
+      <div class="tag-line">3 цеха · DN·Man + DN·Mesh · автономная сеть</div>
+      <p>Метки на работниках в зонах без WiFi. Mesh-сеть из ретрансляторов — единственный BLE-шлюз у выхода. Детектор падения + SOS-кнопка. Полностью автономно, без внешних IP-адресов.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+  <div class="section-label">Ценообразование</div>
+  <h2>Модель стоимости</h2>
+  <p class="subtitle">Три уровня входа — от пилота одного маршрута до партнёрской программы для системных интеграторов.</p>
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="badge">Пилот</div>
+      <h3>Пилотный проект</h3>
+      <div class="desc">Фиксированная стоимость, ограниченный масштаб. Всё необходимое для оценки ROI и принятия решения о тиражировании.</div>
+      <ul>
+        <li>Ограниченный контур (1 маршрут / 1 объект / 1 цех)</li>
+        <li>Срок: 2–4 недели от подписания</li>
+        <li>Фиксированная цена — без сюрпризов</li>
+        <li>Полный стек: метки + шлюзы + сервер + API</li>
+        <li>Интеграция с одной внешней системой</li>
+        <li>Отчёт по итогам пилота с рекомендациями</li>
+      </ul>
+    </div>
+    <div class="price-card featured">
+      <div class="badge">Тираж</div>
+      <h3>Промышленный тираж</h3>
+      <div class="desc">Масштабируемая модель: цена за единицу оборудования снижается с объёмом. Два варианта лицензирования ПО.</div>
+      <ul>
+        <li>Цена за метку — снижается от объёма</li>
+        <li>ПО: годовая лицензия или self-hosted (без абонплаты)</li>
+        <li>Поэтапный ввод в эксплуатацию без остановки</li>
+        <li>SLA 99,5% uptime сервера</li>
+        <li>OTA-обновления прошивки включены</li>
+        <li>Поддержка 24/7 по критическим инцидентам</li>
+      </ul>
+    </div>
+    <div class="price-card">
+      <div class="badge amber">Партнёрам</div>
+      <h3>Партнёрская программа</h3>
+      <div class="desc">Для системных интеграторов транспортного мониторинга, автоматизации логистики и промышленной безопасности.</div>
+      <ul>
+        <li>Партнёрская скидка на оборудование</li>
+        <li>Полная техническая документация и SDK</li>
+        <li>Обучение инженеров и pre-sales</li>
+        <li>Совместные пресейлы по запросу</li>
+        <li>Приоритетная техническая поддержка</li>
+        <li>White-label опция — по согласованию</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DOCS -->
+<section class="docs">
+  <div class="section-label">Документация</div>
+  <h2>Документы по запросу</h2>
+  <p class="subtitle">Все документы предоставляются после подписания NDA или в рамках пресейлового взаимодействия.</p>
+  <div class="docs-grid">
+    <div class="doc-item">
+      <span class="ico">📄</span>
+      <div>
+        <h3>Технический паспорт метки</h3>
+        <p>Полные характеристики аппаратной платформы, схема подключения, чертежи корпуса.</p>
+        <span class="doc-req">PDF по запросу</span>
+      </div>
+    </div>
+    <div class="doc-item">
+      <span class="ico">📐</span>
+      <div>
+        <h3>Схема интеграции</h3>
+        <p>REST API документация, форматы данных, примеры запросов и webhook-событий.</p>
+        <span class="doc-req">PDF / Swagger по запросу</span>
+      </div>
+    </div>
+    <div class="doc-item">
+      <span class="ico">📊</span>
+      <div>
+        <h3>ROI-модель</h3>
+        <p>Расчёт возврата инвестиций: экономия на операциях, стоимость внедрения, срок окупаемости.</p>
+        <span class="doc-req">Excel по запросу</span>
+      </div>
+    </div>
+    <div class="doc-item">
+      <span class="ico">📜</span>
+      <div>
+        <h3>Проект договора поставки</h3>
+        <p>Типовой договор с условиями поставки оборудования, гарантии и технической поддержки.</p>
+        <span class="doc-req">DOCX по запросу</span>
+      </div>
+    </div>
+    <div class="doc-item">
+      <span class="ico">🔒</span>
+      <div>
+        <h3>NDA</h3>
+        <p>Двустороннее соглашение о конфиденциальности — подписывается до передачи технической документации.</p>
+        <span class="doc-req">По запросу</span>
+      </div>
+    </div>
+    <div class="doc-item">
+      <span class="ico">📋</span>
+      <div>
+        <h3>Типовое ТЗ для закупки</h3>
+        <p>Шаблон технического задания для закупочных процедур по 44-ФЗ / 223-ФЗ.</p>
+        <span class="doc-req">DOCX по запросу</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Запросить КП под вашу задачу</h2>
+  <p>Опишите контур в письме — количество объектов, тип активов и требуемые интеграции. КП готово за 1 рабочий день.</p>
+  <div class="cta-form">
+    <a href="mailto:sayr@inbox.ru?subject=Запрос КП DN·Beacon" class="btn-white">Написать запрос</a>
+    <a href="mailto:sayr@inbox.ru?subject=Партнёрская программа DN·Beacon" class="btn-outline-white">Партнёрская программа</a>
+  </div>
+  <p class="cta-detail">Или просто напишите на sayr@inbox.ru — разберёмся вместе.</p>
+</section>
+
+<footer>
+  <p><strong>DN·KP</strong> — коммерческое предложение · DN·Beacon · <a href="mailto:sayr@inbox.ru" style="color:#7dd3fc">sayr@inbox.ru</a></p>
+</footer>
+
+</body>
+</html>

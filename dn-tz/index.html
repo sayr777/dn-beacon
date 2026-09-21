@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Типовое ТЗ на систему BLE-мониторинга | DN·Beacon</title>
+<meta name="description" content="Шаблон технического задания для закупки системы мониторинга на BLE-метках по 44-ФЗ и 223-ФЗ. Готов к адаптации под транспорт, склад, охрану труда.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #1a3a5c;
+    --navy-dark: #112740;
+    --navy-light: #eef3f8;
+    --slate: #1e293b;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --green: #059669;
+    --amber: #d97706;
+    --radius: 12px;
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: var(--text); background: var(--bg); line-height: 1.6; }
+  a { color: var(--navy); text-decoration: none; }
+
+  nav { background: var(--slate); padding: 0 5%; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { color: #fff; font-weight: 700; font-size: 1.1rem; }
+  .nav-logo span { color: #93c5fd; }
+  .nav-back { color: #94a3b8; font-size: .85rem; }
+  .nav-back:hover { color: #fff; }
+  .nav-cta { background: var(--navy); color: #fff; padding: 7px 18px; border-radius: 6px; font-size: .88rem; font-weight: 600; }
+
+  .hero { background: linear-gradient(135deg, #0b2035 0%, #1a3a5c 100%); color: #fff; padding: 80px 5% 90px; }
+  .hero-label { display: inline-block; background: rgba(147,197,253,.12); color: #93c5fd; border: 1px solid rgba(147,197,253,.25); border-radius: 20px; padding: 4px 14px; font-size: .78rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.9rem); font-weight: 800; line-height: 1.2; max-width: 780px; margin-bottom: 18px; }
+  .hero h1 span { color: #60a5fa; }
+  .hero p { font-size: 1.05rem; color: #94a3b8; max-width: 620px; margin-bottom: 40px; }
+  .hero-stats { display: flex; gap: 40px; flex-wrap: wrap; margin-top: 48px; }
+  .hero-stat strong { display: block; font-size: 1.5rem; font-weight: 800; color: #fff; }
+  .hero-stat span { font-size: .82rem; color: #94a3b8; }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { background: #2563eb; color: #fff; padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: .95rem; }
+  .btn-outline { border: 2px solid rgba(255,255,255,.25); color: #fff; padding: 11px 24px; border-radius: 8px; font-weight: 600; font-size: .95rem; }
+
+  section { padding: 72px 5%; }
+  .section-label { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; }
+  h2 { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; color: var(--slate); margin-bottom: 14px; }
+  .subtitle { font-size: 1rem; color: var(--muted); max-width: 640px; margin-bottom: 44px; }
+
+  /* HOW-TO STEPS */
+  .howto { background: var(--white); }
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0; }
+  .step { padding: 32px 28px; border-right: 1px solid var(--border); position: relative; }
+  .step:last-child { border-right: none; }
+  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; background: var(--navy); color: #fff; border-radius: 50%; font-weight: 800; font-size: .9rem; margin-bottom: 14px; }
+  .step h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .step p { font-size: .87rem; color: var(--muted); }
+
+  /* TZ SECTIONS */
+  .tz-sections { background: var(--bg); }
+  .tz-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .tz-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  .tz-card-head { background: var(--navy); color: #fff; padding: 18px 24px; display: flex; align-items: center; gap: 12px; }
+  .tz-card-head .num { background: rgba(255,255,255,.15); color: #fff; font-weight: 800; font-size: .8rem; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+  .tz-card-head h3 { font-size: .95rem; font-weight: 700; }
+  .tz-card-body { padding: 20px 24px; }
+  .tz-card-body ul { list-style: none; }
+  .tz-card-body ul li { font-size: .88rem; color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: flex-start; }
+  .tz-card-body ul li:last-child { border-bottom: none; }
+  .tz-card-body ul li::before { content: '—'; color: var(--navy); font-weight: 700; flex-shrink: 0; }
+  .tz-note { font-size: .8rem; color: var(--muted); background: var(--navy-light); border-radius: 6px; padding: 8px 12px; margin-top: 12px; }
+
+  /* REQUIREMENTS TABLE */
+  .req-table { background: var(--white); }
+  .table-wrap { overflow-x: auto; margin-top: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th { background: var(--navy); color: #fff; padding: 13px 16px; text-align: left; font-weight: 600; }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  tr:hover td { background: var(--navy-light); }
+  .req-val { font-weight: 600; color: var(--navy); }
+  .req-note { font-size: .78rem; color: var(--muted); display: block; margin-top: 2px; }
+
+  /* CHECKLIST */
+  .checklist-sec { background: var(--bg); }
+  .checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+  .check-item { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 14px 18px; display: flex; align-items: flex-start; gap: 12px; font-size: .9rem; }
+  .check-box { width: 20px; height: 20px; border: 2px solid var(--navy); border-radius: 4px; flex-shrink: 0; margin-top: 1px; }
+  .check-item strong { display: block; font-size: .88rem; font-weight: 700; margin-bottom: 2px; }
+  .check-item span { font-size: .82rem; color: var(--muted); }
+
+  /* EXAMPLES */
+  .examples { background: var(--white); }
+  .ex-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .ex-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
+  .ex-card .tag { display: inline-block; background: var(--navy-light); color: var(--navy); font-size: .73rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; }
+  .ex-card h3 { font-size: .95rem; font-weight: 700; margin-bottom: 8px; }
+  .ex-card p { font-size: .86rem; color: var(--muted); }
+  .ex-card .law { font-size: .8rem; font-weight: 700; color: var(--navy); margin-top: 10px; display: inline-block; background: var(--navy-light); padding: 2px 8px; border-radius: 10px; }
+
+  /* CTA */
+  .cta { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%); color: #fff; text-align: center; padding: 80px 5%; }
+  .cta h2 { color: #fff; font-size: clamp(1.5rem, 3.5vw, 2.2rem); margin-bottom: 12px; }
+  .cta p { color: rgba(255,255,255,.75); font-size: 1rem; max-width: 540px; margin: 0 auto 32px; }
+  .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-white { background: #fff; color: var(--navy); padding: 13px 30px; border-radius: 8px; font-weight: 700; font-size: .95rem; }
+  .btn-outline-white { border: 2px solid rgba(255,255,255,.4); color: #fff; padding: 11px 26px; border-radius: 8px; font-weight: 600; font-size: .95rem; }
+
+  footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 26px 5%; font-size: .84rem; }
+  footer strong { color: #fff; }
+  footer a { color: #93c5fd; }
+
+  @media(max-width:640px) {
+    .step { border-right: none; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .tz-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Beacon</span></div>
+  <a href="../index.html" class="nav-back">← Все решения</a>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<section class="hero">
+  <div class="hero-label">Техническое задание · Шаблон</div>
+  <h1>Типовое ТЗ на систему<br><span>мониторинга BLE-меток</span></h1>
+  <p>Шаблон технического задания для закупки по 44-ФЗ / 223-ФЗ — готов к адаптации под конкретный объект: транспорт, охрана труда, логистика, ЖКХ.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru?subject=Запрос ТЗ DN·Beacon" class="btn-primary">Получить финальный вариант ТЗ</a>
+    <a href="#tz-structure" class="btn-outline">Смотреть структуру</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>44-ФЗ / 223-ФЗ</strong><span>нормативная база</span></div>
+    <div class="hero-stat"><strong>6 разделов</strong><span>полная структура ТЗ</span></div>
+    <div class="hero-stat"><strong>ISM 2.4 ГГц</strong><span>лицензирование не требуется</span></div>
+    <div class="hero-stat"><strong>1 р.д.</strong><span>адаптация под ваш объект</span></div>
+  </div>
+</section>
+
+<!-- КАК ПОЛЬЗОВАТЬСЯ -->
+<section class="howto">
+  <div class="section-label">Инструкция</div>
+  <h2>Как пользоваться шаблоном</h2>
+  <p class="subtitle">Три шага от задачи заказчика до готового ТЗ для размещения в ЕИС или корпоративной закупке.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Выберите продукт DN·*</h3>
+      <p>Определите сценарий: транспорт → DN·Fleet / DN·Pay, охрана труда → DN·Man / DN·Staff, ЖКХ → DN·Waste, логистика → DN·Asset / DN·Pick. Шаблон адаптируется под любой продукт линейки.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Адаптируйте разделы 3–5</h3>
+      <p>Укажите количество объектов мониторинга, площадь / периметр, требуемые интеграции (1С, Wialon, АСОП, собственная СУБД). Разделы 1–2 и 6 остаются типовыми.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Запросите финальный вариант</h3>
+      <p>Напишите на sayr@inbox.ru с описанием задачи. Вернём финальный ТЗ с точными техническими характеристиками, схемой интеграции и ссылками на ГОСТ / нормативную базу за 1 рабочий день.</p>
+    </div>
+  </div>
+</section>
+
+<!-- СТРУКТУРА ТЗ -->
+<section class="tz-sections" id="tz-structure">
+  <div class="section-label">Структура</div>
+  <h2>Шесть разделов типового ТЗ</h2>
+  <p class="subtitle">Стандартная структура технического задания в соответствии с ГОСТ 34.602-2020 и практикой закупок ИТ-систем.</p>
+  <div class="tz-grid">
+
+    <div class="tz-card">
+      <div class="tz-card-head">
+        <span class="num">Раздел 1</span>
+        <h3>Общие сведения</h3>
+      </div>
+      <div class="tz-card-body">
+        <ul>
+          <li>Наименование предмета закупки (например: «Поставка и внедрение системы мониторинга транспортных средств на основе BLE-меток»)</li>
+          <li>Заказчик и его реквизиты (полное наименование, ИНН, КПП, адрес)</li>
+          <li>Источник финансирования (бюджетные средства / собственные средства предприятия)</li>
+          <li>Нормативные ссылки: 44-ФЗ или 223-ФЗ, ПП РФ №1236 «О реестре отечественного ПО», ГОСТ 34.602-2020</li>
+          <li>Сроки выполнения работ и срок действия контракта</li>
+        </ul>
+        <div class="tz-note">💡 При закупке по 44-ФЗ укажите код ОКПД2: 26.20.40 (устройства хранения данных и периферийные устройства) или 62.01 (разработка программного обеспечения).</div>
+      </div>
+    </div>
+
+    <div class="tz-card">
+      <div class="tz-card-head">
+        <span class="num">Раздел 2</span>
+        <h3>Цели и задачи системы</h3>
+      </div>
+      <div class="tz-card-body">
+        <ul>
+          <li>Цель: автоматизированный учёт [транспортных средств / персонала / оборудования / отходов — выбрать нужное]</li>
+          <li>Объект внедрения: [тип и количество объектов, адреса площадок]</li>
+          <li>Ожидаемый результат: снижение потерь от [краж / «серых» схем / несчастных случаев] на X%</li>
+          <li>Формирование доказательной базы для отчётности перед регулятором / заказчиком</li>
+          <li>Экономия ФОТ за счёт автоматизации ручных операций учёта</li>
+        </ul>
+        <div class="tz-note">💡 Укажите конкретные KPI: «сократить время инвентаризации с 4 часов до 15 минут» — это помогает обосновать НМЦК.</div>
+      </div>
+    </div>
+
+    <div class="tz-card">
+      <div class="tz-card-head">
+        <span class="num">Раздел 3</span>
+        <h3>Требования к аппаратуре</h3>
+      </div>
+      <div class="tz-card-body">
+        <ul>
+          <li>Технология: Bluetooth Low Energy (BLE) версии 4.0 и выше</li>
+          <li>Формат пакета: iBeacon, Eddystone-UID или совместимый стандарт</li>
+          <li>Защита идентификатора: алгоритм AES-128 и выше, динамическая смена ID не реже 1 раза в 10 минут</li>
+          <li>Дальность связи: не менее 30 м в условиях прямой видимости</li>
+          <li>Степень защиты корпуса: не ниже IP65 (IP67 — для уличной и промышленной эксплуатации)</li>
+          <li>Рабочий диапазон температур: от −40°C до +60°C</li>
+          <li>Срок службы батареи: не менее 5 лет при интервале вещания 1 Гц</li>
+          <li>OTA (Over-the-Air) обновление прошивки: обязательно</li>
+          <li>Дистанционная настройка параметров (мощность, интервал) без демонтажа: обязательно</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tz-card">
+      <div class="tz-card-head">
+        <span class="num">Раздел 4</span>
+        <h3>Требования к ПО</h3>
+      </div>
+      <div class="tz-card-body">
+        <ul>
+          <li>Серверная часть: REST API (JSON), документация на русском языке, возможность self-hosted развёртывания на серверах заказчика</li>
+          <li>Кабинет оператора: веб-интерфейс (без установки ПО на АРМ), ролевая модель доступа, экспорт данных в форматах CSV, Excel, PDF</li>
+          <li>Интеграция: открытый и документированный API, не менее одной готовой интеграции с [1С / Wialon / АСОП / собственной СУБД — указать]</li>
+          <li>Хранение данных: журнал событий не менее 3 лет, резервное копирование не реже 1 раза в сутки</li>
+          <li>Лицензирование: без скрытой привязки к числу устройств; тарифная сетка фиксируется в контракте</li>
+          <li>Включение в реестр отечественного ПО Минцифры (или готовность к подаче заявки): желательно</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tz-card">
+      <div class="tz-card-head">
+        <span class="num">Раздел 5</span>
+        <h3>Безопасность и надёжность</h3>
+      </div>
+      <div class="tz-card-body">
+        <ul>
+          <li>Шифрование данных в канале: TLS 1.2 и выше для серверного взаимодействия</li>
+          <li>Шифрование на уровне метки: AES-128 минимум; реальный TagID не передаётся в эфире открытым текстом</li>
+          <li>Защита от replay-атак: временное окно валидации не более 10 минут</li>
+          <li>Доступность (uptime) серверной части: не менее 99% за расчётный период (допустимый простой — не более 87 часов в год)</li>
+          <li>Резервирование: hot-standby или документированная процедура аварийного восстановления за ≤ 4 часа</li>
+          <li>Аудит: ведение журнала действий администраторов и операторов не менее 1 года</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tz-card">
+      <div class="tz-card-head">
+        <span class="num">Раздел 6</span>
+        <h3>Поставка и сопровождение</h3>
+      </div>
+      <div class="tz-card-body">
+        <ul>
+          <li>Срок поставки оборудования: не более 30 рабочих дней с момента подписания контракта</li>
+          <li>Шеф-монтаж и пусконаладка: включены в стоимость контракта</li>
+          <li>Гарантийный срок на оборудование: не менее 24 месяцев</li>
+          <li>SLA технической поддержки: реакция на критические инциденты — не более 4 рабочих часов</li>
+          <li>Обучение персонала заказчика: не менее 8 академических часов, включено в стоимость</li>
+          <li>Документация: эксплуатационная документация на русском языке передаётся в полном объёме при сдаче-приёмке</li>
+          <li>Послегарантийное сопровождение: предложение по тарифам включается в конкурсную документацию</li>
+        </ul>
+        <div class="tz-note">💡 Укажите требование о предоставлении исходных кодов серверного ПО в escrow — это усиливает позицию заказчика при смене подрядчика.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ТАБЛИЦА ТРЕБОВАНИЙ -->
+<section class="req-table">
+  <div class="section-label">Технические параметры</div>
+  <h2>Минимальные технические требования к BLE-метке</h2>
+  <p class="subtitle">Таблица для раздела 3 ТЗ — готова к вставке в конкурсную документацию.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>Минимальное требование</th>
+          <th>Примечание</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Технология беспроводной связи</td><td class="req-val">BLE 4.0 или выше</td><td>Bluetooth Low Energy, ISM 2.4 ГГц, лицензирование не требуется</td></tr>
+        <tr><td>Формат рекламного пакета</td><td class="req-val">iBeacon, Eddystone или совместимый</td><td>Обеспечивает совместимость с любым BLE-считывателем</td></tr>
+        <tr><td>Защита идентификатора</td><td class="req-val">AES-128, динамическая смена</td><td>Смена Major/Minor/UUID не реже 1 раза в 10 мин; реальный TagID не передаётся</td></tr>
+        <tr><td>Дальность в прямой видимости</td><td class="req-val">не менее 30 м</td><td>Регулируется TxPower от −40 до +4 дБм</td></tr>
+        <tr><td>Степень защиты корпуса</td><td class="req-val">не ниже IP65</td><td>IP67 — для монтажа на контейнерах, технике, уличных объектах</td></tr>
+        <tr><td>Рабочая температура</td><td class="req-val">−40°C … +60°C</td><td>Li-SOCl₂ сохраняет ёмкость до −55°C</td></tr>
+        <tr><td>Срок службы батареи</td><td class="req-val">не менее 5 лет</td><td>При интервале вещания 1 Гц, TxPower 0 дБм, температура −20…+40°C</td></tr>
+        <tr><td>OTA-обновление прошивки</td><td class="req-val">обязательно</td><td>Без демонтажа; защита от сбоя питания (Dual-bank Flash)</td></tr>
+        <tr><td>Дистанционная настройка</td><td class="req-val">TxPower, интервал, параметры смены ID</td><td>Через BLE-шлюз или авторизованный смартфон</td></tr>
+        <tr><td>Крепление</td><td class="req-val">не требует инструмента или стандартное</td><td>2 отверстия под дюбель / магнитное / хомут — по условиям объекта</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ЧЕК-ЛИСТ -->
+<section class="checklist-sec">
+  <div class="section-label">Что уточнить</div>
+  <h2>Чек-лист: что нужно указать в ТЗ</h2>
+  <p class="subtitle">Уточните эти параметры перед финальной редактурой ТЗ — они влияют на конфигурацию и стоимость.</p>
+  <div class="checklist">
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Количество объектов мониторинга</strong><span>Число меток определяет объём закупки и архитектуру серверной части</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Тип объектов</strong><span>ТС, люди, контейнеры, паллеты, оборудование — от этого зависит форм-фактор и вариант крепления метки</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Площадь / периметр объекта</strong><span>Влияет на количество BLE-шлюзов и архитектуру покрытия (опционально: DN·Mesh для подземных/изолированных зон)</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Существующая IT-инфраструктура</strong><span>Есть ли LAN/WiFi/4G, собственный сервер или нужен cloud-вариант</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Требуемые интеграции</strong><span>1С, Wialon, СКАУТ, АСОП, ГИС ЖКХ, SAP, собственная СУБД — укажите конкретно</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Класс защищённости</strong><span>Нужен ли сертифицированный СКЗИ (ФСБ) или достаточно стандартного AES-128 без сертификата</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Требования к офлайн-работе</strong><span>Как долго система должна работать без связи с сервером (влияет на размер кэша считывателя)</span></div>
+    </div>
+    <div class="check-item">
+      <div class="check-box"></div>
+      <div><strong>Нормативные требования отрасли</strong><span>ФНП по горным работам, GDP/HACCP, 89-ФЗ для ТКО, ФЗ-16 для транспорта — укажите применимые</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ПРИМЕРЫ ПРИМЕНЕНИЯ -->
+<section class="examples">
+  <div class="section-label">Примеры ТЗ</div>
+  <h2>Типовые закупки по отраслям</h2>
+  <p class="subtitle">Под каждый сценарий формируется отдельный вариант ТЗ с адаптированными требованиями разделов 2–5.</p>
+  <div class="ex-grid">
+    <div class="ex-card">
+      <div class="tag">Городской транспорт</div>
+      <h3>Безбарьерная оплата проезда</h3>
+      <p>Оснащение автобусного / трамвайного парка BLE-валидаторами. Интеграция с региональным АСОП. Персонализированные брелоки-метки пассажирам. Приказ Минтранса №473.</p>
+      <span class="law">DN·Pay · 44-ФЗ</span>
+    </div>
+    <div class="ex-card">
+      <div class="tag">Горнодобыча / промышленность</div>
+      <h3>Охрана труда и man-down</h3>
+      <p>Метки на каски горняков. BLE Mesh-сеть для шахт без WiFi. Детектирование падения, SOS-кнопка. ФНП «Безопасность горных работ», ГОСТ Р 59007-2020.</p>
+      <span class="law">DN·Man + DN·Mesh · 223-ФЗ</span>
+    </div>
+    <div class="ex-card">
+      <div class="tag">ЖКХ / ТКО</div>
+      <h3>Учёт вывоза контейнеров ТКО</h3>
+      <p>Метки на контейнерах 120–1100 л, считыватель на манипуляторе. Журнал вывозов для ГИС ЖКХ. 89-ФЗ, ПП РФ №354, требования регоператора ТКО.</p>
+      <span class="law">DN·Waste · 44-ФЗ</span>
+    </div>
+    <div class="ex-card">
+      <div class="tag">Строительство / подрядчики</div>
+      <h3>Контроль СИЗ и инструмента</h3>
+      <p>Метки на работниках (каска, жилет) и ценном инструменте. Контроль зон допуска. Инвентаризация без остановки работ. РД-15-08-2006, Приказ Минтруда №590н.</p>
+      <span class="law">DN·Staff + DN·Rent · 223-ФЗ</span>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Получить ТЗ под ваш объект</h2>
+  <p>Напишите задачу — вернём финальный вариант ТЗ с точными характеристиками, схемой интеграции и ссылками на нормативную базу за 1 рабочий день.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru?subject=Запрос ТЗ DN·Beacon" class="btn-white">Запросить ТЗ</a>
+    <a href="mailto:sayr@inbox.ru?subject=Консультация по закупке" class="btn-outline-white">Консультация по закупке</a>
+  </div>
+</section>
+
+<footer>
+  <p><strong>DN·ТЗ</strong> — шаблон технического задания · DN·Beacon · <a href="mailto:sayr@inbox.ru">sayr@inbox.ru</a></p>
+</footer>
+
+</body>
+</html>
