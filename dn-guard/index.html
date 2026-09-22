@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Guard — Контроль маршрутов патрулирования | DN·Beacon</title>
+<meta name="description" content="BLE-маячки на контрольных точках + считыватель у охранника. Автоматическая регистрация прохода: ID точки, время, последовательность. Динамический ID исключает фальсификацию маршрута.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#2e4060;--cd:#1e2d45;--cl:#eef2f8;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#93c5fd}
+  .nav-back{color:#94a3b8;font-size:.85rem}.nav-back:hover{color:#fff}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+
+  .hero{background:linear-gradient(135deg,#08111f 0%,#1e2d45 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(147,197,253,.08);color:#93c5fd;border:1px solid rgba(147,197,253,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:860px;margin-bottom:20px}
+  .hero h1 span{color:#93c5fd}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:660px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:660px;margin-bottom:48px}
+
+  /* Problems */
+  .probs{background:var(--white)}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+  .prob-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px;border-left:4px solid var(--c)}
+  .prob-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px;color:var(--slate)}
+  .prob-card p{font-size:.84rem;color:var(--muted)}
+
+  /* How it works */
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+
+  /* Diagram / terminal */
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:700px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#93c5fd;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem}
+  .t-row:last-child{border-bottom:none}
+  .t-row .k{color:#94a3b8}.t-row .v{color:#f1f5f9;font-weight:600}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .miss{color:#f87171}
+  .t-sum{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1);display:flex;justify-content:space-between;font-size:.8rem}
+  .t-sum .label{color:#64748b}.t-sum .val{color:#fff;font-weight:700}
+
+  /* Anti-spoof */
+  .antispoof{background:var(--white)}
+  .compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:36px}
+  .cmp-card{border-radius:var(--radius);padding:22px;border:1px solid var(--border)}
+  .cmp-card.old{background:#fff5f5;border-color:#fecaca}
+  .cmp-card.new{background:#f0fdf4;border-color:#bbf7d0}
+  .cmp-card .ico{font-size:1.8rem;margin-bottom:12px}
+  .cmp-card h3{font-size:.88rem;font-weight:700;margin-bottom:10px}
+  .cmp-card.old h3{color:#991b1b}
+  .cmp-card.new h3{color:#166534}
+  .cmp-card ul{list-style:none;padding:0}
+  .cmp-card li{font-size:.82rem;padding:4px 0;display:flex;gap:8px}
+  .cmp-card.old li::before{content:'✗';color:#f87171;flex-shrink:0}
+  .cmp-card.new li::before{content:'✓';color:#34d399;flex-shrink:0}
+  .cmp-card li span{color:var(--muted)}
+
+  /* Use cases */
+  .usecases{background:var(--bg)}
+  .uc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .uc-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+  .uc-card .ico{font-size:2rem;margin-bottom:12px}
+  .uc-card h3{font-size:.92rem;font-weight:700;margin-bottom:8px}
+  .uc-card p{font-size:.84rem;color:var(--muted)}
+
+  /* Specs */
+  .specs{background:var(--white)}
+  .spec-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:36px}
+  .spec-item{background:var(--white);padding:22px;text-align:center}
+  .spec-item .val{font-size:1.4rem;font-weight:800;color:var(--c);display:block}
+  .spec-item .lbl{font-size:.78rem;color:var(--muted);margin-top:4px}
+
+  /* Integration */
+  .integ{background:var(--bg)}
+  .integ-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .integ-item{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:flex-start;gap:12px}
+  .integ-item .ico{font-size:1.6rem;flex-shrink:0}
+  .integ-item h3{font-size:.88rem;font-weight:700;margin-bottom:3px}
+  .integ-item p{font-size:.8rem;color:var(--muted)}
+
+  /* ROI */
+  .roi{background:var(--white)}
+  .roi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .roi-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+  .roi-card .num{font-size:1.8rem;font-weight:800;color:var(--c);margin-bottom:6px}
+  .roi-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .roi-card p{font-size:.84rem;color:var(--muted)}
+
+  /* CTA */
+  .cta{background:linear-gradient(135deg,#08111f 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta h2{color:#fff;font-size:clamp(1.5rem,3.5vw,2.2rem);margin-bottom:14px}
+  .cta p{color:rgba(255,255,255,.75);font-size:1rem;max-width:520px;margin:0 auto 36px}
+  .btn-white{background:#fff;color:var(--cd);padding:14px 36px;border-radius:8px;font-weight:700;font-size:1rem;display:inline-block}
+  .cta-email{margin-top:20px;color:#93c5fd;font-size:.9rem}
+
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.84rem}
+  footer strong{color:#fff}
+  footer a{color:#7dd3fc}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">DN·<span>Guard</span></div>
+  <a href="../index.html" class="nav-back">← Все решения</a>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Запросить пилот</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-label">Охрана · Патрулирование · Безопасность объектов</div>
+  <h1>Маршрут пройден —<br><span>и это доказано</span></h1>
+  <p>BLE-маячок на каждой контрольной точке, считыватель у охранника. Факт присутствия записывается автоматически при подходе: ID точки, метка времени, последовательность. Динамический ID исключает фальсификацию маршрута на аппаратном уровне.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru?subject=Запрос DN·Guard" class="btn-primary">Запросить пилот</a>
+    <a href="#how" class="btn-outline">Как это работает</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>до 70 м</strong><span>дальность считывания метки</span></div>
+    <div class="hero-stat"><strong>до 10 лет</strong><span>срок работы метки без обслуживания</span></div>
+    <div class="hero-stat"><strong>&lt;1 сек</strong><span>фиксация прохода контрольной точки</span></div>
+    <div class="hero-stat"><strong>100%</strong><span>защита от фальсификации маршрута</span></div>
+  </div>
+</section>
+
+<!-- PROBLEMS -->
+<section class="probs">
+  <div class="section-label">Боли заказчика</div>
+  <h2>Как охрану маршрутов фальсифицируют сейчас</h2>
+  <p class="subtitle">Традиционные системы контроля обходов легко обмануть. Это знает и охранник, и руководство — но доказать нечем.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <h3>Бумажный журнал не является доказательством</h3>
+      <p>Охранник вписывает время прохода из головы, не выходя из КПП. Подпись есть — факта прохода нет. При инциденте объяснение одно: «журнал вёлся».</p>
+    </div>
+    <div class="prob-card">
+      <h3>iButton и RFID-метки копируются и передаются</h3>
+      <p>Один охранник сканирует метки за другого — или сканирует все точки подряд, не обходя маршрут. Статичный ID невозможно отличить от скопированного.</p>
+    </div>
+    <div class="prob-card">
+      <h3>QR-коды фотографируют заранее</h3>
+      <p>Достаточно один раз обойти маршрут и сфотографировать все QR-коды. Дальше их можно сканировать из кармана в нужный момент без физического присутствия на точке.</p>
+    </div>
+    <div class="prob-card">
+      <h3>GPS не работает внутри зданий и на закрытых территориях</h3>
+      <p>Подземные паркинги, склады, тоннели, железобетонные сооружения, зоны РЭБ — GPS-трек охранника либо отсутствует, либо недостоверен. Контроль невозможен.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>Четыре шага — и маршрут зафиксирован</h2>
+  <p class="subtitle">Охранник работает как обычно. Система записывает каждый факт присутствия автоматически.</p>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>Маячки на точках маршрута</h3>
+      <p>BLE-маячки DN·Guard устанавливаются на контрольных точках: у ворот, углов периметра, технических объектов, входов в здания. IP67, до 10 лет автономно — установил и забыл.</p>
+    </div>
+    <div class="how-step">
+      <h3>Считыватель у охранника</h3>
+      <p>Охранник несёт один BLE-считыватель (смартфон с приложением или специализированный ручной сканер). Никаких дополнительных действий не требуется — достаточно оказаться в зоне метки.</p>
+    </div>
+    <div class="how-step">
+      <h3>Автоматическая фиксация прохода</h3>
+      <p>При подходе на настроенное расстояние (1–70 м) считыватель регистрирует событие: ID точки, метка времени, порядковый номер прохода. Данные хранятся в памяти считывателя офлайн.</p>
+    </div>
+    <div class="how-step">
+      <h3>Синхронизация на КПП</h3>
+      <p>По возвращении на КПП — или в фоне через WiFi — все записи уходят на сервер. Отчёт по смене, сравнение с плановым маршрутом, алерты о пропущенных точках.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TERMINAL MOCK -->
+<section style="padding:64px 5%;background:var(--bg)">
+  <div class="section-label">Данные в реальном времени</div>
+  <h2>Что видит диспетчер</h2>
+  <p class="subtitle">Сервер сравнивает фактические проходы с плановым расписанием и мгновенно сигнализирует об отклонениях.</p>
+  <div class="mk-grid">
+    <div class="terminal">
+      <div class="t-header">◉ МАРШРУТ №3 — ПЕРИМЕТР СЕВЕРНЫЙ · Смена 23:00–07:00</div>
+      <div class="t-row"><span class="k">23:47:12</span><span class="v">CP-001 · Северные ворота</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">23:51:44</span><span class="v">CP-002 · Склад А, угол</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">23:56:29</span><span class="v">CP-003 · Насосная станция</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">00:01:17</span><span class="v">CP-004 · Трансформатор №2</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">00:09:05</span><span class="v">CP-005 · Южные ворота</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">01:00:00</span><span class="v">CP-001 · Северные ворота</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">01:04:33</span><span class="v">CP-002 · Склад А, угол</span><span class="ok">✓ ПРОХОД</span></div>
+      <div class="t-row"><span class="k">02:00:00</span><span class="v">CP-003 · Насосная станция</span><span class="warn">⚠ ЗАДЕРЖКА +4 мин</span></div>
+      <div class="t-row"><span class="k">03:00:00</span><span class="v">CP-004 · Трансформатор №2</span><span class="miss">✗ ПРОПУСК — АЛЕРТ</span></div>
+      <div class="t-sum">
+        <span class="label">Выполнено / план</span>
+        <span class="val">8 / 9 точек</span>
+      </div>
+    </div>
+    <div>
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--slate)">Что фиксирует система</h3>
+      <div style="display:grid;gap:12px">
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid #34d399">
+          <div style="font-size:.82rem;font-weight:700;color:var(--slate);margin-bottom:4px">Факт прохода контрольной точки</div>
+          <div style="font-size:.8rem;color:var(--muted)">ID маячка, время, охранник, последовательность точек</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid #fbbf24">
+          <div style="font-size:.82rem;font-weight:700;color:var(--slate);margin-bottom:4px">Задержка или нарушение интервала</div>
+          <div style="font-size:.8rem;color:var(--muted)">Отклонение от планового расписания — уведомление диспетчеру</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid #f87171">
+          <div style="font-size:.82rem;font-weight:700;color:var(--slate);margin-bottom:4px">Пропуск контрольной точки</div>
+          <div style="font-size:.8rem;color:var(--muted)">Алерт диспетчеру + автоматическая запись в журнал инцидентов</div>
+        </div>
+        <div style="background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px;border-left:3px solid var(--c)">
+          <div style="font-size:.82rem;font-weight:700;color:var(--slate);margin-bottom:4px">Отчёт за смену одной кнопкой</div>
+          <div style="font-size:.8rem;color:var(--muted)">PDF с хронологией всех обходов, подписью и печатью. Доказательная база для аудита.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANTI-SPOOF -->
+<section class="antispoof">
+  <div class="section-label">Защита от фальсификации</div>
+  <h2>Почему DN·Guard нельзя обмануть</h2>
+  <p class="subtitle">Традиционные системы обходов построены на статичном идентификаторе. DN·Guard меняет его каждые 5 минут — скопированный сигнал устаревает быстрее, чем его успевают использовать.</p>
+  <div class="compare-grid">
+    <div class="cmp-card old">
+      <div class="ico">📛</div>
+      <h3>Традиционные системы (iButton, RFID, QR)</h3>
+      <ul>
+        <li><span>Статичный ID — легко скопировать или передать коллеге</span></li>
+        <li><span>QR-код фотографируется один раз, сканируется из кармана</span></li>
+        <li><span>Несколько точек можно пройти без движения по маршруту</span></li>
+        <li><span>Устройство можно оставить другому охраннику</span></li>
+        <li><span>GPS не подтверждает присутствие внутри зданий</span></li>
+      </ul>
+    </div>
+    <div class="cmp-card new">
+      <div class="ico">🛡️</div>
+      <h3>DN·Guard — динамический BLE</h3>
+      <ul>
+        <li><span>ID маячка меняется каждые 5 мин по AES-128 — скопированный токен бесполезен</span></li>
+        <li><span>Нельзя «отсканировать заранее» — ключ уже сменился</span></li>
+        <li><span>Дальность настраивается: 1–5 м = охранник должен физически подойти</span></li>
+        <li><span>Последовательность и хронология точек проверяется сервером</span></li>
+        <li><span>Работает без GPS — подземные объекты, зоны РЭБ</span></li>
+      </ul>
+    </div>
+  </div>
+  <div style="margin-top:24px;background:var(--cl);border:1px solid #c7d7ec;border-radius:var(--radius);padding:20px 24px">
+    <p style="font-size:.9rem;color:var(--cd)"><strong>Дополнительный рубеж:</strong> дальность считывания регулируется программно от 1 до 70 м. Установите 3–5 м — охранник обязан физически подойти вплотную к точке. Установите 30–70 м — маячок у здания фиксирует периметр без прохода внутрь.</p>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="usecases">
+  <div class="section-label">Применение</div>
+  <h2>Где работает DN·Guard</h2>
+  <p class="subtitle">Любой объект с охранным патрулированием и требованием к документируемости маршрутов.</p>
+  <div class="uc-grid">
+    <div class="uc-card">
+      <div class="ico">🏭</div>
+      <h3>Промышленные предприятия</h3>
+      <p>Заводы, НПЗ, энергообъекты. Обязательный контроль периметра и технических зон. Интеграция с системой пожарной безопасности и СКУД.</p>
+    </div>
+    <div class="uc-card">
+      <div class="ico">🏗️</div>
+      <h3>Строительные площадки и склады</h3>
+      <p>Контроль сохранности техники и материалов ночью. Охранник проходит маршрут — факт зафиксирован в журнале. Документация для страховки.</p>
+    </div>
+    <div class="uc-card">
+      <div class="ico">🏢</div>
+      <h3>Бизнес-центры и ТРЦ</h3>
+      <p>Контроль ночных обходов, патрулирование паркингов. Управляющая компания видит отчёт по каждой смене — документирование для арендаторов.</p>
+    </div>
+    <div class="uc-card">
+      <div class="ico">⚡</div>
+      <h3>Объекты критической инфраструктуры</h3>
+      <p>Подстанции, водозаборы, ЦОД, транспортные узлы. Строгие регуляторные требования к документированию обходов — DN·Guard генерирует доказательный журнал.</p>
+    </div>
+    <div class="uc-card">
+      <div class="ico">🚂</div>
+      <h3>Железнодорожные объекты и тоннели</h3>
+      <p>GPS недоступен в тоннелях и на крытых платформах. BLE-маячки работают независимо от спутникового сигнала и сотовой связи.</p>
+    </div>
+    <div class="uc-card">
+      <div class="ico">🏥</div>
+      <h3>Медицинские и режимные учреждения</h3>
+      <p>Контроль обходов охраны и дежурного персонала. Интеграция с системой управления зданием (BMS) и учётом рабочего времени.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SPECS -->
+<section class="specs">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Параметры аппаратной платформы</h2>
+  <p class="subtitle">Все маячки DN·Guard построены на промышленном образце dynamic-iBeacon — платформе с подтверждёнными характеристиками.</p>
+  <div class="spec-grid">
+    <div class="spec-item"><span class="val">до 10 лет</span><span class="lbl">Срок службы батареи</span></div>
+    <div class="spec-item"><span class="val">1–70 м</span><span class="lbl">Настраиваемая дальность</span></div>
+    <div class="spec-item"><span class="val">IP67</span><span class="lbl">Защита корпуса</span></div>
+    <div class="spec-item"><span class="val">5 мин</span><span class="lbl">Период смены ID (настраивается)</span></div>
+    <div class="spec-item"><span class="val">AES-128</span><span class="lbl">Шифрование идентификатора</span></div>
+    <div class="spec-item"><span class="val">−40…+85°C</span><span class="lbl">Рабочий диапазон</span></div>
+  </div>
+  <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+    <h3 style="font-size:.92rem;font-weight:700;margin-bottom:12px;color:var(--slate)">Совместимые считыватели</h3>
+    <p style="font-size:.88rem;color:var(--muted);line-height:1.7">Любой Android/iOS-смартфон с BLE 4.0+ и приложением DN·Guard (офлайн-работа, синхронизация по WiFi). Специализированные промышленные ручные BLE-сканеры для объектов без личных телефонов. Совместимость с GPS-трекерами Teltonika FMB920/FMC150, GalileoSky 7x — BLE-события и ГЛОНАСС-координата в одном пакете.</p>
+  </div>
+</section>
+
+<!-- INTEGRATION -->
+<section class="integ">
+  <div class="section-label">Интеграция</div>
+  <h2>Встраивается в существующую инфраструктуру</h2>
+  <p class="subtitle">REST API и готовые коннекторы для популярных систем безопасности, охраны труда и учёта рабочего времени.</p>
+  <div class="integ-list">
+    <div class="integ-item">
+      <div class="ico">🔗</div>
+      <div>
+        <h3>REST API</h3>
+        <p>JSON-события в реальном времени: checkpoint_id, guard_id, timestamp, route_id. Webhook-уведомления о пропусках.</p>
+      </div>
+    </div>
+    <div class="integ-item">
+      <div class="ico">🔒</div>
+      <div>
+        <h3>СКУД</h3>
+        <p>Объединение данных о доступе к помещениям и маршрутах патрулирования в единой системе безопасности.</p>
+      </div>
+    </div>
+    <div class="integ-item">
+      <div class="ico">📊</div>
+      <div>
+        <h3>1С: УПП / ЗУП</h3>
+        <p>Журнал обходов как документ в 1С. Учёт рабочего времени охраны и привязка смен к маршрутам.</p>
+      </div>
+    </div>
+    <div class="integ-item">
+      <div class="ico">📡</div>
+      <div>
+        <h3>GPS-мониторинг (Wialon, ГдеМои)</h3>
+        <p>BLE-события из DN·Guard объединяются с GPS-треком транспортного трекера — единое окно мониторинга объекта.</p>
+      </div>
+    </div>
+    <div class="integ-item">
+      <div class="ico">🧯</div>
+      <div>
+        <h3>Системы пожарной безопасности</h3>
+        <p>Интеграция с СОУЭ и ОПС через REST: маршруты обходов привязаны к зонам пожарной сигнализации.</p>
+      </div>
+    </div>
+    <div class="integ-item">
+      <div class="ico">📄</div>
+      <div>
+        <h3>PDF-отчёты и экспорт</h3>
+        <p>Автоматический журнал смены в PDF: хронология всех обходов, отклонения, подпись. Экспорт в Excel/CSV для аудита.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROI -->
+<section class="roi">
+  <div class="section-label">Экономика внедрения</div>
+  <h2>Измеримый результат</h2>
+  <p class="subtitle">Экономия достигается за счёт дисциплины персонала, снижения страховых рисков и документальной защиты при инцидентах.</p>
+  <div class="roi-grid">
+    <div class="roi-card">
+      <div class="num">−40–60%</div>
+      <h3>Нарушений маршрута после внедрения</h3>
+      <p>Охранники знают о фиксации каждого прохода — дисциплина растёт без административного давления. Эффект заметен в первую неделю.</p>
+    </div>
+    <div class="roi-card">
+      <div class="num">от 2 недель</div>
+      <h3>Срок запуска пилота</h3>
+      <p>Маячки монтируются без проводки и инфраструктуры. Приложение настраивается удалённо. Первый отчёт — в первую же смену.</p>
+    </div>
+    <div class="roi-card">
+      <div class="num">100%</div>
+      <h3>Доказательная база при инцидентах</h3>
+      <p>Страховой случай, хищение, ЧП — у вас есть точная хронология: кто, где и когда был. Журнал с цифровой подписью принимается как доказательство.</p>
+    </div>
+    <div class="roi-card">
+      <div class="num">0 ₽</div>
+      <h3>Затрат на обслуживание маячков</h3>
+      <p>Батарея рассчитана на срок службы объекта. Корпус IP67 — для улицы и производства. Установил один раз — система работает без замены батарей.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DN·MAN CROSS-PROMO -->
+<section style="padding:56px 5%;background:var(--bg)">
+  <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:32px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center">
+    <div>
+      <div style="font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:10px">Расширение DN·Guard</div>
+      <h3 style="font-size:1.1rem;font-weight:700;color:var(--slate);margin-bottom:10px">Охранник упал — система знает через 30 секунд</h3>
+      <p style="font-size:.9rem;color:var(--muted);max-width:560px">Добавьте к DN·Guard метку с акселерометром DN·Man на каждого охранника: детектор падения + SOS-кнопка. При ЧС диспетчер получает алерт немедленно и знает точную последнюю контрольную точку — где искать пострадавшего.</p>
+    </div>
+    <a href="../dn-man/index.html" style="background:var(--c);color:#fff;padding:14px 24px;border-radius:8px;font-weight:700;font-size:.9rem;white-space:nowrap;text-align:center">DN·Man →</a>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <h2>Запустим пилот на вашем объекте</h2>
+  <p>Опишите количество маршрутов, контрольных точек и смен. Подготовим конфигурацию и расчёт стоимости за один рабочий день.</p>
+  <a href="mailto:sayr@inbox.ru?subject=Запрос DN·Guard — контроль маршрутов" class="btn-white">Написать нам</a>
+  <p class="cta-email">sayr@inbox.ru</p>
+</section>
+
+<footer>
+  <p><strong>DN·Guard</strong> — контроль маршрутов патрулирования · DN·Beacon · <a href="../index.html">все решения</a> · <a href="mailto:sayr@inbox.ru">sayr@inbox.ru</a></p>
+</footer>
+
+</body>
+</html>
