@@ -97,6 +97,11 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .norm-block { background:#f1f5f9; border-radius:10px; padding:24px 28px; }
+  .norm-block h3 { font-weight:800; margin-bottom:12px; }
+  .norm-block ul { margin:0; padding-left:20px; }
+  .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
+  .norm-block a { color:inherit; }
 </style>
 </head>
 <body>
@@ -248,6 +253,21 @@
       <div class="spec-row"><span class="k">Смена ID</span><span class="v tap">каждые 5 минут (настраивается)</span></div>
       <div class="spec-row"><span class="k">TagID</span><span class="v green">не передаётся в эфире</span></div>
     </div>
+  </div>
+</section>
+
+<section style="padding:64px 5%;background:var(--white,#fff)">
+  <h2>Нормативная база</h2>
+  <div class="norm-block">
+    <h3>Применимые стандарты — NFC и BLE каналы</h3>
+    <ul>
+      <li><strong>ISO/IEC 14443</strong> — Идентификационные карты. Бесконтактные карты типа proximity (NFC, 13,56 МГц). Чип метки поддерживает NFC-A (ISO 14443-A) и NDEF.</li>
+      <li><strong><a href="https://www.gpntb.ru/rfid/pdf-doc/1.pdf" target="_blank">ГОСТ Р ИСО/МЭК 18000-3</a></strong> — Радиочастотная идентификация на частоте 13,56 МГц. Российский аналог ISO/IEC 18000-3.</li>
+      <li><strong>ISO/IEC 15693</strong> — Бесконтактные карты типа vicinity (13,56 МГц, дальность до 1 м). Совместимость справочно.</li>
+      <li><strong>IEEE 802.15.1</strong> — Стандарт Bluetooth LE. BLE-канал метки DN·Tap для широковещательных объявлений.</li>
+      <li><strong>ТР ТС 020/2011</strong> — Электромагнитная совместимость. Оба канала (NFC + BLE) работают в лицензируемых диапазонах.</li>
+      <li><strong>ФЗ №152-ФЗ «О персональных данных»</strong> — TagID в эфире не раскрывает личность: в NFC-сессии передаётся только сессионный токен, в BLE — ротируемый UUID.</li>
+    </ul>
   </div>
 </section>
 
