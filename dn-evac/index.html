@@ -337,6 +337,43 @@
   </div>
 </section>
 
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7f1d1d;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Becker Mining SENTRY: 25–100 М₽ на кабельную инфраструктуру. DN·Evac — полное покрытие за 200–500 К₽</h2>
+  <div class="vs-callout"><strong>Leaky feeder / излучающий кабель — промышленный стандарт связи в шахтах, но ценник делает его недоступным для малого и среднего бизнеса.</strong> Becker Mining SENTRY: прокладка излучающего кабеля 25–100М₽/км тоннеля. DN·Evac: BLE Mesh по существующим потолочным конструкциям — полное покрытие предприятия за 200–500К₽.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Принцип</th><th>Инфраструктура</th><th>Стоимость развёртывания</th><th>Время отклика</th><th>Работа без GSM</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Evac</strong></td><td>BLE Mesh AES-128</td><td class="c-ok">Существующие потолки</td><td class="c-ok">200–500 К₽</td><td class="c-ok"><3 сек</td><td class="c-ok">Да</td></tr>
+        <tr><td>Becker Mining SENTRY</td><td>Leaky feeder кабель</td><td class="c-err">Прокладка кабеля</td><td class="c-err">25–100 М₽/км</td><td class="c-ok"><1 сек</td><td class="c-ok">Да</td></tr>
+        <tr><td>Strata G-Tag</td><td>WiFi + BLE</td><td class="c-warn">WiFi-точки</td><td class="c-warn">2–5 М₽</td><td class="c-warn"><10 сек</td><td class="c-warn">Частично</td></tr>
+        <tr><td>Blackline Safety G7x</td><td>GSM + GPS</td><td class="c-warn">GSM-покрытие</td><td class="c-warn">$700/устройство</td><td class="c-err">Зависит от GSM</td><td class="c-err">Нет</td></tr>
+        <tr><td>Ручная перекличка</td><td>Ручной учёт</td><td class="c-ok">Нет</td><td class="c-ok">~0</td><td class="c-err">Минуты</td><td class="c-ok">Да</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card">
+      <div class="adv-title">В 50–200× дешевле leaky feeder</div>
+      <p>Becker SENTRY на тоннеле 500 м: 12–50М₽ на кабель + монтаж. DN·Evac на том же объекте: 200–400К₽ на BLE-шлюзы. Разница уходит на другие меры безопасности.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">Эвакуация за <3 секунды</div>
+      <p>BLE Mesh: тревожная кнопка → ближайший шлюз → сервер → все экраны диспетчера. Без GSM, без интернета. Персонал на плане эвакуации в реальном времени до прихода пожарных.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">AES-128 достоверность</div>
+      <p>Rolling ID: невозможно имитировать тревогу с чужого маяка, невозможно заблокировать сигнал replay-атакой. Каждый факт присутствия криптографически верифицирован.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">Интеграция с АУПС / МЧС</div>
+      <p>REST API: интеграция с автоматической установкой пожарной сигнализации (АУПС) и АСУ ТП. Отчёт о составе персонала на объекте — в реальном времени для команды МЧС на входе.</p>
+    </div>
+  </div>
+</section>
+
 <section class="cta-section">
   <h2>Спасатели входят с данными, а не вслепую</h2>
   <p>Укажите тип объекта и численность персонала. Рассчитаем количество меток, точек учёта и полную стоимость внедрения за 1 день.</p>

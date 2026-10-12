@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
@@ -370,24 +370,37 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
 <!-- COMP-VS -->
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#166534;margin-bottom:12px">Сравнение с конкурентами</div>
-  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Waste точнее GPS и QR при учёте вывоза ТКО</h2>
-  <div class="vs-callout"><strong>До 30% бумажных актов объезда ТКО фальсифицируются (данные ФАС, 2023).</strong> DN·Waste выдаёт криптографически подтверждённую запись: AES-128 подпись маяка при каждом подъёме контейнера.</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">RFID 125 кГц требует 5 см и отмывки контейнера. DN·Waste читает через 70 м и сквозь грязь</h2>
+  <div class="vs-callout"><strong>Пассивный RFID 125 кГц — стандарт ЖКХ 2000-х годов.</strong> Idesco, Identix: ридер за 30 000 ₽ должен поднести антенну на 5 см к каждому контейнеру. В дождь, снег, после мусоровоза — ридер срабатывает в 60–70% случаев. DN·Waste: BLE, дальность 70 м, IP67, считывает с движущегося мусоровоза без остановки.</div>
   <div class="comp-wrap">
-    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Waste</th></tr></thead>
-    <tbody>
-      <tr><td>QR-метки на контейнерах</td><td>Ecoharvest, ЭкоНива</td><td class="c-err">Сканирование с 20 см вручную — водитель выходит из кабины в любую погоду</td><td class="c-ok">Автоматически с 5–30 м: водитель не выходит из кабины</td></tr>
-      <tr><td>GPS на мусоровозах</td><td>Wialon, CityDriver</td><td class="c-warn">Маршрут виден, но факт подъёма контейнера криптографически не подтверждён</td><td class="c-ok">Маяк на контейнере = AES-128 доказательство подъёма</td></tr>
-      <tr><td>RFID 125 кГц (кольцо)</td><td>Стандарт ЖКХ РФ</td><td class="c-err">Зона чтения 5–15 см; водитель должен выйти и поднести считыватель</td><td class="c-ok">Чтение с 5–30 м, не выходя из кабины, в любую погоду</td></tr>
-      <tr><td>Весовые датчики</td><td>Mettler Toledo (CH)</td><td class="c-warn">Только стационарные точки; нет мобильного подтверждения контейнера</td><td class="c-ok">Маяк на каждом контейнере — учёт каждого подъёма</td></tr>
-      <tr><td>Бумажные акты объезда</td><td>—</td><td class="c-err">До 30% актов фальсифицируются — без криптографии нет доказательной базы</td><td class="c-ok">Подпись маяка AES-128: подделать без физического присутствия невозможно</td></tr>
-    </tbody></table>
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Технология</th><th>Дальность</th><th>Без остановки</th><th>Работа в грязи</th><th>Цена метки</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Waste</strong></td><td>BLE AES-128</td><td class="c-ok">До 70 м</td><td class="c-ok">Да</td><td class="c-ok">IP67</td><td class="c-ok">3 000–5 000 ₽</td></tr>
+        <tr><td>Idesco 8CM (RFID 125 кГц)</td><td>Пассивный RFID</td><td class="c-err">3–5 см</td><td class="c-err">Нет</td><td class="c-warn">Слой грязи = отказ</td><td class="c-ok">800–1 500 ₽</td></tr>
+        <tr><td>Feig OBID RFID UHF</td><td>UHF RFID 868 МГц</td><td class="c-warn">1–3 м</td><td class="c-warn">Медленно (<15 км/ч)</td><td class="c-warn">Снижает дальность</td><td class="c-warn">1 500–3 000 ₽</td></tr>
+        <tr><td>Весовые датчики</td><td>Тензодатчик</td><td class="c-ok">Н/п (интегрированы)</td><td class="c-ok">Да</td><td class="c-ok">Не зависит</td><td class="c-err">80 000–150 000 ₽/ТС</td></tr>
+        <tr><td>Бумажные маршрутные листы</td><td>Ручное заполнение</td><td class="c-ok">Н/п</td><td class="c-warn">Субъективно</td><td class="c-ok">Бумага не ломается</td><td class="c-ok">~0 ₽</td></tr>
+      </tbody>
+    </table>
   </div>
-  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Waste</h3>
   <div class="adv-grid">
-    <div class="adv-card"><h3>Из кабины, автоматически</h3><p>Маяк на контейнере виден с 5–30 м. Водитель ничего не делает — данные фиксируются сами.</p></div>
-    <div class="adv-card"><h3>Крипто-доказательство</h3><p>Rolling AES-128 ID — подделать запись без физического присутствия у контейнера невозможно.</p></div>
-    <div class="adv-card"><h3>Аналитика пропусков</h3><p>Какие точки пропущены, в какое время — готовая база для штрафных актов и претензий.</p></div>
-    <div class="adv-card"><h3>Работает без GSM</h3><p>Данные кэшируются на борту мусоровоза и синхронизируются по приезду в гараж.</p></div>
+    <div class="adv-card">
+      <div class="adv-title">Считывание на ходу</div>
+      <p>Мусоровоз проезжает мимо точки сбора — BLE-ридер на бампере считывает все контейнеры в радиусе 70 м без снижения скорости. RFID 125 кГц требует полной остановки и подхода оператора.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">IP67 под любую погоду</div>
+      <p>Метка работает после мойки под давлением, после зимнего засоления, в −40°C. Пассивный RFID теряет читаемость при слое грязи >5 мм между меткой и антенной.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">АСУ ТКО и 44-ФЗ</div>
+      <p>Интеграция с региональными АСУ ТКО через REST API. Экспорт актов вывоза для надзорных органов. Полный пакет документации для тендерных закупок по 44-ФЗ/223-ФЗ.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">AES-128 против фальсификаций</div>
+      <p>Rolling ID: нельзя «отметить» контейнер заранее или повторно. Каждый факт вывоза — уникальный криптографический токен с геометкой и временем. Суд принимает как доказательство.</p>
+    </div>
   </div>
 </section>
 

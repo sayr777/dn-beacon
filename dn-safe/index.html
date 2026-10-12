@@ -418,6 +418,43 @@
   </div>
 </section>
 
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#dc2626;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Sewio UWB якорь: $800–1500. BLE AoA якорь DN·Safe — 50–100 К₽. Те же 10–30 см точности</h2>
+  <div class="vs-callout"><strong>UWB — лучшая точность для RTLS, но стоимость развёртывания делает его недоступным для большинства складов.</strong> Sewio/Kinexon/Pozyx: якорь $800–1500, тег $50–150, проприетарный SDK. DN·Safe: BLE AoA якорь 50–100К₽, стандартный BLE-тег 3–5К₽, открытый протокол. Точность сопоставима: 10–30 см.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Технология</th><th>Точность</th><th>Цена якоря</th><th>Цена тега</th><th>Монтаж</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Safe</strong></td><td>BLE AoA AES-128</td><td class="c-ok">10–30 см</td><td class="c-ok">50–100 К₽</td><td class="c-ok">3 000–5 000 ₽</td><td class="c-ok">Потолочный, 15 мин</td></tr>
+        <tr><td>Sewio RTLS UWB</td><td>UWB 6.5 ГГц</td><td class="c-ok">10–15 см</td><td class="c-err">$800–1 500</td><td class="c-warn">$50–150</td><td class="c-warn">Квалиф. монтаж</td></tr>
+        <tr><td>Kinexon UWB</td><td>UWB проприетарный</td><td class="c-ok">10–30 см</td><td class="c-err">$1 000–2 000</td><td class="c-warn">$80–200</td><td class="c-err">Только Kinexon</td></tr>
+        <tr><td>Zebra MotionWorks</td><td>UWB Zebra</td><td class="c-warn">30–50 см</td><td class="c-err">$500–1 000</td><td class="c-warn">$45–100</td><td class="c-err">Только Zebra</td></tr>
+        <tr><td>Spot-r Triax</td><td>BLE + акселерометр</td><td class="c-warn">Зональный (3–5 м)</td><td class="c-ok">$200–400</td><td class="c-ok">$30–50</td><td class="c-ok">Простой</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card">
+      <div class="adv-title">5–10× дешевле UWB</div>
+      <p>Склад 5000 м²: Sewio 20 якорей × $1200 = $24 000 только на инфраструктуру. DN·Safe 20 якорей × 75К₽ = 1.5М₽ — при сопоставимой точности позиционирования 10–30 см.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">Тормоз без касания</div>
+      <p>Погрузчик получает BLE-сигнал тега на каске за 5–15 м — автотормоз срабатывает до контакта. Latency <200 мс — быстрее человеческой реакции (300 мс). Расстояние вычисляется локально, не через облако.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">AES-128 против спуфинга</div>
+      <p>Rolling UUID каждые 5 минут: нельзя воспроизвести чужой сигнал, нельзя «отключить» защиту перехватом. Spot-r и Zebra используют статические идентификаторы — уязвимы к BLE-спуфингу.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">Открытый протокол, ФЗ-116</div>
+      <p>Соответствие ФЗ-116 «О промышленной безопасности» и ГОСТ 12.0.004. Интеграция с WMS и системой охраны труда через REST API — без привязки к Sewio/Kinexon-экосистеме.</p>
+    </div>
+  </div>
+</section>
+
 <section class="cta">
   <h2>Остановите следующий несчастный случай до того, как он случился</h2>
   <p>Расскажите об объекте: площадь, количество погрузчиков, тип стеллажей. Подготовим план расстановки локаторов и расчёт за 1 день.</p>

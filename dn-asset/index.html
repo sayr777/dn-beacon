@@ -235,30 +235,6 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
 <!-- COMP-VS -->
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0891b2;margin-bottom:12px">Сравнение с конкурентами</div>
-  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Asset лучше RFID и GPS-трекеров</h2>
-  <div class="vs-callout"><strong>Nedap (NL), Zebra (US), Honeywell (US) — официальные поставки в Россию прерваны с 2022 г.</strong> DN·Asset собирается на nRF52832, доступном в Chipdip и Компэл.</div>
-  <div class="comp-wrap">
-    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Asset</th></tr></thead>
-    <tbody>
-      <tr><td>RFID UHF (FX7500)</td><td>Zebra Technologies (США)</td><td class="c-err">Металлический стеллаж расстраивает антенну; зона чтения 20–80 см в металлосреде</td><td class="c-ok">BLE 2.4 ГГц, до 70 м через металлические стеллажи</td></tr>
-      <tr><td>Barcode + WMS</td><td>Honeywell</td><td class="c-warn">Ручное сканирование, 5-сек пауза на каждый актив; ошибки при сходных SKU</td><td class="c-ok">Автоматически при проходе, без пауз и ручных действий</td></tr>
-      <tr><td>GPS asset tracker</td><td>Teltonika TFT100</td><td class="c-err">Нет GPS внутри здания, склада, цеха, подземной парковки</td><td class="c-ok">BLE работает indoor без спутников</td></tr>
-      <tr><td>BLE-маяки статические</td><td>Estimote, Kontakt.io</td><td class="c-err">Статический UUID — клонируется за 30 секунд любым смартфоном</td><td class="c-ok">AES-128, rolling ID каждые 5 мин — клонировать математически невозможно</td></tr>
-      <tr><td>RFID UHF система</td><td>Nedap TRANSIT (NL)</td><td class="c-err">Официальные поставки в РФ прерваны с 2022 г.</td><td class="c-ok">nRF52832 через Chipdip/Компэл, цепочка полностью отечественная</td></tr>
-    </tbody></table>
-  </div>
-  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Asset</h3>
-  <div class="adv-grid">
-    <div class="adv-card"><h3>Замена импорту</h3><p>После 2022 г. nRF52832 доступен через Chipdip и Компэл. Вся производственная цепочка — отечественная.</p></div>
-    <div class="adv-card"><h3>AES-128 rolling ID</h3><p>Estimote и Kontakt.io вещают статический UUID — клонируется за 30 сек. DN·Asset меняет подпись каждые 5 мин.</p></div>
-    <div class="adv-card"><h3>10 лет без обслуживания</h3><p>GPS-трекеры — SIM + батарея 1–2 года. DN·Asset — без SIM, без замены батареи 10 лет.</p></div>
-    <div class="adv-card"><h3>IP67, −40°C…+85°C</h3><p>Морозильный склад, открытый двор, горячий производственный цех — работает без ограничений.</p></div>
-  </div>
-</section>
-
-<!-- COMP-VS -->
-<section style="background:#f8fafc;padding:72px 5%">
-  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0891b2;margin-bottom:12px">Сравнение с конкурентами</div>
   <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">AirTag умрёт через год. Zebra ZB200 стоит $45 и закрывает в проприетарную экосистему. DN·Asset — 10 лет, открытый стандарт</h2>
   <div class="vs-callout"><strong>Apple AirTag: батарея CR2032 — год, после нужно менять вручную на каждом из тысяч активов.</strong> Zebra MotionWorks ZB200 — $45/тег и только Zebra RFID-ридеры. DN·Asset: ER14505H-LD, 10 лет без обслуживания, стандартный BLE-приёмник.</div>
   <div class="comp-wrap">

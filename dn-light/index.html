@@ -270,24 +270,37 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
 <!-- COMP-VS -->
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ca8a04;margin-bottom:12px">Сравнение с конкурентами</div>
-  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Light дешевле и быстрее проводных Pick-by-Light</h2>
-  <div class="vs-callout"><strong>Banner Engineering K50 Pick-to-Light — 12 000–40 000 ₽ за ячейку плюс кабельная разводка электриком 3–7 дней.</strong> DN·Light — 950 ₽/ячейку, монтаж за 4 часа без кабелей.</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Проводной PTL: 150–400 К₽/зону на кабельную инфраструктуру. DN·Light — беспроводной шлюз и монтаж за 1 день</h2>
+  <div class="vs-callout"><strong>Проводные Pick-by-Light системы — это не стеллаж, а строительство.</strong> SSI Schäfer, Mecalux, Vanderlande: кабель-канал вдоль каждого ряда, монтаж электрика, согласование с пожнадзором — 2–4 недели и 150–400К ₽ только на инфраструктуру. DN·Light: BLE-шлюз в любую розетку, метки — двусторонний скотч. Через 8 часов — работает.</div>
   <div class="comp-wrap">
-    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Light</th></tr></thead>
-    <tbody>
-      <tr><td>Проводные LED Pick-to-Light</td><td>Banner Engineering K50/K30 (США)</td><td class="c-err">12–40 тыс. ₽/ячейку; кабельная прокладка 3–7 дней; электрик обязателен</td><td class="c-ok">950 ₽/ячейку; монтаж 4 ч без электрика; беспроводная</td></tr>
-      <tr><td>Pick-to-Light система</td><td>Knapp AG OK.Vision (Австрия)</td><td class="c-err">Импорт из ЕС в РФ заблокирован с 2022 г.</td><td class="c-ok">Отечественная сборка на nRF52832, доступно сейчас</td></tr>
-      <tr><td>Корпоративная Pick-to-Light</td><td>Würth Monta (Германия)</td><td class="c-warn">Только для собственных систем хранения Würth; несовместима с другими стеллажами</td><td class="c-ok">Совместима с любыми стеллажами и любой WMS через API</td></tr>
-      <tr><td>Наручный сканер-терминал</td><td>Zebra WT6000 (США)</td><td class="c-err">90–250 тыс. ₽ за носимую гарнитуру; требует обучения; хрупкое</td><td class="c-ok">Нет носимого оборудования — LED на полке, сборщик работает свободно</td></tr>
-      <tr><td>Бумажные маршрутные листы</td><td>—</td><td class="c-err">20–30% ошибок комплектования; нет контроля в реальном времени</td><td class="c-ok">Световой сигнал на нужной ячейке — ошибки исключены конструктивно</td></tr>
-    </tbody></table>
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Тип</th><th>Кабельная трасса</th><th>Монтаж</th><th>Стоимость ячейки</th><th>Перемещение стеллажей</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Light</strong></td><td>BLE беспроводной PTL</td><td class="c-ok">Нет</td><td class="c-ok">1 день</td><td class="c-ok">3 500–5 000 ₽</td><td class="c-ok">Переклеить, 5 мин</td></tr>
+        <tr><td>SSI Schäfer LOGIMAT</td><td>Проводной PTL</td><td class="c-err">Да</td><td class="c-err">2–4 нед.</td><td class="c-err">10 000–20 000 ₽</td><td class="c-err">Электромонтаж</td></tr>
+        <tr><td>Mecalux Interlake PTL</td><td>Проводной LED</td><td class="c-err">Да</td><td class="c-err">2–3 нед.</td><td class="c-err">8 000–15 000 ₽</td><td class="c-err">Новый монтаж</td></tr>
+        <tr><td>Vanderlande PICK@EASY</td><td>Проводной конвейер</td><td class="c-err">Да</td><td class="c-err">1–3 мес.</td><td class="c-err">50 000+₽/ячейка</td><td class="c-err">Невозможно</td></tr>
+        <tr><td>Zebra RFID PTL</td><td>UHF RFID</td><td class="c-warn">Частично</td><td class="c-warn">1–2 нед.</td><td class="c-warn">7 000–12 000 ₽</td><td class="c-warn">Перепроектирование</td></tr>
+      </tbody>
+    </table>
   </div>
-  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Light</h3>
   <div class="adv-grid">
-    <div class="adv-card"><h3>Без кабелей</h3><p>BLE 2.4 ГГц, LED на батарейке — стеллаж переставляется за 10 секунд без электрика.</p></div>
-    <div class="adv-card"><h3>В 15–40 раз дешевле</h3><p>Banner K50: 12–40 тыс. ₽/ячейку. DN·Light: 950 ₽/ячейку. При 100 ячейках — экономия от 1,1 млн ₽.</p></div>
-    <div class="adv-card"><h3>Монтаж за 4 часа</h3><p>Маяк клеится, LED крепится скотчем. Не нужен электрик, разрешения или остановка склада.</p></div>
-    <div class="adv-card"><h3>Замена импорту</h3><p>Banner, Knapp, Würth не поставляются в РФ с 2022 г. DN·Light — полностью доступная отечественная замена.</p></div>
+    <div class="adv-card">
+      <div class="adv-title">Монтаж без строителей</div>
+      <p>Один BLE-шлюз накрывает 50–70 ячеек. Метка крепится на скотч за 30 секунд. Переезд склада, перестановка стеллажей — просто переклейте метку и переназначьте адрес в системе.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">В 2–4× дешевле на ячейку</div>
+      <p>3 500–5 000 ₽ против 8 000–20 000 ₽ у проводных систем. При 200 ячейках экономия 900К–3М ₽ только на метках — без учёта стоимости монтажных работ.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">AES-128 без конфликтов сигналов</div>
+      <p>Rolling ID: каждые 5 минут маяк меняет UUID. Никаких коллизий при 500+ метках в одной зоне — шлюз криптографически разделяет потоки данных.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">Пуск с первой смены</div>
+      <p>Утром — развесили, настроили интеграцию 1С WMS / SAP EWM. Вечером — первая смена работает с индикацией. Vanderlande PICK@EASY требует 1–3 месяца проектирования.</p>
+    </div>
   </div>
 </section>
 
