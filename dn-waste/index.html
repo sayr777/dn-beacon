@@ -104,6 +104,18 @@
   .mount-card h3{font-size:.88rem;font-weight:700;color:var(--slate);margin-bottom:8px}
   .mount-card p{font-size:.82rem;color:var(--muted)}
   .mount-card .tag{display:inline-block;background:var(--cl);color:var(--c);font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px}
+.comp-wrap{overflow-x:auto;margin-top:28px}
+table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+table.vs tr:nth-child(even) td{background:#f8fafc}
+.c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #166534}
+.adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+.adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+.vs-callout{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+.vs-callout strong{color:#166534}
 </style>
 </head>
 <body>
@@ -352,6 +364,30 @@
     <div class="eco-row"><span class="ek">Снижение претензий жителей (штрафы)</span><span class="ev">~1,8 млн руб./год</span></div>
     <div class="eco-row"><span class="ek">Оптимизация маршрутов (−12% топлива)</span><span class="ev">~2,1 млн руб./год</span></div>
     <div class="eco-total">Срок окупаемости — 8–10 месяцев · ROI первого года &gt;120%</div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#166534;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Waste точнее GPS и QR при учёте вывоза ТКО</h2>
+  <div class="vs-callout"><strong>До 30% бумажных актов объезда ТКО фальсифицируются (данные ФАС, 2023).</strong> DN·Waste выдаёт криптографически подтверждённую запись: AES-128 подпись маяка при каждом подъёме контейнера.</div>
+  <div class="comp-wrap">
+    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Waste</th></tr></thead>
+    <tbody>
+      <tr><td>QR-метки на контейнерах</td><td>Ecoharvest, ЭкоНива</td><td class="c-err">Сканирование с 20 см вручную — водитель выходит из кабины в любую погоду</td><td class="c-ok">Автоматически с 5–30 м: водитель не выходит из кабины</td></tr>
+      <tr><td>GPS на мусоровозах</td><td>Wialon, CityDriver</td><td class="c-warn">Маршрут виден, но факт подъёма контейнера криптографически не подтверждён</td><td class="c-ok">Маяк на контейнере = AES-128 доказательство подъёма</td></tr>
+      <tr><td>RFID 125 кГц (кольцо)</td><td>Стандарт ЖКХ РФ</td><td class="c-err">Зона чтения 5–15 см; водитель должен выйти и поднести считыватель</td><td class="c-ok">Чтение с 5–30 м, не выходя из кабины, в любую погоду</td></tr>
+      <tr><td>Весовые датчики</td><td>Mettler Toledo (CH)</td><td class="c-warn">Только стационарные точки; нет мобильного подтверждения контейнера</td><td class="c-ok">Маяк на каждом контейнере — учёт каждого подъёма</td></tr>
+      <tr><td>Бумажные акты объезда</td><td>—</td><td class="c-err">До 30% актов фальсифицируются — без криптографии нет доказательной базы</td><td class="c-ok">Подпись маяка AES-128: подделать без физического присутствия невозможно</td></tr>
+    </tbody></table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Waste</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Из кабины, автоматически</h3><p>Маяк на контейнере виден с 5–30 м. Водитель ничего не делает — данные фиксируются сами.</p></div>
+    <div class="adv-card"><h3>Крипто-доказательство</h3><p>Rolling AES-128 ID — подделать запись без физического присутствия у контейнера невозможно.</p></div>
+    <div class="adv-card"><h3>Аналитика пропусков</h3><p>Какие точки пропущены, в какое время — готовая база для штрафных актов и претензий.</p></div>
+    <div class="adv-card"><h3>Работает без GSM</h3><p>Данные кэшируются на борту мусоровоза и синхронизируются по приезду в гараж.</p></div>
   </div>
 </section>
 

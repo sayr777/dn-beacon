@@ -115,6 +115,18 @@
     .flow-step:last-child { border-bottom: none; }
     .hero-stats { gap: 24px; }
   }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #7c3aed}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#f3f0ff;border:1px solid #ddd6fe;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#6d28d9}
 </style>
 </head>
 <body>
@@ -375,6 +387,31 @@
         <tr class="hl"><td>Работа при отключении сети</td><td class="check">до 24 часов офлайн</td><td class="cross">требует постоянного соединения</td></tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#7c3aed;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Hands-free vs «достать телефон»: разница в пропускной способности</h2>
+  <div class="vs-callout"><strong>Турникет пропустил до того, как пассажир его заметил.</strong> NFC требует осознанного действия 1,5–3 с. BLE считывает пассивно за &lt;200 мс. На 1500 пассажиров в час это в 1,7× больше пропускной способности.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель / система</th><th>Ключевая слабость</th><th>DN·Pay</th></tr></thead>
+      <tbody>
+        <tr><td><strong>NFC/EMV бесконтактная оплата</strong></td><td>Visa/MC/Мир, Тройка (Москва)</td><td class="c-warn">Требует поднести карту/телефон и держать 0,5–1,5 с. В перчатках, с сумками — 3–8 с. Apple Pay заблокирован в РФ с 2022.</td><td class="c-ok">Hands-free &lt;200 мс, смартфон не нужен</td></tr>
+        <tr><td><strong>Mifare Classic / Подорожник</strong></td><td>СПб Подорожник, региональные карты</td><td class="c-err">Mifare Classic взломан в 2008 (CRYPTO-1). Физический контакт обязателен — проблема для пожилых. Производство карт: 3–8 ₽/транзакция.</td><td class="c-ok">AES-128, без физ. контакта, работает без смартфона</td></tr>
+        <tr><td><strong>QR-оплата</strong></td><td>СБП QR, Яндекс Транспорт</td><td class="c-err">Достать телефон → открыть приложение → показать QR: 4–10 с. В солнце / грязный экран — не работает. Не для пожилых без смартфона.</td><td class="c-ok">Пассивно, работает в кармане</td></tr>
+        <tr><td><strong>Face Pay (биометрия)</strong></td><td>Сбербанк (Московский метро)</td><td class="c-warn">CAPEX 500 тыс. – 1,5 млн ₽/турникет. ФЗ-152 privacy-риски. Только помещения с controlled освещением. Vendor lock-in Сбербанк.</td><td class="c-ok">Без биометрии, CAPEX в 10× ниже</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Pay</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>1500+ пассажиров/час вместо 900</h3><p>NFC турникет пропускает ~900 чел/ч из-за времени на поднесение. BLE hands-free — свыше 1500 чел/ч. Для крупных ТПУ это критично в час пик.</p></div>
+    <div class="adv-card"><h3>Работает без смартфона</h3><p>Автономная метка — не нужен телефон. Пенсионеры, дети, пассажиры без смартфона получают тот же бесконтактный комфорт, что и молодёжь.</p></div>
+    <div class="adv-card"><h3>GPS и GSM не нужны</h3><p>Работает в метро, подземных переходах, экранированных помещениях. Оплата не зависит от наличия сотовой сети или GPS-покрытия.</p></div>
+    <div class="adv-card"><h3>Региональный рынок</h3><p>Face Pay и Тройка — Москва. Реальный рынок DN·Pay: 60+ региональных городов с устаревшими жетонами, пригородные электрички РЖД, корпоративные шаттлы.</p></div>
   </div>
 </section>
 

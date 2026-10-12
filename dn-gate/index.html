@@ -150,6 +150,18 @@
 
   @media(max-width: 768px) { .flow-wrap { grid-template-columns: 1fr; } }
   @media(max-width: 600px) { .hero-stats { gap: 24px; } }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #16a34a}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#15803d}
 </style>
 </head>
 <body>
@@ -367,6 +379,32 @@ slot:  unix_time/300 = 5529736  ← актуален</code>
         <tr><td>Стоимость на 100 водителей</td><td class="check">1 метка + приложение</td><td class="cross">100 карточек + ридер</td><td class="cross">100 пультов</td><td class="check">Нет доп. расходов</td></tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#16a34a;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему не хватает брелока, домофона или QR-кода</h2>
+  <div class="vs-callout"><strong>Брелок Em-Marine клонируется за 3 секунды копировщиком за 500 ₽.</strong> Перехваченный BLE-сигнал DN·Gate устаревает за 5 минут — его невозможно использовать повторно.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Gate</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Em-Marine брелок 125 kHz</strong></td><td>Came, Roger, BFT, Vizit</td><td class="c-err">Клонируется за 3 сек любым копировщиком за 500 ₽. Нет гостевого доступа без выдачи физического брелока.</td><td class="c-ok">AES-128 rolling ID · гость по ссылке за 10 с</td></tr>
+        <tr><td><strong>NFC-приложение</strong></td><td>HID Mobile Access, Suprema BioStar Mobile</td><td class="c-warn">Дальность 1–4 см: остановить машину, снять перчатку, поднести. 5–15 с на открытие. Лицензия $3–5/пользователь/мес.</td><td class="c-ok">BLE в кармане, шлагбаум открыт до остановки</td></tr>
+        <tr><td><strong>UHF RFID на лобовое стекло</strong></td><td>Nedap TRANSIT, Parsec PR-X08, Feig IDENT</td><td class="c-warn">Статический ID → relay-атака. Считыватель 30–80 тыс. ₽. Поставки Nedap в РФ ограничены с 2022.</td><td class="c-ok">Динамич. ID · считыватель 8–15 тыс. ₽</td></tr>
+        <tr><td><strong>Домофон + камера + оператор</strong></td><td>Beward, Hikvision, Slinex</td><td class="c-err">Оператор отвлёкся — гость ждёт. Ночью задержка 30–90 с. CAPEX 80–300 тыс. ₽/въезд.</td><td class="c-ok">Автоматически, без оператора, &lt;2 с</td></tr>
+        <tr><td><strong>QR-код шлагбаум</strong></td><td>ParkPass, Autopay</td><td class="c-err">QR фотографируется один раз → используется бесконтрольно. Не работает в яркий солнечный свет / ночью.</td><td class="c-ok">Одноразовая ссылка с истечением срока</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Gate</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Гостевой доступ за 10 секунд</h3><p>Хозяин отправляет ссылку — гость приезжает и шлагбаум открывается без звонков, визитов к администратору и выдачи брелока. Доступ действует строго отведённое время.</p></div>
+    <div class="adv-card"><h3>AES-128: нельзя скопировать</h3><p>Перехваченный BLE-пакет меняется каждые 5 минут. Скопировать Em-Marine — 3 секунды. Скопировать DN·Gate — физически бессмысленно.</p></div>
+    <div class="adv-card"><h3>Руки свободны</h3><p>Телефон в кармане, перчатки на руках, зима −30°C — шлагбаум открывается при подъезде. NFC требует снять перчатку и поднести к считывателю.</p></div>
+    <div class="adv-card"><h3>Импортозамещение</h3><p>Nedap и HID ограничены в поставках в РФ с 2022. DN·Gate — отечественный стек на nRF52832, доступном через Chipdip и Компэл.</p></div>
   </div>
 </section>
 

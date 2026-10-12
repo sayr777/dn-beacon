@@ -93,6 +93,18 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+.comp-wrap{overflow-x:auto;margin-top:28px}
+table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+table.vs tr:nth-child(even) td{background:#f8fafc}
+.c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #ca8a04}
+.adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+.adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+.vs-callout{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+.vs-callout strong{color:#ca8a04}
 </style>
 </head>
 <body>
@@ -252,6 +264,30 @@
       <div class="spec-row"><span class="k">WMS</span><span class="v green">1С · SAP EWM · Oracle</span></div>
       <div class="spec-row"><span class="k">Конфигуратор</span><span class="v green">Web-интерфейс</span></div>
     </div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ca8a04;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Light дешевле и быстрее проводных Pick-by-Light</h2>
+  <div class="vs-callout"><strong>Banner Engineering K50 Pick-to-Light — 12 000–40 000 ₽ за ячейку плюс кабельная разводка электриком 3–7 дней.</strong> DN·Light — 950 ₽/ячейку, монтаж за 4 часа без кабелей.</div>
+  <div class="comp-wrap">
+    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Light</th></tr></thead>
+    <tbody>
+      <tr><td>Проводные LED Pick-to-Light</td><td>Banner Engineering K50/K30 (США)</td><td class="c-err">12–40 тыс. ₽/ячейку; кабельная прокладка 3–7 дней; электрик обязателен</td><td class="c-ok">950 ₽/ячейку; монтаж 4 ч без электрика; беспроводная</td></tr>
+      <tr><td>Pick-to-Light система</td><td>Knapp AG OK.Vision (Австрия)</td><td class="c-err">Импорт из ЕС в РФ заблокирован с 2022 г.</td><td class="c-ok">Отечественная сборка на nRF52832, доступно сейчас</td></tr>
+      <tr><td>Корпоративная Pick-to-Light</td><td>Würth Monta (Германия)</td><td class="c-warn">Только для собственных систем хранения Würth; несовместима с другими стеллажами</td><td class="c-ok">Совместима с любыми стеллажами и любой WMS через API</td></tr>
+      <tr><td>Наручный сканер-терминал</td><td>Zebra WT6000 (США)</td><td class="c-err">90–250 тыс. ₽ за носимую гарнитуру; требует обучения; хрупкое</td><td class="c-ok">Нет носимого оборудования — LED на полке, сборщик работает свободно</td></tr>
+      <tr><td>Бумажные маршрутные листы</td><td>—</td><td class="c-err">20–30% ошибок комплектования; нет контроля в реальном времени</td><td class="c-ok">Световой сигнал на нужной ячейке — ошибки исключены конструктивно</td></tr>
+    </tbody></table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Light</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Без кабелей</h3><p>BLE 2.4 ГГц, LED на батарейке — стеллаж переставляется за 10 секунд без электрика.</p></div>
+    <div class="adv-card"><h3>В 15–40 раз дешевле</h3><p>Banner K50: 12–40 тыс. ₽/ячейку. DN·Light: 950 ₽/ячейку. При 100 ячейках — экономия от 1,1 млн ₽.</p></div>
+    <div class="adv-card"><h3>Монтаж за 4 часа</h3><p>Маяк клеится, LED крепится скотчем. Не нужен электрик, разрешения или остановка склада.</p></div>
+    <div class="adv-card"><h3>Замена импорту</h3><p>Banner, Knapp, Würth не поставляются в РФ с 2022 г. DN·Light — полностью доступная отечественная замена.</p></div>
   </div>
 </section>
 

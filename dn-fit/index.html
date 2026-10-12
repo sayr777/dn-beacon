@@ -77,6 +77,18 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #9d174d}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fdf2f8;border:1px solid #fbcfe8;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#9d174d}
 </style>
 </head>
 <body>
@@ -218,6 +230,29 @@
       <div class="spec-row"><span class="k">Каналы</span><span class="v green">Telegram / email / SMS</span></div>
       <div class="spec-row"><span class="k">Журнал</span><span class="v green">PDF · 90 дней</span></div>
     </div>
+  </div>
+</section>
+
+<section style="padding:64px 5%;background:#fff">
+  <h2>Сравнение с конкурентами</h2>
+  <div class="vs-callout"><strong>По данным МОТ, тепловой стресс снижает производительность на 30–50% и является причиной 600+ смертей рабочих ежегодно в РФ.</strong> Потребительские часы и пульсометры не имеют канала тревоги на диспетчерскую.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Мониторинг ЧСС</th><th>Зоновый контекст</th><th>Алерт диспетчеру</th><th>Батарея</th><th>IP</th><th>152-ФЗ</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Fit (BLE + ANT+)</strong></td><td class="c-ok">Реал-тайм + настраиваемые пороги</td><td class="c-ok">Зона из BLE-сети</td><td class="c-ok">Telegram/Push/SMS мгновенно</td><td class="c-ok">10 лет (метка), 400 ч (ремень)</td><td class="c-ok">IP67</td><td class="c-ok">Биометрия не хранится</td></tr>
+        <tr><td>Garmin Fenix 7 / Watch</td><td class="c-ok">Да, на запястье</td><td class="c-err">Нет</td><td class="c-err">Нет производственного API</td><td class="c-err">1–2 дня при GPS</td><td class="c-warn">IP68 (потребит.)</td><td class="c-warn">Облако США</td></tr>
+        <tr><td>Polar H10 нагрудный ремень</td><td class="c-ok">Высокая точность</td><td class="c-err">Нет</td><td class="c-err">Только приложение на телефоне</td><td class="c-warn">400 ч</td><td class="c-warn">IPX7</td><td class="c-warn">Облако Polar</td></tr>
+        <tr><td>Sewio/Pozyx HR Badge</td><td class="c-ok">Да</td><td class="c-ok">UWB</td><td class="c-ok">Да</td><td class="c-err">6–12 мес</td><td class="c-warn">IP54</td><td class="c-err">Импорт прерван 2022</td></tr>
+        <tr><td>Fatigue-приложения (облачные)</td><td class="c-warn">Через телефон</td><td class="c-err">GPS (улица)</td><td class="c-warn">Задержка до 1 мин</td><td class="c-err">Телефон: 1 день</td><td class="c-err">Нет (телефон)</td><td class="c-warn">Облако иностр.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>ANT+ совместимость — не покупать новое железо</h3><p>DN·Fit работает с уже купленными Garmin HRM, Polar H10, Wahoo TICKR. Метка добавляет зоновый контекст и канал тревоги, не заменяя привычный датчик.</p></div>
+    <div class="adv-card"><h3>Зона + ЧСС = контекст</h3><p>110 bpm в машинном зале и 110 bpm в комнате отдыха — это разные ситуации. BLE-зона позволяет настраивать пороги тревоги по местоположению работника.</p></div>
+    <div class="adv-card"><h3>152-ФЗ: нет биометрических данных на сервере</h3><p>ЧСС привязывается к номеру метки, не к личности. Никаких фото, ФИО, биометрических шаблонов — порог, при котором данные считаются биометрическими, не достигается.</p></div>
+    <div class="adv-card"><h3>Sewio/Pozyx недоступны с 2022</h3><p>Основные европейские производители промышленных HR-badge решений прекратили поставки в РФ. DN·Fit производится и поддерживается локально.</p></div>
   </div>
 </section>
 

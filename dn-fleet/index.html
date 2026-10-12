@@ -141,6 +141,18 @@
     .case { grid-template-columns: 1fr; }
     .case-num { width: 40px; height: 40px; font-size: .95rem; }
   }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #1a56db}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#ebf0ff;border:1px solid #c7d2fe;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#1a56db}
 </style>
 </head>
 <body>
@@ -382,6 +394,31 @@
       <li><strong><a href="http://docs.cntd.ru/document/1200175068" target="_blank">ГОСТ Р ИСО 45001-2020</a></strong> — безопасность водителей и персонала автопарка.</li>
       <li><strong>44-ФЗ / 223-ФЗ</strong> — закупки систем мониторинга транспорта. Документация предоставляется.</li>
     </ul>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1a56db;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Dallas-ключ копируется за ₽500 — BLE-метка устаревает раньше, чем её успевают скопировать</h2>
+  <div class="vs-callout"><strong>Dallas key клонируется копировщиком за 500 ₽ с AliExpress.</strong> Перехваченный DN·Fleet сигнал устаревает через 5 минут — клонирование бессмысленно.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Fleet</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Dallas iButton DS1990</strong></td><td>Omnicomm, Wialon, Navtelecom</td><td class="c-err">Контактный (касание в мороз), нет шифрования, клонируется за ₽500. Идентифицирует водителя, НЕ прицеп.</td><td class="c-ok">AES-128 rolling, бесконтактный, водитель + прицеп</td></tr>
+        <tr><td><strong>UHF RFID прицепные метки</strong></td><td>Turck, Pepperl+Fuchs, Nordic ID</td><td class="c-warn">Дальность пассивный UHF 1–5 м, нестабильно у металла. Активный: замена батарей 1–3 года. Ограниченные поставки в РФ.</td><td class="c-ok">70 м, IP67, 10 лет батарея</td></tr>
+        <tr><td><strong>BLE-брелок (статический)</strong></td><td>Teltonika Eye/FMB Blue</td><td class="c-warn">Статический MAC — перехватывается BLE-сниффером за секунды. IP54. Нет rolling code.</td><td class="c-ok">AES-128, rolling ID каждые 5 мин</td></tr>
+        <tr><td><strong>GPS-фиксация сцепки</strong></td><td>Wialon, SCOUT, Omnicomm</td><td class="c-err">Определяет ФАКТ подключения прицепа, не КАКОЙ прицеп. Нет идентификации — только «что-то подключено».</td><td class="c-ok">Полная идентификация: маршрут + борт + прицеп</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Fleet</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>70 м — прицеп идентифицирован на подъезде к доку</h3><p>Считыватель у ворот дока видит прицеп ещё при подъезде. RFID требует точного позиционирования на 1–5 м — водитель должен остановиться.</p></div>
+    <div class="adv-card"><h3>Водитель И прицеп — одной меткой</h3><p>Dallas key идентифицирует только водителя. DN·Fleet — и водителя, и прицеп, и навесное оборудование одновременно. Одна система закрывает всё.</p></div>
+    <div class="adv-card"><h3>Нет физического контакта</h3><p>Dallas key в рукавицах при −30°C — реальная проблема. BLE считывается через одежду, перчатки, упаковку на любом морозе.</p></div>
+    <div class="adv-card"><h3>Импортозамещение</h3><p>Nordic ID, Pepperl+Fuchs — западный hardware с ограниченными поставками в РФ с 2022. nRF52832 доступен через Chipdip и Компэл без ограничений.</p></div>
   </div>
 </section>
 

@@ -108,6 +108,18 @@
   .sla-card{background:var(--cl);border:1px solid #fecaca;border-radius:12px;padding:20px;text-align:center}
   .sla-card .sla-val{font-size:1.6rem;font-weight:800;color:var(--c);margin-bottom:6px}
   .sla-card .sla-label{font-size:.8rem;color:var(--muted)}
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #7f1d1d}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#7f1d1d}
 </style>
 </head>
 <body>
@@ -298,6 +310,30 @@
       <div class="spec-row"><span class="k">Пожарная сигнализация</span><span class="v ok">API / сухой контакт</span></div>
       <div class="spec-row"><span class="k">Нормативы</span><span class="v accent">ФНП · МЧС №645 · ГОСТ Р 59007</span></div>
     </div>
+  </div>
+</section>
+
+<section style="padding:64px 5%;background:#fff">
+  <h2>Сравнение с конкурентами</h2>
+  <div class="vs-callout"><strong>По статистике МЧС, 70% смертей при пожарах происходит из-за того, что спасатели не знают, кто и где остался в здании.</strong> Стандартные пожарные панели фиксируют сработавший датчик — но не людей.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Учёт персонала</th><th>Реал-тайм локализация</th><th>Работа без GSM</th><th>Интеграция АПС</th><th>Поставки</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Evac (BLE iBeacon)</strong></td><td class="c-ok">Авто: зоновый тепловой карте, кто и где</td><td class="c-ok">Зона/этаж BLE-сетью</td><td class="c-ok">DN·Mesh — без GSM/WiFi</td><td class="c-ok">API / сухой контакт</td><td class="c-ok">РФ</td></tr>
+        <tr><td>QR-регистрация на точке сбора</td><td class="c-err">Ручная, пробка у стойки</td><td class="c-err">Только у точки сбора</td><td class="c-ok">Не нужен</td><td class="c-err">Нет</td><td class="c-ok">Есть</td></tr>
+        <tr><td>DNV GL ETS (offshore RTLS)</td><td class="c-ok">Да, UWB/RFID</td><td class="c-ok">Точность ~1 м</td><td class="c-ok">Собственная сеть</td><td class="c-ok">Да</td><td class="c-err">€50K+, импорт закрыт</td></tr>
+        <tr><td>Пожарные панели Viking/Esmi</td><td class="c-err">Нет учёта людей</td><td class="c-err">Только датчики</td><td class="c-ok">Автономная шина</td><td class="c-ok">Встроена</td><td class="c-warn">Импорт затруднён</td></tr>
+        <tr><td>Бумажные переклички</td><td class="c-err">Ошибки 20–40%</td><td class="c-err">Нет</td><td class="c-ok">Не нужен</td><td class="c-err">Нет</td><td class="c-ok">Есть</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Спасатели видят, кто остался</h3><p>Тепловая карта на планшете командира — зоны с людьми подсвечены красным. Не «пропал человек», а «зона B3, второй этаж, 2 человека».</p></div>
+    <div class="adv-card"><h3>Нет пробки у точки сбора</h3><p>QR-системы требуют, чтобы каждый человек подойдёл к стойке и отсканировал. DN·Evac регистрирует выход из здания автоматически — просто идёшь к выходу.</p></div>
+    <div class="adv-card"><h3>Шахты и туннели без связи</h3><p>DN·Mesh создаёт локальную BLE-сеть без GSM, WiFi и интернета. МЧС получает персональную карту даже в подземных горизонтах.</p></div>
+    <div class="adv-card"><h3>SLA: пропавший найден за 3 мин</h3><p>Бумажная перекличка при 200 сотрудниках занимает 20–40 минут. По каждой минуте промедления вероятность выживания при пожаре снижается на 3–5%.</p></div>
+    <div class="adv-card"><h3>Замена европейского DNV GL ETS</h3><p>DNV GL ETS (Норвегия) — единственный сопоставимый продукт для нефтяных платформ и шахт. Стоит €50K+, поставки прерваны. DN·Evac — отечественная альтернатива.</p></div>
   </div>
 </section>
 

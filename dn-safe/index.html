@@ -137,6 +137,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:inherit; }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #dc2626}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#dc2626}
 </style>
 </head>
 <body>
@@ -378,6 +390,31 @@
       <li><strong>ГОСТ 12.3.009-76 ССБТ</strong> — безопасность погрузочно-разгрузочных работ.</li>
       <li><strong>ТР ТС 010/2011</strong> — Технический регламент о безопасности машин и оборудования.</li>
     </ul>
+  </div>
+</section>
+
+<section style="padding:64px 5%;background:#fff">
+  <h2>Сравнение с конкурентами</h2>
+  <div class="vs-callout"><strong>95% производственных несчастных случаев происходят без нажатия тревожной кнопки.</strong> Системы, требующие активации человеком, защищают только от инцидентов, которые успели осознать.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Принцип</th><th>Зоновая логика</th><th>Шифрование</th><th>Работа в −40°C</th><th>Батарея</th><th>Поставки</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Safe (BLE iBeacon)</strong></td><td class="c-ok">Авто: метка → локатор → стоп ПТС</td><td class="c-ok">Да, AES-128 UUID</td><td class="c-ok">Rolling ID каждые 5 мин</td><td class="c-ok">−40…+85°C IP67</td><td class="c-ok">10 лет</td><td class="c-ok">Производство РФ</td></tr>
+        <tr><td>Sewio UWB RTLS</td><td class="c-warn">Пассивная координата, оповещение — облако</td><td class="c-warn">Нет зонового останова</td><td class="c-warn">Базовое</td><td class="c-warn">0…+40°C</td><td class="c-err">1–2 года</td><td class="c-err">Импорт прерван 2022</td></tr>
+        <tr><td>Kinexon UWB</td><td class="c-warn">UWB позиция + алерт ПО</td><td class="c-warn">Только уведомление</td><td class="c-warn">Базовое</td><td class="c-err">−20…+55°C</td><td class="c-err">1–2 года</td><td class="c-err">Импорт прерван 2022</td></tr>
+        <tr><td>Zebra MotionWorks RTLS</td><td class="c-warn">RFID + UWB, ПО cloud</td><td class="c-err">RFID грубо ±3–5 м</td><td class="c-warn">TLS транспорт</td><td class="c-warn">0…+50°C</td><td class="c-err">6–12 мес</td><td class="c-err">Импорт прерван 2022</td></tr>
+        <tr><td>Кнопки тревоги (Волна, Ретранслятор)</td><td class="c-err">Ручная активация</td><td class="c-err">Нет</td><td class="c-err">Нет</td><td class="c-warn">Зависит от модели</td><td class="c-warn">3–5 лет (замена)</td><td class="c-ok">РФ производство</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Автоматическая остановка, не кнопка</h3><p>ПТС останавливается при входе метки-работника в зону — без каких-либо действий человека. Работает даже когда человек не успел среагировать.</p></div>
+    <div class="adv-card"><h3>Непрерывность в экстремальных условиях</h3><p>IP67, −40…+85°C — работает в морозильных складах, литейных цехах, нефтяных буровых. UWB-конкуренты ограничены 0°C и выше.</p></div>
+    <div class="adv-card"><h3>10 лет без обслуживания</h3><p>Батарея ER14505H-LD. Sewio и Kinexon требуют зарядки или замены каждые 1–2 года — в грязных промышленных условиях это критическая точка отказа.</p></div>
+    <div class="adv-card"><h3>Защита от спуфинга</h3><p>AES-128 + rolling UUID каждые 5 минут. UUID кнопки тревоги Rexant/Волна статичен — любой BLE-сниффер считывает и воспроизводит за секунды.</p></div>
+    <div class="adv-card"><h3>Импортозамещение</h3><p>Sewio (Чехия), Kinexon (Германия), Zebra (США) — поставки прерваны или существенно затруднены с 2022. DN·Safe производится и обслуживается в РФ.</p></div>
+    <div class="adv-card"><h3>Интеграция с СКУД и АСУ ТП</h3><p>REST API + Modbus TCP. Зоновый сигнал останова подаётся на ПЛК или систему управления ПТС без дополнительного ПО-шлюза.</p></div>
   </div>
 </section>
 

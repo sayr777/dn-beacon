@@ -116,6 +116,18 @@
   .btn-outline-white { border: 2px solid rgba(255,255,255,.5); color: #fff; padding: 12px 28px; border-radius: 8px; font-weight: 600; }
   footer { background: var(--slate); color: #94a3b8; text-align: center; padding: 28px 5%; font-size: .85rem; }
   footer strong { color: #fff; }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #3f6212}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#f7fee7;border:1px solid #bef264;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#3f6212}
 </style>
 </head>
 <body>
@@ -295,6 +307,31 @@
       <div class="spec-row"><span class="k">Лимиты</span><span class="v green">по объёму, дате, маршруту</span></div>
       <div class="spec-row"><span class="k">Алерт диспетчеру</span><span class="v green">Telegram / email</span></div>
     </div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#3f6212;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">GPS-трекер глушится за ₽2 000 — BLE-маячок работает без спутника и без SIM</h2>
+  <div class="vs-callout"><strong>GPS-глушители продаются в свободном доступе за ₽2 000–5 000.</strong> Угонщик включает глушилку — трекер теряет сигнал, шеринговый автомобиль «исчезает». DN·Share: разблокировка через BLE — физически, рядом с машиной, без спутника.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Share</th></tr></thead>
+      <tbody>
+        <tr><td><strong>GPS + SIM шеринг</strong></td><td>Яндекс.Драйв (Wialon), BelkaCar</td><td class="c-err">GPS глушится за ₽2 000. SIM-зависимость: нет сети = нет разблокировки. ₽200–500/мес/авто на связь. Нет верификации «водитель рядом».</td><td class="c-ok">BLE: без GPS, без SIM, верификация присутствия</td></tr>
+        <tr><td><strong>NFC/RFID-брелоки шеринга</strong></td><td>СитиДрайв, кастомные</td><td class="c-warn">Статический ID: брелок украден или скопирован = доступ к автомобилю. Нет проверки «это тот же человек». Нет мониторинга возврата.</td><td class="c-ok">Rolling AES-128, верификация ID + геозона возврата</td></tr>
+        <tr><td><strong>BLE-шеринг (статический)</strong></td><td>Телтоника FMB (Blue), Samsara</td><td class="c-warn">Статический MAC: сниффером пассивно перехватывается за 30 секунд. IP54. Samsara недоступна в РФ с 2022.</td><td class="c-ok">Rolling MAC каждые 5 мин, IP67</td></tr>
+        <tr><td><strong>Камера + распознавание лица</strong></td><td>VisionLabs, NtechLab</td><td class="c-err">ФЗ-152: биометрия требует явного согласия. Дорогостоящая инфраструктура. Ночью — деградация. Нет решения для самокатов / мопедов.</td><td class="c-ok">Без биометрии, ФЗ-152 compliant, для любого МС</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Share</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Нельзя разблокировать не подходя</h3><p>BLE разблокировка требует физического присутствия — телефон должен быть в 1–5 м от маячка. GPS-системы открываются по координатам, которые глушатся или подделываются.</p></div>
+    <div class="adv-card"><h3>₽0 SIM в месяц</h3><p>GPS + SIM: ₽200–500/авто/мес = ₽120 000–300 000/год для парка 50 ТС. BLE: связь с маячком прямая через телефон пользователя — никаких абонентских платежей.</p></div>
+    <div class="adv-card"><h3>Геозона возврата без GPS</html><p>Маячок на парковке подтверждает: ТС вернулось в разрешённую зону. GPS «видит» в радиусе 30 м — при плотной застройке размытие критично. BLE: 1–3 м в любом месте.</p></div>
+    <div class="adv-card"><h3>Импортозамещение шеринга</h3><p>Samsara, Geotab — западный стек, ограниченные поставки с 2022. DN·Share: полностью отечественный — нет зависимости от санкционного оборудования.</p></div>
   </div>
 </section>
 

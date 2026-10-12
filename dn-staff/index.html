@@ -171,6 +171,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:inherit; }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #b45309}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#b45309}
 </style>
 </head>
 <body>
@@ -522,6 +534,32 @@
 </section>
 
 <!-- CTA -->
+
+<section style="padding:64px 5%;background:#fff">
+  <h2>Сравнение с конкурентами</h2>
+  <div class="vs-callout"><strong>По данным Роструда, 60% нарушений охраны труда на проверяемых объектах — это работники без СИЗ или с неправильно применёнными СИЗ.</strong> Ручные проверки и камеры не останавливают инцидент — они лишь фиксируют нарушение постфактум.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Проверка при входе</th><th>Биометрия / 152-ФЗ</th><th>Работа в −40°C</th><th>Батарея</th><th>Подмена метки</th><th>Поставки</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Staff (BLE iBeacon)</strong></td><td class="c-ok">Авто: метка на СИЗ в зоне ворот</td><td class="c-ok">Нет биометрии</td><td class="c-ok">−40…+85°C IP67</td><td class="c-ok">10 лет</td><td class="c-ok">AES-128 rolling UUID</td><td class="c-ok">РФ</td></tr>
+        <tr><td>RFID на каске (HID/Zebra)</td><td class="c-warn">Считыватель у входа, 0–10 см</td><td class="c-ok">Нет биометрии</td><td class="c-warn">−20…+50°C</td><td class="c-warn">3–5 лет</td><td class="c-err">Статичный ID, клонируется</td><td class="c-err">Импорт прерван</td></tr>
+        <tr><td>Камеры CV (Hikvision/Dahua)</td><td class="c-ok">Авто: детекция наличия каски/жилета</td><td class="c-err">Биометрическая обработка лиц</td><td class="c-warn">−20…+60°C</td><td class="c-ok">Питание от сети</td><td class="c-ok">Нет</td><td class="c-warn">Санкционный риск</td></tr>
+        <tr><td>Guardhat Smart PPE (США)</td><td class="c-ok">Сенсоры + GPS</td><td class="c-ok">Нет</td><td class="c-warn">−20…+55°C</td><td class="c-err">8–12 часов</td><td class="c-ok">Шифрование</td><td class="c-err">Импорт закрыт, $2K/шт</td></tr>
+        <tr><td>Ручные чек-листы / приложения</td><td class="c-err">Ручная проверка ИТР</td><td class="c-ok">Нет</td><td class="c-ok">Бумага не замерзает</td><td class="c-ok">Не нужна</td><td class="c-err">Фальсифицируются</td><td class="c-ok">Есть</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Вход без остановки — проверка на ходу</h3><p>Работник проходит через зону ворот, метка на каске/жилете считывается автоматически за 200 мс. Нет очереди у считывателя, нет потери времени смены.</p></div>
+    <div class="adv-card"><h3>152-ФЗ: нет биометрических данных</h3><p>CV-камеры Hikvision/Dahua обрабатывают изображение лица — это биометрические данные по 152-ФЗ, требующие согласия работника. DN·Staff работает с UUID метки, а не с лицом.</p></div>
+    <div class="adv-card"><h3>Метку нельзя передать — rolling UUID</h3><p>Статичный RFID-чип можно снять с каски и отдать другому. AES-128 rolling UUID меняется каждые 5 минут — скопированный UUID устареет через 5 минут.</p></div>
+    <div class="adv-card"><h3>Промышленный диапазон температур</h3><p>HID/Zebra RFID на −20°C начинают давать сбои. DN·Staff работает при −40°C — нормально для северных регионов, нефтяных объектов, шахт.</p></div>
+    <div class="adv-card"><h3>Интеграция с СКУД — запрет входа без СИЗ</h3><p>При отсутствии метки СИЗ турникет/шлагбаум остаётся закрытым. Не «оштрафовать постфактум» — а физически не пустить без снаряжения.</p></div>
+    <div class="adv-card"><h3>Замена HID/Zebra после 2022</h3><p>HID Global и Zebra Technologies прекратили поставки и поддержку в РФ. DN·Staff — готовый отечественный аналог с производством и сервисом в стране.</p></div>
+  </div>
+</section>
+
 <section class="cta">
   <h2>Готовы внедрить контроль СИЗ на вашем объекте?</h2>
   <p>Расскажите об отрасли и количестве персонала — подготовим схему зон, состав меток и расчёт стоимости за 1 рабочий день.</p>

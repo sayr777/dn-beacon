@@ -83,6 +83,18 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #7c2d12}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#7c2d12}
 </style>
 </head>
 <body>
@@ -224,6 +236,29 @@
       <div class="spec-row"><span class="k">Экстренный режим</span><span class="v accent">iBeacon · 100 мс</span></div>
       <div class="spec-row"><span class="k">DN·Mesh совместимость</span><span class="v green">✓ для подземных работ</span></div>
     </div>
+  </div>
+</section>
+
+<section style="padding:64px 5%;background:#fff">
+  <h2>Сравнение с конкурентами</h2>
+  <div class="vs-callout"><strong>У 80% одиночных работников, погибших на производстве, при себе был телефон.</strong> GSM-связь есть, а сообщить о падении уже некому — нужна автоматическая детекция без участия человека.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Детекция падения</th><th>Локализация</th><th>Работа без GSM</th><th>Батарея</th><th>IP</th><th>Поставки</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Man (BLE + акселерометр)</strong></td><td class="c-ok">Авто: акселерометр + no-motion таймер</td><td class="c-ok">Зона/этаж BLE-сетью</td><td class="c-ok">DN·Mesh (шахты, туннели)</td><td class="c-ok">10 лет</td><td class="c-ok">IP67</td><td class="c-ok">РФ</td></tr>
+        <tr><td>Motorola WAVE (GPS PTT)</td><td class="c-err">Только кнопка SOS</td><td class="c-warn">GPS — улица только</td><td class="c-err">Нет GSM = нет алерта</td><td class="c-err">1–2 суток (заряд)</td><td class="c-warn">IP54</td><td class="c-err">Импорт затруднён</td></tr>
+        <tr><td>Garmin inReach</td><td class="c-err">Только кнопка SOS</td><td class="c-ok">GPS спутник</td><td class="c-ok">Спутниковый канал</td><td class="c-warn">5–7 дней</td><td class="c-ok">IP67</td><td class="c-err">Подписка USD/мес</td></tr>
+        <tr><td>ИО 101 / кнопки тревоги РФ</td><td class="c-err">Только ручная активация</td><td class="c-err">Нет</td><td class="c-warn">Зависит от канала</td><td class="c-warn">3–5 лет</td><td class="c-warn">IP54</td><td class="c-ok">РФ</td></tr>
+        <tr><td>GSM-трекеры (Пеленг, Протей)</td><td class="c-warn">Акселерометр + GSM</td><td class="c-warn">GPS — улица только</td><td class="c-err">Нет</td><td class="c-warn">Подзарядка каждый день</td><td class="c-warn">IP54</td><td class="c-ok">РФ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Падение — автоматический алерт</h3><p>Встроенный акселерометр фиксирует удар, затем no-motion таймер подтверждает, что человек неподвижен. Алерт уходит диспетчеру без нажатия кнопки.</p></div>
+    <div class="adv-card"><h3>Где упал — не «где-то на объекте»</h3><p>BLE-сеть из DN·Scan локаторов определяет зону/этаж с точностью 3–15 м. GPS и GSM-трекеры дают позицию только на улице.</p></div>
+    <div class="adv-card"><h3>Работает в шахтах и туннелях</h3><p>DN·Mesh — самовосстанавливающаяся BLE-ячеистая сеть. GSM нет, спутника нет — алерт всё равно дойдёт до диспетчерской через цепочку меток.</p></div>
+    <div class="adv-card"><h3>10 лет без замены батареи</h3><p>Garmin inReach — 5–7 дней, Motorola WAVE — 1–2 суток заряда. DN·Man: установил и забыл. Критично для удалённых объектов.</p></div>
   </div>
 </section>
 

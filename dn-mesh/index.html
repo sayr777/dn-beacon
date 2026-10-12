@@ -111,6 +111,18 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #1e3a8a}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#eff6ff;border:1px solid #93c5fd;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#1e3a8a}
 </style>
 </head>
 <body>
@@ -313,6 +325,31 @@
       <div class="spec-row"><span class="k">Шлюз</span><span class="v green">1 · LTE / Ethernet</span></div>
       <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 CCM</span></div>
     </div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1e3a8a;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Leaky feeder кабель — $50 000 за 1 км шахты. BLE mesh — в 20 раз дешевле</h2>
+  <div class="vs-callout"><strong>Leaky feeder (текущий кабель) в шахте или тоннеле: $30 000–80 000 за 1 км.</strong> DN·Mesh: relay-узел каждые 50–70 м на батарее 10 лет = $500–800 за тот же километр. В 20–40 раз дешевле без кабельных работ.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Mesh</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Leaky feeder (РЧ-кабель)</strong></td><td>Prysmian, CommScope, Belden</td><td class="c-err">$30 000–80 000 за 1 км. Требует остановки работ на монтаж. Обрыв кабеля = потеря связи по всей шахте. CommScope недоступен в РФ с 2022.</td><td class="c-ok">$500–800 за км, battery-only, нет кабеля</td></tr>
+        <tr><td><strong>Wi-Fi в шахтах/туннелях</strong></td><td>Cisco, Meraki underground</td><td class="c-warn">AP каждые 30–50 м требует питания (220В или PoE) — прокладка кабеля 220В по взрывоопасной зоне: ATEX-сертификация +40% к стоимости. Cisco в РФ недоступен.</td><td class="c-ok">Батарейный, ГОСТ Р 52350 ATEX</td></tr>
+        <tr><td><strong>LoRaWAN подземный</strong></td><td>Kerlink, Semtech</td><td class="c-warn">Шлюз каждые 2–5 км требует питания. Пропускная способность 250 бит/с — только статусы. Нет маршрутизации mesh — одно кольцо отказа.</td><td class="c-ok">BLE mesh маршрутизация, 1 Мбит/с</td></tr>
+        <tr><td><strong>UHF RFID + считыватели</strong></td><td>Zebra, Honeywell (горнодобыча)</td><td class="c-warn">Считыватель каждые 3–5 м для надёжной идентификации = высокая плотность оборудования. Zebra RFID недоступен в РФ. Нет двусторонней связи.</td><td class="c-ok">BLE bidirectional, 70 м/узел</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Mesh</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Нет кабельных работ = нет остановки производства</h3><p>Leaky feeder требует остановки шахты на 2–6 недель для монтажа. DN·Mesh: relay-узлы на стяжках, батарейные — монтаж 1 узла за 10 минут, без остановки добычи.</p></div>
+    <div class="adv-card"><h3>В 20× дешевле за километр</h3><p>1 км leaky feeder: $50 000–80 000. 1 км DN·Mesh (14 узлов × $50): $700. Для 5 км горной выработки — разница $250 000 против $3 500. Окупаемость — первый месяц.</p></div>
+    <div class="adv-card"><h3>Самовосстановление mesh</h3><p>Один узел вышел из строя — соседи автоматически перестроили маршрут. Leaky feeder: обрыв в одном месте = вся ветка без связи. Mesh: нет единой точки отказа.</p></div>
+    <div class="adv-card"><h3>Замена через 10 лет, не 2 года</h3><p>Wi-Fi AP и LoRa-шлюзы в шахте: замена аккумуляторов каждые 1–2 года в труднодоступных зонах. Li-SOCl₂ 10 лет: на всё время действия лицензии на добычу.</p></div>
   </div>
 </section>
 

@@ -102,6 +102,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:inherit; }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #5b21b6}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#5b21b6}
 </style>
 </head>
 <body>
@@ -268,6 +280,31 @@
       <li><strong>ТР ТС 020/2011</strong> — Электромагнитная совместимость. Оба канала (NFC + BLE) работают в лицензируемых диапазонах.</li>
       <li><strong>ФЗ №152-ФЗ «О персональных данных»</strong> — TagID в эфире не раскрывает личность: в NFC-сессии передаётся только сессионный токен, в BLE — ротируемый UUID.</li>
     </ul>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#5b21b6;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Mifare Classic взломан в 2008 — транспортные системы России до сих пор им пользуются</h2>
+  <div class="vs-callout"><strong>CRYPTO-1 (Mifare Classic) полностью скомпрометирован с 2008 г.</strong> Любая карта клонируется за 3 секунды ридером MFRC522 за ₽400 с AliExpress. «Тройка» (Mifare Plus) и СИТИКАРД (Mifare Classic) — разный уровень защиты в одном городе. DN·Tap: AES-128 rolling + NFC session token.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Tap</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Mifare Classic (CRYPTO-1)</strong></td><td>СИТИКАРД, устаревшие системы РФ</td><td class="c-err">CRYPTO-1 взломан с 2008. Клонируется за 3 сек ридером за ₽400. Ни один аудит ИБ не сертифицирует Mifare Classic для новых внедрений.</td><td class="c-ok">AES-128 session token, rolling UUID</td></tr>
+        <tr><td><strong>Mifare DESFire EV2</strong></td><td>Тройка (Москва), Подорожник (СПб)</td><td class="c-warn">Сильное шифрование, но карта физическая: украдена = деньги потеряны. Нет push-уведомлений. Нет оффлайн-верификации маршрута через BLE.</td><td class="c-ok">BLE rolling + NFC: телефон = карта, push-уведомления</td></tr>
+        <tr><td><strong>QR-код оплаты СБП</strong></td><td>ВТБ, Сбер (СБП турникеты)</td><td class="c-warn">Требует разблокировки телефона, открытия приложения, сканирования. В час пик — очередь на 1 турникет. Нет offline-верификации при падении связи.</td><td class="c-ok">Автотриггер, offline-верификация BLE</td></tr>
+        <tr><td><strong>Face Pay</strong></td><td>Сбербанк (Московское метро)</td><td class="c-err">Биометрия: ФЗ-152 требует добровольного согласия. При маске, шапке, низком освещении — деградация. Нет cross-city interop.</td><td class="c-ok">Без биометрии, ФЗ-152 compliant</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Tap</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Турникет открыт до прикладывания</h3><p>BLE-маячок на телефоне авторизует пассажира за 1–5 м до турникета. NFC — финальное подтверждение. Сравните с QR: достать телефон, открыть приложение, сканировать.</p></div>
+    <div class="adv-card"><h3>Offline-верификация без сервера</h3><p>Сессионный токен в NFC-метке подписан ECDSA — турникет верифицирует криптографически без интернета. Падение связи ≠ остановка. QR-системы при падении СБП встают.</p></div>
+    <div class="adv-card"><h3>Один телефон — все города</h3><p>Interoperability через открытый протокол: один профиль — московское метро, петербургский автобус, казанский трамвай. Mifare карты города несовместимы между городами.</p></div>
+    <div class="adv-card"><h3>Двойная верификация — для КИИ</h3><p>NFC без BLE-подтверждения = аномалия (карта без телефона = кража/клон). Система автоматически блокирует транзакцию. Mifare и QR этого не умеют.</p></div>
   </div>
 </section>
 

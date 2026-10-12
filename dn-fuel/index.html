@@ -115,6 +115,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:var(--c); }
+.comp-wrap{overflow-x:auto;margin-top:28px}
+table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+table.vs tr:nth-child(even) td{background:#f8fafc}
+.c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #b45309}
+.adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+.adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+.vs-callout{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+.vs-callout strong{color:#b45309}
 </style>
 </head>
 <body>
@@ -408,6 +420,30 @@
       <li><strong><a href="http://docs.cntd.ru/document/1200175068" target="_blank">ГОСТ Р ИСО 45001-2020</a></strong> — безопасность при работе с топливом на ОПО.</li>
       <li><strong>44-ФЗ / 223-ФЗ</strong> — закупки систем контроля топлива для государственных и муниципальных автопарков.</li>
     </ul>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#b45309;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Fuel надёжнее зондовых датчиков</h2>
+  <div class="vs-callout"><strong>Датчик уровня топлива Omnicomm LLS-Ex требует врезки в топливный бак, что аннулирует заводскую гарантию техники.</strong> DN·Fuel — бесконтактный ультразвуковой датчик снаружи бака, гарантия не нарушается.</div>
+  <div class="comp-wrap">
+    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Fuel</th></tr></thead>
+    <tbody>
+      <tr><td>Ёмкостный зонд уровня топлива</td><td>Omnicomm LLS-Ex / LLS-20</td><td class="c-err">Врезка в бак — аннулирует гарантию производителя техники</td><td class="c-ok">Ультразвуковой датчик снаружи бака, гарантия сохраняется</td></tr>
+      <tr><td>Ёмкостный датчик KAC</td><td>Kiberline KAC-3</td><td class="c-warn">Авторизованный монтажник обязателен; 8–15 тыс. ₽ за установку</td><td class="c-ok">Самостоятельный монтаж за 30 мин без специалиста</td></tr>
+      <tr><td>Проводной зонд DUT-E</td><td>ООО Технотон</td><td class="c-warn">Проводная линия 4–20 мА: уязвима к физическому разрыву</td><td class="c-ok">BLE-передача, нет уязвимых проводов к БУ</td></tr>
+      <tr><td>Wialon топливный модуль</td><td>Wialon (BY)</td><td class="c-warn">Только для GSM-объектов с SIM; нет оффлайн-работы</td><td class="c-ok">Кэширование локально; синхронизация при въезде во двор</td></tr>
+      <tr><td>Ручной контроль на АЗС</td><td>—</td><td class="c-err">Хищения 5–25% фонда — неотслеживаемы при ночных сливах</td><td class="c-ok">Секундная фиксация каждой заправки и слива, включая ночные</td></tr>
+    </tbody></table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Fuel</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Без вскрытия бака</h3><p>Ультразвук снаружи корпуса бака — заводская гарантия на технику сохраняется полностью.</p></div>
+    <div class="adv-card"><h3>Работает без GSM</h3><p>Данные кэшируются оффлайн и синхронизируются при следующем въезде на базу.</p></div>
+    <div class="adv-card"><h3>Хищение → 0</h3><p>Каждая заправка и каждый слив фиксируются немедленно, в том числе ночные несанкционированные.</p></div>
+    <div class="adv-card"><h3>Монтаж 30 мин</h3><p>Без авторизованного специалиста и без дополнительных расходов на выезд мастера.</p></div>
   </div>
 </section>
 

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Prio — BLE-приоритет проезда транспорта на светофоре | DN·Beacon</title>
+<meta name="description" content="Автобус ставит BLE-метку — контроллер на перекрёстке считывает её и запрашивает зелёный. Условный приоритет по расписанию РНИС. Совместим со всеми российскими дорожными контроллерами. 80 тыс. ₽ за перекрёсток vs 300–500 тыс. ₽ за 433 МГц.">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root{--c:#15803d;--cd:#166534;--cl:#f0fdf4;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--radius:12px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+  a{color:var(--c);text-decoration:none}
+  nav{background:var(--slate);padding:0 5%;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100}
+  .nav-logo{color:#fff;font-weight:700;font-size:1.1rem}.nav-logo span{color:#86efac}
+  .nav-back{color:#94a3b8;font-size:.85rem}.nav-back:hover{color:#fff}
+  .nav-cta{background:var(--c);color:#fff;padding:8px 20px;border-radius:6px;font-size:.9rem;font-weight:600}
+  .hero{background:linear-gradient(135deg,#021a0c 0%,#0a2e18 100%);color:#fff;padding:80px 5% 90px}
+  .hero-label{display:inline-block;background:rgba(134,239,172,.08);color:#86efac;border:1px solid rgba(134,239,172,.2);border-radius:20px;padding:4px 14px;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:20px}
+  .hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;max-width:880px;margin-bottom:20px}
+  .hero h1 span{color:#86efac}
+  .hero p{font-size:1.1rem;color:#94a3b8;max-width:700px;margin-bottom:36px}
+  .hero-btns{display:flex;gap:14px;flex-wrap:wrap}
+  .btn-primary{background:var(--c);color:#fff;padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem;display:inline-block}
+  .btn-outline{border:2px solid rgba(255,255,255,.3);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600;display:inline-block}
+  .hero-stats{display:flex;gap:40px;margin-top:60px;flex-wrap:wrap}
+  .hero-stat strong{display:block;font-size:2rem;font-weight:800;color:#fff}
+  .hero-stat span{font-size:.85rem;color:#94a3b8}
+  section{padding:72px 5%}
+  .section-label{font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--c);margin-bottom:12px}
+  h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:var(--slate);margin-bottom:16px}
+  .subtitle{font-size:1.05rem;color:var(--muted);max-width:700px;margin-bottom:48px}
+
+  /* Problems */
+  .probs{background:var(--white)}
+  .prob-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:40px}
+  .prob-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px;border-left:4px solid var(--c)}
+  .prob-card h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .prob-card p{font-size:.84rem;color:var(--muted)}
+
+  /* Comparison table */
+  .comp-wrap{overflow-x:auto;margin-top:36px}
+  table.comp{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.comp th{background:var(--slate);color:#fff;padding:11px 14px;text-align:left;font-size:.78rem;font-weight:700;white-space:nowrap}
+  table.comp td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+  table.comp tr:nth-child(even) td{background:#f8fafc}
+  table.comp tr.hl td{background:#f0fdf4;font-weight:600}
+  .c-ok{color:#16a34a;font-weight:700}
+  .c-warn{color:#b45309}
+  .c-err{color:#dc2626}
+  .c-acc{color:var(--c);font-weight:700}
+
+  /* How it works */
+  .how{background:var(--bg)}
+  .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));border:1px solid var(--border);border-radius:12px;overflow:hidden;counter-reset:s}
+  .how-step{background:var(--white);padding:28px;border-right:1px solid var(--border)}
+  .how-step:last-child{border-right:none}
+  .how-step::before{counter-increment:s;content:counter(s);display:block;width:36px;height:36px;background:var(--c);color:#fff;border-radius:50%;text-align:center;line-height:36px;font-weight:700;margin-bottom:14px;font-size:.9rem}
+  .how-step h3{font-size:.9rem;font-weight:700;margin-bottom:8px}
+  .how-step p{font-size:.84rem;color:var(--muted)}
+
+  /* Architecture diagram */
+  .arch-diagram{background:var(--slate);border-radius:14px;padding:28px;color:#fff;font-size:.82rem;margin-top:36px}
+  .arch-row{display:flex;align-items:stretch;gap:0;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+  .arch-box{background:#1e3a2a;border:1px solid #2d5a3d;border-radius:8px;padding:14px 16px;min-width:140px;flex:1}
+  .arch-box.hl{background:#15803d;border-color:#16a34a}
+  .arch-box.gray{background:#374151;border-color:#4b5563}
+  .arch-box h4{font-size:.77rem;font-weight:700;color:#86efac;margin-bottom:6px}
+  .arch-box.hl h4{color:#fff}
+  .arch-box.gray h4{color:#94a3b8}
+  .arch-box p{font-size:.72rem;color:#6b7280;line-height:1.4}
+  .arch-box.hl p{color:rgba(255,255,255,.7)}
+  .arch-arrow{display:flex;align-items:center;color:#374151;font-size:1.2rem;align-self:center}
+
+  /* Priority algorithm */
+  .algo-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:24px}
+  .algo-table th{background:var(--slate);color:#fff;padding:10px 16px;text-align:left;font-size:.78rem}
+  .algo-table td{padding:12px 16px;border-bottom:1px solid var(--border)}
+  .algo-table tr:nth-child(even) td{background:#f8fafc}
+  .badge{display:inline-block;padding:3px 9px;border-radius:10px;font-size:.73rem;font-weight:700}
+  .badge-red{background:#fee2e2;color:#dc2626}
+  .badge-blue{background:#dbeafe;color:#1d4ed8}
+  .badge-green{background:#dcfce7;color:#15803d}
+  .badge-gray{background:#f1f5f9;color:#64748b}
+  .badge-yellow{background:#fef9c3;color:#92400e}
+
+  /* Interface */
+  .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+  @media(max-width:720px){.mk-grid{grid-template-columns:1fr}}
+  .terminal{background:var(--slate);border-radius:14px;padding:24px;font-family:monospace;font-size:.78rem;color:#94a3b8}
+  .t-header{color:#86efac;font-weight:700;margin-bottom:16px;font-size:.83rem}
+  .t-section{color:#475569;font-size:.72rem;margin:12px 0 6px;border-top:1px solid rgba(255,255,255,.05);padding-top:10px}
+  .t-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.78rem;gap:12px}
+  .t-row .k{color:#94a3b8;flex:1}.t-row .v{color:#f1f5f9;font-weight:600;white-space:nowrap}
+  .t-row .ok{color:#34d399}.t-row .warn{color:#fbbf24}.t-row .err{color:#f87171}.t-row .prio{color:#86efac}
+  .t-log{margin-top:14px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px}
+  .tl-title{color:#86efac;font-size:.78rem;font-weight:700;margin-bottom:10px}
+  .tl-row{display:flex;gap:10px;margin-bottom:7px;font-size:.76rem;align-items:flex-start}
+  .tl-time{color:#475569;width:56px;flex-shrink:0}.tl-text{color:#cbd5e1;line-height:1.4}
+
+  /* Features list */
+  .features{display:flex;flex-direction:column;gap:18px}
+  .feat{display:flex;gap:14px;align-items:flex-start}
+  .feat-ico{width:38px;height:38px;background:var(--cl);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+  .feat-text h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+  .feat-text p{font-size:.84rem;color:var(--muted)}
+
+  /* Controller compatibility */
+  .ctrl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:32px}
+  .ctrl-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:18px}
+  .ctrl-card h3{font-size:.88rem;font-weight:700;color:var(--slate);margin-bottom:6px}
+  .ctrl-card .proto{font-size:.75rem;color:var(--c);font-weight:600;margin-bottom:6px}
+  .ctrl-card p{font-size:.81rem;color:var(--muted)}
+
+  /* Scenarios */
+  .sc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+  .sc-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .sc-card .ico{font-size:2rem;margin-bottom:12px}
+  .sc-card h3{font-size:.95rem;font-weight:700;margin-bottom:8px}
+  .sc-card p{font-size:.86rem;color:var(--muted)}
+  .sc-card ul{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+  .sc-card li{font-size:.82rem;color:var(--muted);padding-left:14px;position:relative;list-style:none}
+  .sc-card li::before{content:'→';position:absolute;left:0;color:var(--c)}
+
+  /* Specs */
+  .specs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
+  .spec-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:24px}
+  .spec-card h3{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+  .spec-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.87rem}
+  .spec-row:last-child{border-bottom:none}
+  .spec-row .k{color:var(--muted)}.spec-row .v{font-weight:600}
+  .v.accent{color:var(--c)}.v.ok{color:#16a34a}
+
+  /* Cost callout */
+  .cost-row{display:flex;gap:16px;flex-wrap:wrap;margin-top:32px}
+  .cost-card{flex:1;min-width:180px;border-radius:12px;padding:24px;text-align:center}
+  .cost-card.ours{background:var(--c);color:#fff}
+  .cost-card.other{background:var(--bg);border:1px solid var(--border)}
+  .cost-card .price{font-size:1.9rem;font-weight:800;display:block;margin-bottom:4px}
+  .cost-card.ours .price{color:#fff}
+  .cost-card.other .price{color:var(--slate)}
+  .cost-card .lbl{font-size:.78rem;opacity:.8}
+  .cost-card .tech{font-size:.82rem;font-weight:600;margin-top:8px}
+
+  /* CTA */
+  .cta-section{background:linear-gradient(135deg,var(--c) 0%,var(--cd) 100%);color:#fff;text-align:center;padding:80px 5%}
+  .cta-section h2{color:#fff;font-size:clamp(1.6rem,4vw,2.4rem);margin-bottom:14px}
+  .cta-section p{color:rgba(255,255,255,.85);max-width:560px;margin:0 auto 36px}
+  .cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  .btn-white{background:#fff;color:var(--c);padding:14px 32px;border-radius:8px;font-weight:700;font-size:1rem;display:inline-block}
+  .btn-ow{border:2px solid rgba(255,255,255,.5);color:#fff;padding:12px 28px;border-radius:8px;font-weight:600;display:inline-block}
+  .norm-block{background:#f1f5f9;border-radius:10px;padding:24px 28px}
+  .norm-block h3{font-weight:800;margin-bottom:12px}
+  .norm-block ul{margin:0;padding-left:20px}
+  .norm-block li{margin-bottom:8px;color:var(--slate)}
+  footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
+  footer strong{color:#fff}
+  .callout{background:var(--cl);border:1px solid #bbf7d0;border-radius:10px;padding:18px 22px;font-size:.9rem;color:var(--slate);margin-bottom:32px}
+  .callout strong{color:var(--cd)}
+  @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #15803d}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#15803d}
+</style>
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-back">← DN·Beacon</a>
+  <div class="nav-logo">DN·<span>Prio</span></div>
+  <a href="mailto:sayr@inbox.ru" class="nav-cta">Связаться</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-label">Приоритет ОТ · TSP · V2I · АСУДД · ГОСТ Р 57776-2017</div>
+  <h1>Метка на автобусе — <span>светофор переключается до его прибытия</span></h1>
+  <p>DN·Prio: направленный BLE-контроллер на опоре светофора детектирует зашифрованную метку приближающегося транспортного средства за 70–80 м и за &lt;200 мс запрашивает дорожный контроллер на продление зелёной или досрочный старт нужного направления. Без GSM. Без GPS. Без лицензии на радиочастоту. Совместимо с любым российским контроллером — включая старые Потенциал с контактным входом.</p>
+  <div class="hero-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
+    <a href="#scenarios" class="btn-outline">Сценарии применения</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><strong>&lt;200 мс</strong><span>от детектирования метки до команды контроллеру (edge-обработка, без облака)</span></div>
+    <div class="hero-stat"><strong>5–15 с</strong><span>экономия на каждом перекрёстке · до 90 с на коридоре 6+ перекрёстков</span></div>
+    <div class="hero-stat"><strong>≈80 тыс. ₽</strong><span>за перекрёсток vs 300–500 тыс. ₽ за систему на 433 МГц</span></div>
+    <div class="hero-stat"><strong>0 лицензий</strong><span>ISM 2.4 ГГц — не требует разрешения Роскомнадзора</span></div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEMS ═══ -->
+<section class="probs">
+  <div class="section-label">Проблемы отрасли</div>
+  <h2>Приоритет ОТ: все хотят, никто не внедряет — из-за цены и сложности</h2>
+  <p class="subtitle">Приоритетный проезд включён в стратегии транспортного развития большинства крупных городов России. На практике внедрение тормозят стоимость, лицензирование и несовместимость с парком контроллеров.</p>
+  <div class="prob-grid">
+    <div class="prob-card">
+      <h3>433 МГц — дорого и с лицензией Роскомнадзора</h3>
+      <p>Классические европейские системы (Peek, Swarco) работают на выделенных частотах 433/868 МГц. Каждое развёртывание требует согласования с РКН. Оборудование: 200–500 тыс. ₽ за перекрёсток без монтажа.</p>
+    </div>
+    <div class="prob-card">
+      <h3>GPS/ГЛОНАСС отказывает в городском каньоне</h3>
+      <p>Системы с GPS-телематикой (Swarco Vicos, Siemens) теряют точность под мостами, в туннелях, в плотной городской застройке. Запрос на зелёный приходит с опозданием или не приходит — момент упущен.</p>
+    </div>
+    <div class="prob-card">
+      <h3>ИК Opticom требует прямой видимости и стоит дорого</h3>
+      <p>Инфракрасные системы (GTT Opticom, стандарт de facto в США) — только прямая видимость: деревья, солнечные блики, грязные линзы дают ложные срабатывания. Статический сигнал легко клонируется. 6–8 тыс. $ за перекрёсток.</p>
+    </div>
+    <div class="prob-card">
+      <h3>«Умный» приоритет без данных расписания — бесполезен</h3>
+      <p>Безусловный приоритет (всегда зелёный для любого автобуса) снижает эффективность перекрёстка на 8–15%. Современный стандарт — условный приоритет: опоздал на 90 с → получи зелёный. DN·Prio читает данные из РНИС.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARISON ═══ -->
+<section style="background:var(--bg)">
+  <div class="section-label">Сравнение технологий</div>
+  <h2>Почему BLE — оптимальный выбор для российского рынка</h2>
+  <p class="subtitle">Пять технологий приоритетного проезда по ключевым параметрам закупки и эксплуатации.</p>
+  <div class="comp-wrap">
+    <table class="comp">
+      <thead>
+        <tr>
+          <th>Параметр</th>
+          <th>ИК Opticom</th>
+          <th>GPS + GSM</th>
+          <th>433 МГц радио</th>
+          <th>DSRC 5,9 ГГц</th>
+          <th style="background:#15803d">BLE DN·Prio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Стоимость инфраструктуры на 1 перекрёсток</strong></td>
+          <td>350–600 тыс. ₽</td>
+          <td>250–500 тыс. ₽</td>
+          <td>200–500 тыс. ₽</td>
+          <td>1–3 млн ₽</td>
+          <td class="c-acc">80–120 тыс. ₽</td>
+        </tr>
+        <tr>
+          <td><strong>Стоимость на 1 ТС</strong></td>
+          <td>25–40 тыс. ₽</td>
+          <td>+SIM-карта/мес</td>
+          <td>15–30 тыс. ₽</td>
+          <td>40–150 тыс. ₽</td>
+          <td class="c-acc">6–12 тыс. ₽<br><span style="font-size:.75rem;color:#64748b">или 0 ₽ — BLE уже в Teltonika/GalileoSky</span></td>
+        </tr>
+        <tr>
+          <td><strong>Лицензия на частоту</strong></td>
+          <td class="c-ok">Не требуется</td>
+          <td class="c-ok">Не требуется</td>
+          <td class="c-err">Роскомнадзор</td>
+          <td class="c-warn">Согласование</td>
+          <td class="c-ok">Не требуется (ISM 2,4 ГГц)</td>
+        </tr>
+        <tr class="hl">
+          <td><strong>Работа в туннелях / под мостами</strong></td>
+          <td class="c-warn">Только прямая видимость</td>
+          <td class="c-err">GPS отказывает</td>
+          <td class="c-ok">Да, NLOS</td>
+          <td class="c-warn">Частично</td>
+          <td class="c-ok">Да, NLOS, 2,4 ГГц</td>
+        </tr>
+        <tr>
+          <td><strong>Задержка от детектирования до команды</strong></td>
+          <td>мгновенно (аналог)</td>
+          <td class="c-warn">300–800 мс (через сервер)</td>
+          <td>~100 мс</td>
+          <td>&lt;10 мс</td>
+          <td class="c-ok">&lt;200 мс (edge)</td>
+        </tr>
+        <tr>
+          <td><strong>Защита от клонирования</strong></td>
+          <td class="c-err">Нет (статич. ИК частота)</td>
+          <td class="c-warn">Умеренная</td>
+          <td class="c-warn">Слабая</td>
+          <td class="c-ok">PKI сертификаты</td>
+          <td class="c-ok">AES-128, ID меняется каждые 5 мин</td>
+        </tr>
+        <tr>
+          <td><strong>Условный приоритет по расписанию</strong></td>
+          <td class="c-err">Нет</td>
+          <td class="c-ok">Да</td>
+          <td class="c-warn">Редко</td>
+          <td class="c-ok">Да (J2735)</td>
+          <td class="c-ok">Да, интеграция с РНИС</td>
+        </tr>
+        <tr>
+          <td><strong>Совместимость с рос. контроллерами</strong></td>
+          <td class="c-warn">Потребует адаптеры</td>
+          <td class="c-warn">Через АСУДД</td>
+          <td class="c-warn">Peek, Swarco</td>
+          <td class="c-err">Ограничена</td>
+          <td class="c-ok">Все: контакт + RS-485 + REST</td>
+        </tr>
+        <tr>
+          <td><strong>Батарея метки / обслуживание</strong></td>
+          <td class="c-warn">Замена ламп ИК</td>
+          <td class="c-warn">SIM + питание</td>
+          <td class="c-warn">1–3 года</td>
+          <td class="c-warn">Постоянное питание</td>
+          <td class="c-ok">До 10 лет, Li-SOCl₂</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="callout" style="margin-top:28px">
+    <strong>Ключевой факт для российского рынка:</strong> GPS-трекеры Teltonika FMB920, FMC150, GalileoSky 7x, Навтелеком Кловер и Вега-Абсолют установлены на всём парке ОТ по требованию 257-ФЗ (РНИС) — и все они уже содержат BLE-радио. Город уже заплатил за бортовое оборудование. DN·Prio добавляет только метку-дублёр на корпусе ТС и читатель на столбе светофора.
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="how">
+  <div class="section-label">Принцип работы</div>
+  <h2>От метки на автобусе до зелёного сигнала — за 200 мс</h2>
+  <div class="how-grid">
+    <div class="how-step">
+      <h3>BLE-метка на транспортном средстве</h3>
+      <p>На каждом автобусе, трамвае, троллейбусе или машине скорой помощи — метка DN·Prio на базе nRF52832 (IP67, −40…+85°C). Транслирует iBeacon-пакет с AES-128-зашифрованным ID, меняющимся каждые 5 минут. Клонирование перехваченного сигнала — бессмысленно.</p>
+    </div>
+    <div class="how-step">
+      <h3>Предварительное детектирование за 70–80 м</h3>
+      <p>Первый направленный BLE-контроллер на опоре светофора (угол антенны ≤30°) детектирует метку за 70–80 м до стоп-линии. Этого времени достаточно для запроса к дорожному контроллеру. Соседние полосы не дают ложных срабатываний.</p>
+    </div>
+    <div class="how-step">
+      <h3>Верификация и расчёт уровня приоритета</h3>
+      <p>Edge-процессор расшифровывает пакет, сверяет с локальным белым списком (кэш 24 ч). Запрашивает у РНИС/ПТИС отклонение от расписания: опоздание &lt;60 с — без приоритета; 60–90 с — продление +10–15 с; &gt;90 с — полный приоритет. Всё локально, без облачного round-trip.</p>
+    </div>
+    <div class="how-step">
+      <h3>Команда дорожному контроллеру</h3>
+      <p>По RS-485 Modbus RTU, Ethernet (NTCIP 1211) или контактному замыканию (legacy) контроллер получает запрос: продлить текущую зелёную или досрочно запустить фазу нужного направления. Минимальный интервал очистки для пешеходов — соблюдается строго по ГОСТ Р 52289.</p>
+    </div>
+    <div class="how-step">
+      <h3>ТС проходит без остановки</h3>
+      <p>Автобус или трамвай проходит перекрёсток без остановки или с минимальным замедлением. Второй подтверждающий считыватель (30–40 м) уточняет ETA. Факт проезда фиксируется с временной меткой.</p>
+    </div>
+    <div class="how-step">
+      <h3>Журнал и аналитика в АСУДД</h3>
+      <p>Каждое событие — в АСУДД: маршрут, бортовой номер, направление, факт получения приоритета, время задержки до и после. Аналитика коридора: средняя задержка, процент успешных проходов, улучшение регулярности.</p>
+    </div>
+  </div>
+
+  <!-- Architecture diagram -->
+  <div class="arch-diagram">
+    <div class="tl-title">Архитектура системы DN·Prio</div>
+    <div class="arch-row">
+      <div class="arch-box hl"><h4>Метка на ТС</h4><p>nRF52832 · AES-128 rolling ID · iBeacon · до 10 лет батарея · IP67</p></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box hl"><h4>Направленный BLE-считыватель</h4><p>70–80 м от стоп-линии · угол ≤30° · высота 4–6 м · PoE/220 В · IP66</p></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box hl"><h4>Edge-контроллер DN·Prio</h4><p>&lt;200 мс · локальный белый список · запрос РНИС · расчёт уровня приоритета</p></div>
+      <div class="arch-arrow">→</div>
+      <div class="arch-box gray"><h4>Дорожный контроллер</h4><p>RS-485 Modbus · NTCIP 1211 · контактный вход · Потенциал / Технотроникс / Peek / Swarco / Robotraffic</p></div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-box"><h4>Сервер DN·Prio</h4><p>Обновление белого списка (каждые 60 с) · приём данных расписания от РНИС · аналитика · мониторинг здоровья</p></div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-box"><h4>РНИС / ПТИС</h4><p>Данные о регулярности движения · отклонение от расписания по маршруту · REST или SOAP API</p></div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-box"><h4>АСУДД</h4><p>Карта событий приоритета · аналитика коридора · алерты сбоев · отчёты для регулятора</p></div>
+      <div class="arch-arrow">↕</div>
+      <div class="arch-box"><h4>ЦУП экстренных служб</h4><p>Маршрут скорой / пожарных → автоматическая активация экстренного приоритета уровня 1</p></div>
+    </div>
+    <div style="font-size:.72rem;color:#475569;margin-top:12px">Критический путь (детектирование → команда контроллеру) никогда не проходит через облако. Edge-обработка гарантирует работу при потере связи с сервером.</div>
+  </div>
+</section>
+
+<!-- ═══ PRIORITY ALGORITHM ═══ -->
+<section style="background:var(--white)">
+  <div class="section-label">Алгоритм приоритета</div>
+  <h2>Условный приоритет: умный, а не безусловный</h2>
+  <p class="subtitle">Безусловный приоритет (всегда зелёный для любого автобуса) снижает пропускную способность перекрёстка на 8–15%. Условный приоритет по расписанию убирает этот эффект на 70–80%, сохраняя большинство выгод для пассажиров.</p>
+  <table class="algo-table">
+    <thead>
+      <tr>
+        <th>Отклонение от расписания</th>
+        <th>Тип ТС</th>
+        <th>Уровень приоритета</th>
+        <th>Действие</th>
+        <th>Максимум</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Любое</td>
+        <td><span class="badge badge-red">Скорая · Пожарные · Полиция</span></td>
+        <td><strong>1 — Экстренный</strong></td>
+        <td>Немедленное завершение всех конфликтующих фаз → зелёный немедленно</td>
+        <td>Без ограничений</td>
+      </tr>
+      <tr>
+        <td>Любое</td>
+        <td><span class="badge badge-blue">Трамвай / рельсовый ОТ</span></td>
+        <td><strong>2 — Рельсовый</strong></td>
+        <td>Продление зелёной до 40 с или ранний старт до −30 с (учёт инерции состава)</td>
+        <td>40 с / −30 с</td>
+      </tr>
+      <tr>
+        <td>Опоздание &gt;180 с</td>
+        <td><span class="badge badge-green">Автобус · Троллейбус</span></td>
+        <td><strong>3 — Полный</strong></td>
+        <td>Продление зелёной или досрочный старт фазы, максимально допустимое</td>
+        <td>25 с / −20 с</td>
+      </tr>
+      <tr>
+        <td>Опоздание 90–180 с</td>
+        <td><span class="badge badge-green">Автобус · Троллейбус</span></td>
+        <td><strong>4 — Средний</strong></td>
+        <td>Продление текущей зелёной фазы</td>
+        <td>+15 с</td>
+      </tr>
+      <tr>
+        <td>Опоздание 60–90 с</td>
+        <td><span class="badge badge-green">Автобус · Троллейбус</span></td>
+        <td><strong>5 — Мягкий</strong></td>
+        <td>Небольшое продление текущей зелёной</td>
+        <td>+10 с</td>
+      </tr>
+      <tr>
+        <td>Опоздание &lt;60 с</td>
+        <td><span class="badge badge-gray">Любой ОТ</span></td>
+        <td>Нет приоритета</td>
+        <td>Нормальный цикл без изменений</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>Опережение расписания</td>
+        <td><span class="badge badge-yellow">Любой ОТ</span></td>
+        <td>Нет приоритета</td>
+        <td>Приоритет не выдаётся (предотвращение «кучкования»)</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:.82rem;color:var(--muted);margin-top:16px">Обязательное условие: минимальный интервал очистки пешеходной фазы по ГОСТ Р 52289 не сокращается ни при каком уровне приоритета. Максимум одна продлённая/ранняя фаза за цикл на одном направлении — предотвращает голодание поперечного потока.</p>
+</section>
+
+<!-- ═══ INTERFACE ═══ -->
+<section style="background:var(--bg)">
+  <div class="section-label">Диспетчерский интерфейс</div>
+  <h2>Полная картина приоритетного коридора в реальном времени</h2>
+  <div class="mk-grid">
+    <div>
+      <div class="terminal">
+        <div class="t-header">DN·Prio · Ленинский пр-т BRT-коридор · 14:38:20</div>
+        <div class="t-section">▸ АКТИВНЫЕ СОБЫТИЯ</div>
+        <div class="t-row"><span class="k">пк Ленинский/Гагарина · Маршрут №12 · борт 4471</span><span class="v prio">🟢 ЗЕЛЁНЫЙ +18 с</span></div>
+        <div class="t-row"><span class="k">Опоздание от расписания</span><span class="v warn">+134 с → уровень 3 (полный)</span></div>
+        <div class="t-row"><span class="k">Детект → команда контроллеру</span><span class="v ok">14:38:09 → 14:38:09.187 · 187 мс</span></div>
+        <div class="t-section">▸ СТАТУС ПЕРЕКРЁСТКОВ</div>
+        <div class="t-row"><span class="k">пк Ленинский/Победы</span><span class="v ok">✓ свободен · ожидание №А5</span></div>
+        <div class="t-row"><span class="k">пк Ленинский/Строителей</span><span class="v err">✗ нет связи с контроллером!</span></div>
+        <div class="t-row"><span class="k">пк Ленинский/Юбилейная</span><span class="v ok">✓ свободен</span></div>
+        <div class="t-section">▸ ОЧЕРЕДЬ ПРИОРИТЕТА</div>
+        <div class="t-row"><span class="k">Маршрут №А5 · борт 0912 · Ленинский/Победы</span><span class="v warn">опоздание +97 с · ожидание в очереди #1</span></div>
+        <div class="t-row"><span class="k">Скорая 03-447 · маршрут к ЦГБ</span><span class="v err">⚡ ЭКСТРЕННЫЙ · уровень 1 · все перекрёстки</span></div>
+        <div class="t-log">
+          <div class="tl-title">— Последние события</div>
+          <div class="tl-row"><span class="tl-time">14:38</span><span class="tl-text" style="color:#86efac">№12 борт 4471 · Ленинский/Гагарина · приоритет уровень 3 · зелёный +18 с · задержка 187 мс</span></div>
+          <div class="tl-row"><span class="tl-time">14:35</span><span class="tl-text" style="color:#f87171">Скорая 03-447 · Ленинский/Победы · ЭКСТРЕННЫЙ · все фазы сброшены · зелёный 14:35:08</span></div>
+          <div class="tl-row"><span class="tl-time">14:31</span><span class="tl-text" style="color:#86efac">Трамвай Т3 борт 2201 · Ленинский/Строителей · уровень 2 · ранний старт −22 с</span></div>
+          <div class="tl-row"><span class="tl-time">14:28</span><span class="tl-text">№12 борт 4471 · опоздание +44 с &lt; 60 с → приоритет не выдан · нормальный цикл</span></div>
+          <div class="tl-row"><span class="tl-time">14:22</span><span class="tl-text" style="color:#86efac">№А5 борт 0912 · Ленинский/Юбилейная · уровень 5 (мягкий) · +10 с</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="features">
+      <div class="feat"><div class="feat-ico">⚡</div><div class="feat-text"><h3>Edge-обработка: никакого облака на критическом пути</h3><p>Решение «давать приоритет или нет» принимается локально, на оборудовании у перекрёстка. Потеря связи с сервером не останавливает систему — приоритет выдаётся по локальному кэшу белого списка (актуален 24 ч).</p></div></div>
+      <div class="feat"><div class="feat-ico">📅</div><div class="feat-text"><h3>Условный приоритет из РНИС — без лишних зелёных</h3><p>DN·Prio запрашивает отклонение от расписания через API РНИС (SOAP/REST). Автобус идёт точно — нормальный цикл. Опаздывает на 2 минуты — полный приоритет. Исчезают лишние зелёные, которые раздражают водителей и ГИБДД.</p></div></div>
+      <div class="feat"><div class="feat-ico">🚦</div><div class="feat-text"><h3>Коридорная координация — «зелёная волна» для ОТ</h3><p>DN·Prio рассчитывает временну́ю пропускную полосу: если несколько последовательных перекрёстков коридора перестраивают фазовые офсеты на скорость автобуса (20–25 км/ч), ТС проходит без остановки весь коридор.</p></div></div>
+      <div class="feat"><div class="feat-ico">♿</div><div class="feat-text"><h3>Приоритет пешеходного перехода — тот же ридер</h3><p>Дополнительный режим: BLE-приложение на смартфоне пожилого или маломобильного пешехода → тот же ридер на опоре → продление пешеходной фазы на 10–15 с. Требование программы «Доступная среда» на том же железе.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔐</div><div class="feat-text"><h3>Нельзя подделать — AES-128 rolling code</h3><p>Перехваченный BLE-пакет устаревает через 5 минут. Неавторизованное ТС (личная машина, конкурент) приоритет не получит. Ни одна из развёрнутых в России систем 433 МГц не обеспечивает такой защиты.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CONTROLLER COMPATIBILITY ═══ -->
+<section style="background:var(--white)">
+  <div class="section-label">Совместимость с контроллерами</div>
+  <h2>Работает с любым дорожным контроллером в России</h2>
+  <p class="subtitle">DN·Prio поддерживает три уровня интеграции — от современного REST API до контактного замыкания на старых контроллерах. Замена светофорного оборудования не требуется.</p>
+  <div class="ctrl-grid">
+    <div class="ctrl-card">
+      <h3>Потенциал ДКУ-ВТ (Пенза)</h3>
+      <div class="proto">RS-485 Modbus RTU · контактный вход</div>
+      <p>Наиболее распространённый российский контроллер. Запись в holding-регистр 100 (битовая маска направлений приоритета) или замыкание дискретного входа.</p>
+    </div>
+    <div class="ctrl-card">
+      <h3>Технотроникс ТМ-250 (Москва)</h3>
+      <div class="proto">Ethernet Modbus TCP · RS-485</div>
+      <p>Установлен по всей Москве. Поддерживает Modbus TCP по порту 502. Частичная NTCIP-совместимость. DN·Prio использует стандартный регистровый интерфейс.</p>
+    </div>
+    <div class="ctrl-card">
+      <h3>Peek ATC (Нидерланды)</h3>
+      <div class="proto">NTCIP 1211 SNMP · Ethernet</div>
+      <p>Полная поддержка NTCIP 1211: priorityRequestTable + priorityResponseTable. Проекты Росавтодора и федеральных трасс.</p>
+    </div>
+    <div class="ctrl-card">
+      <h3>Swarco Vicos (Австрия)</h3>
+      <div class="proto">RS-485 · Ethernet · внешний приоритетный вход</div>
+      <p>Используется в Санкт-Петербурге, на олимпийских объектах. Поддерживает внешний приоритетный вход; DN·Prio подключается через адаптер-шлюз.</p>
+    </div>
+    <div class="ctrl-card">
+      <h3>Robotraffic (Казань)</h3>
+      <div class="proto">REST API · JSON</div>
+      <p>Современная архитектура. POST /priority с JSON-телом. Новые муниципальные развёртывания. Нативная интеграция DN·Prio через REST.</p>
+    </div>
+    <div class="ctrl-card">
+      <h3>Legacy — контактное замыкание</h3>
+      <div class="proto">Сухой контакт · любой производитель</div>
+      <p>Универсальный fallback для любых старых контроллеров. DN·Prio выдаёт сигнал через реле: активно — продли зелёную, пассивно — нормальный цикл. Поддерживают все контроллеры без исключения.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SCENARIOS ═══ -->
+<section id="scenarios" style="background:var(--bg)">
+  <div class="section-label">Сценарии применения</div>
+  <h2>Приоритет для любого типа транспортного коридора</h2>
+  <div class="sc-grid">
+    <div class="sc-card">
+      <div class="ico">🚌</div>
+      <h3>BRT-коридоры и скоростные автобусы</h3>
+      <p>Выделенная полоса без системы приоритета — полумера. DN·Prio формирует «зелёную волну» на скорости 25 км/ч вдоль всего коридора: каждый перекрёсток встречает зелёным.</p>
+      <ul>
+        <li>Сокращение времени поездки на 8–25%</li>
+        <li>Улучшение регулярности с 56% до 75% (данные Чикаго, маршрут №79)</li>
+        <li>Снижение расхода топлива — меньше разгонов</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🚃</div>
+      <h3>Трамваи в смешанном потоке</h3>
+      <p>Трамвай не может объехать пробку. Каждая задержка на светофоре нарастает по всему маршруту. DN·Prio компенсирует задержки до их накопления — уровень приоритета 2 с продлением до 40 с.</p>
+      <ul>
+        <li>Ранний старт до −30 с с учётом инерции состава</li>
+        <li>Синхронизация фаз на последовательных перекрёстках</li>
+        <li>Интеграция с диспетчерской системой трамвая</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">🚑</div>
+      <h3>Экстренные службы</h3>
+      <p>Каждый перекрёсток прибавляет 15–30 с к времени прибытия скорой. На маршруте из 6 перекрёстков — это 2–3 минуты. Уровень 1 — немедленный зелёный при включении маяков/сирены.</p>
+      <ul>
+        <li>Автоматическая активация через CAN-шину бортового блока</li>
+        <li>Интеграция с ЦУП скорой помощи и пожарных</li>
+        <li>Журнал для анализа времени прибытия</li>
+      </ul>
+    </div>
+    <div class="sc-card">
+      <div class="ico">♿</div>
+      <h3>Маломобильные пешеходы</h3>
+      <p>Тот же BLE-считыватель на опоре обеспечивает приоритет пешеходной фазы: приложение на смартфоне пожилого или пользователя коляски → продление фазы на 10–15 с. Нулевые доп. капиталовложения.</p>
+      <ul>
+        <li>Требования программы «Доступная среда» РФ</li>
+        <li>APS (доступные пешеходные сигналы) — звуковой сигнал</li>
+        <li>Тот же ридер, дополнительный режим прошивки</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COST ═══ -->
+<section style="background:var(--white)">
+  <div class="section-label">Стоимость внедрения</div>
+  <h2>В 3–15 раз дешевле альтернатив при том же эффекте</h2>
+  <p class="subtitle">Стоимость развёртывания на 1 перекрёсток «под ключ», включая оборудование, монтаж и первоначальную настройку. Без учёта расходов на лицензирование частот и адаптацию контроллеров.</p>
+  <div class="cost-row">
+    <div class="cost-card ours">
+      <span class="price">80–120 тыс. ₽</span>
+      <div class="lbl">1 перекрёсток</div>
+      <div class="tech">DN·Prio (BLE)</div>
+    </div>
+    <div class="cost-card other">
+      <span class="price">200–500 тыс. ₽</span>
+      <div class="lbl">1 перекрёсток</div>
+      <div class="tech" style="color:#64748b">433 МГц радио + лицензия РКН</div>
+    </div>
+    <div class="cost-card other">
+      <span class="price">250–600 тыс. ₽</span>
+      <div class="lbl">1 перекрёсток</div>
+      <div class="tech" style="color:#64748b">ИК Opticom (зарубежная закупка)</div>
+    </div>
+    <div class="cost-card other">
+      <span class="price">300–600 тыс. ₽</span>
+      <div class="lbl">1 перекрёсток</div>
+      <div class="tech" style="color:#64748b">GPS/GSM (Swarco Vicos, Siemens)</div>
+    </div>
+    <div class="cost-card other">
+      <span class="price">1–3 млн ₽</span>
+      <div class="lbl">1 перекрёсток</div>
+      <div class="tech" style="color:#64748b">DSRC V2X RSU</div>
+    </div>
+  </div>
+  <p style="font-size:.82rem;color:var(--muted);margin-top:20px">Стоимость метки на борту ТС: 6–12 тыс. ₽ · или 0 ₽ — BLE-радио уже встроено в Teltonika FMB920/FMC150, GalileoSky 7x, Навтелеком Кловер, Вега-Абсолют. Бортовое оборудование уже оплачено городом.</p>
+</section>
+
+<!-- ═══ SPECS ═══ -->
+<section style="background:var(--bg);padding:72px 5%">
+  <div class="section-label">Технические характеристики</div>
+  <h2>Платформа DN·Prio</h2>
+  <div class="specs-grid">
+    <div class="spec-card"><h3>BLE-метка на ТС</h3>
+      <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
+      <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
+      <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v ok">ER14505H-LD · Li-SOCl₂ · до 10 лет</span></div>
+      <div class="spec-row"><span class="k">Монтаж</span><span class="v ok">снаружи кузова · IP67</span></div>
+    </div>
+    <div class="spec-card"><h3>Направленный BLE-считыватель</h3>
+      <div class="spec-row"><span class="k">Антенна</span><span class="v ok">направленная · угол ≤30°</span></div>
+      <div class="spec-row"><span class="k">Дальность детектирования</span><span class="v accent">70–80 м (основной) · 30–40 м (подтверждение)</span></div>
+      <div class="spec-row"><span class="k">Время отклика</span><span class="v ok">&lt;200 мс (edge)</span></div>
+      <div class="spec-row"><span class="k">Питание</span><span class="v ok">220 В / PoE · ИБП контроллера</span></div>
+      <div class="spec-row"><span class="k">Монтаж</span><span class="v ok">опора светофора · консоль · IP66</span></div>
+    </div>
+    <div class="spec-card"><h3>BLE · Безопасность</h3>
+      <div class="spec-row"><span class="k">Протокол</span><span class="v ok">iBeacon · стандартный BLE 4.0+</span></div>
+      <div class="spec-row"><span class="k">Шифрование ID</span><span class="v ok">AES-128 ECB</span></div>
+      <div class="spec-row"><span class="k">Смена ID</span><span class="v ok">каждые 5 мин (настраивается)</span></div>
+      <div class="spec-row"><span class="k">Белый список</span><span class="v ok">локальный кэш 24 ч + облачный</span></div>
+      <div class="spec-row"><span class="k">Частота</span><span class="v ok">2,4 ГГц ISM · лицензия не нужна</span></div>
+    </div>
+    <div class="spec-card"><h3>Интеграция с контроллером</h3>
+      <div class="spec-row"><span class="k">Интерфейсы</span><span class="v ok">RS-485 · Ethernet · контактный вход</span></div>
+      <div class="spec-row"><span class="k">Протоколы</span><span class="v ok">Modbus RTU/TCP · NTCIP 1211 · REST</span></div>
+      <div class="spec-row"><span class="k">Контроллеры</span><span class="v ok">Потенциал · Технотроникс · Peek · Swarco · Robotraffic</span></div>
+      <div class="spec-row"><span class="k">АСУДД / РНИС</span><span class="v ok">REST · Webhook · MQTT · SOAP</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REGULATORY ═══ -->
+<section style="padding:64px 5%;background:var(--white)">
+  <h2>Нормативная база</h2>
+  <div class="norm-block">
+    <h3>Применимые стандарты и требования</h3>
+    <ul>
+      <li><strong>ГОСТ Р 57776-2017</strong> — ИТС. Приоритет движения ТС на регулируемых пересечениях. Зона детектирования 50–200 м, время реакции ≤2 с, обязательное журналирование, верификация ТС.</li>
+      <li><strong>ГОСТ Р 58963-2020</strong> — ИТС. V2I взаимодействие транспортного средства и дорожной инфраструктуры.</li>
+      <li><strong>ГОСТ Р 52289-2019</strong> — Технические средства ОДД. Светофоры и дорожные контроллеры. Требования к внешнему приоритетному входу и минимальным интервалам пешеходной фазы.</li>
+      <li><strong>Приказ Минтранса РФ № 145 от 14.03.2008</strong> — требования к обеспечению приоритетного проезда маршрутных транспортных средств на регулируемых пересечениях.</li>
+      <li><strong>NTCIP 1211:2006</strong> — стандарт SNMP-протокола управления фазами светофора для ОТ (priorityRequestTable / priorityResponseTable). Применяется как международный ориентир; поддерживается контроллерами Peek/Swarco.</li>
+      <li><strong>257-ФЗ</strong> — обязательная установка ГЛОНАСС/GPS трекеров с BLE-радио на весь ОТ (Teltonika, GalileoSky, Навтелеком); бортовое оборудование уже в наличии.</li>
+      <li><strong>44-ФЗ / 223-ФЗ</strong> — государственные закупки ТСОДД и ИТС. Шаблон ТЗ по ГОСТ Р 57776 предоставляется. Более низкая НМЦК по сравнению с 433 МГц системами облегчает выход на тендер.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+
+<section style="padding:64px 5%;background:#fff">
+  <h2>Сравнение с конкурентами</h2>
+  <div class="vs-callout"><strong>IR Opticom (GTT) — мировой стандарт TSP с 1970-х — требует прямой видимости и стоит $6 000–8 000 на перекрёсток.</strong> BLE работает без видимости и без американского производителя, который прекратил поставки в РФ.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Стоимость/перекрёсток</th><th>Лицензия</th><th>Прямая видимость</th><th>Шифрование/защита</th><th>Работа в городе</th><th>Поставки в РФ</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Prio (BLE ISM)</strong></td><td class="c-ok">~80–120 К₽</td><td class="c-ok">Нет (ISM 2,4 ГГц)</td><td class="c-ok">Не требуется, 70 м</td><td class="c-ok">AES-128 rolling UUID</td><td class="c-ok">Работает в тоннелях/каньонах</td><td class="c-ok">РФ производство</td></tr>
+        <tr><td>IR Opticom (GTT, США)</td><td class="c-err">$6 000–8 000</td><td class="c-ok">Нет (IR)</td><td class="c-err">Обязательна, блокируется снегом/туманом</td><td class="c-err">Нет шифрования, ID воспроизводится</td><td class="c-warn">Загрязнённые линзы = отказ</td><td class="c-err">Закрыты с 2022</td></tr>
+        <tr><td>GPS/GSM (Swarco/Siemens)</td><td class="c-err">300–600 К₽ (Siemens)</td><td class="c-ok">Нет (GSM)</td><td class="c-ok">Не требуется</td><td class="c-warn">TLS канал</td><td class="c-err">Urban canyon: GPS ±20–50 м</td><td class="c-err">Санкционный риск</td></tr>
+        <tr><td>433/868 МГц радио (РФ)</td><td class="c-warn">60–150 К₽</td><td class="c-err">Требуется (Роскомнадзор)</td><td class="c-ok">Не требуется</td><td class="c-err">Нет шифрования, ID статичен</td><td class="c-warn">Помехи в городе</td><td class="c-ok">РФ</td></tr>
+        <tr><td>DSRC / V2X 5,9 ГГц</td><td class="c-err">$15 000–40 000 (RSU)</td><td class="c-warn">Полоса 5,9 ГГц</td><td class="c-ok">Не требуется, 1 км</td><td class="c-ok">IEEE 1609.2</td><td class="c-ok">Да</td><td class="c-err">Нет развёрнутой инфраструктуры РФ</td></tr>
+        <tr><td>CV-видеокамеры (распознавание ТС)</td><td class="c-warn">80–200 К₽ + сервер</td><td class="c-ok">Нет</td><td class="c-err">Ночь / снег / туман = отказ</td><td class="c-err">152-ФЗ: биометрия</td><td class="c-warn">Загрязнение объектива</td><td class="c-warn">Hikvision/Dahua: ограничения</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>В 5–40× дешевле альтернатив</h3><p>IR Opticom: $6–8K/перекрёсток × курс ₽90 = 540–720 К₽. DSRC RSU — до $40K. DN·Prio: ~80–120 К₽ при готовности бортового трекера (257-ФЗ уже оплатил оборудование на ОТ).</p></div>
+    <div class="adv-card"><h3>Без лицензии на частоту</h3><p>433 МГц и 868 МГц требуют разрешения Роскомнадзора — деньги, сроки, бюрократия. BLE 2,4 ГГц (ISM) — свободная полоса, разрешение не нужно.</p></div>
+    <div class="adv-card"><h3>Нельзя получить приоритет обманом</h3><p>Статичный ID IR Opticom воспроизводится любым IR-пультом. DN·Prio: AES-128 + rolling UUID каждые 5 минут — «сыграть» приоритет невозможно без авторизованной метки.</p></div>
+    <div class="adv-card"><h3>Работает в тоннелях и городских каньонах</h3><p>GPS теряет сигнал в тоннелях и между высотными зданиями. Камеры слепнут в снег и туман. BLE-сигнал проходит через конструкции и не зависит от погоды.</p></div>
+    <div class="adv-card"><h3>257-ФЗ: оборудование уже оплачено</h3><p>GPS-трекеры Teltonika FMB920/FMC150, GalileoSky 7x и Навтелеком обязательны на ОТ и уже содержат BLE-радио. Бортовая часть DN·Prio — прошивка, не новое железо.</p></div>
+    <div class="adv-card"><h3>Замена GTT Opticom после 2022</h3><p>GTT Inc. (США) поставки в РФ прекратила. Регионы со старыми IR-системами остаются без запчастей и поддержки. DN·Prio — готовая отечественная замена с тем же принципом работы.</p></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Зелёная волна для вашего транспортного коридора</h2>
+  <p>Укажите тип транспорта, количество перекрёстков и модели дорожных контроллеров. Подготовим расчёт стоимости пилота, шаблон ТЗ по 44-ФЗ и схему интеграции с вашей АСУДД — за один рабочий день.</p>
+  <div class="cta-btns">
+    <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
+    <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Prio" class="btn-ow">Обсудить пилот</a>
+  </div>
+</section>
+<footer><p><strong>DN·Prio</strong> — решение DN·Beacon · dynamic-iBeacon · <a href="mailto:sayr@inbox.ru" style="color:#86efac">sayr@inbox.ru</a></p></footer>
+</body>
+</html>

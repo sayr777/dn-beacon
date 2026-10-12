@@ -122,6 +122,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:var(--c); }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #2e4060}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#eef2f8;border:1px solid #c5d0e4;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#1e2d45}
 </style>
 </head>
 <body>
@@ -441,6 +453,32 @@
       <li><strong>Ведомственная охрана: Приказ МВД №1 / ФСО №10</strong> — требования к журналу несения службы выполнены, формируется доказательный PDF-отчёт.</li>
       <li><strong><a href="http://docs.cntd.ru/document/1200175068" target="_blank">ГОСТ Р ИСО 45001-2020</a></strong> — Охрана труда: тревожный сигнал охранника с координатами последней контрольной точки.</li>
     </ul>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2e4060;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему все существующие системы можно обмануть — кроме одной</h2>
+  <div class="vs-callout"><strong>Охранник не может отметиться там, где его нет — физически.</strong> По экспертным оценкам, 40–60% охранных обходов в России фальсифицируются или не выполняются полностью. Rolling AES-128 закрывает эту дыру на аппаратном уровне.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Как фальсифицируется</th><th>DN·Guard</th></tr></thead>
+      <tbody>
+        <tr><td><strong>NFC-обходник</strong></td><td>Detex WandReader, GuardScan</td><td class="c-err">Статич. NFC — сфотографировал метку на первом обходе, потом копирует с телефона. Зарубежные, ограниченные поставки в РФ с 2022.</td><td class="c-ok">Rolling ID: сканированный сигнал устаревает через 5 мин</td></tr>
+        <tr><td><strong>RFID 125 kHz</strong></td><td>Datastor, ГардТех, Guardware</td><td class="c-err">EM4100 дублируется T5577-записывателем за 200 ₽. «Цифровой» журнал — но с той же дырой, что и бумажный.</td><td class="c-ok">AES-128: клон бессмыслен через 5 мин</td></tr>
+        <tr><td><strong>GPS-трекинг охранников</strong></td><td>Wialon Guard, SCOUT, МегаФон ГеоМониторинг</td><td class="c-err">GPS не работает в зданиях, подвалах, металлических конструкциях. Точность ±10–50 м — охранник «у двери» по GPS фактически в курилке.</td><td class="c-ok">BLE: работает там, где нет GPS</td></tr>
+        <tr><td><strong>QR-чек-пойнты</strong></td><td>Guardtek, кастомные решения</td><td class="c-err">QR фотографируется раз → сканируется с любого места, без прихода на точку. Нет временно́й уникальности.</td><td class="c-ok">Уникальный ID каждые 5 мин — replay невозможен</td></tr>
+        <tr><td><strong>Бумажный журнал</strong></td><td>—</td><td class="c-err">Заполняется задним числом. Нет цифрового следа. При страховом случае — не доказательство.</td><td class="c-ok">Timestamped cryptographic log — доказательство в суде</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Guard</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Нельзя обмануть аппаратно</h3><p>ID маячка меняется каждые 5 минут. Нельзя собрать все «токены» маршрута заранее и отмечаться из офиса. Физическое присутствие — единственный способ получить актуальный ID.</p></div>
+    <div class="adv-card"><h3>Работает без GPS — внутри зданий</h3><p>Подвалы, серверные, металлические склады, паркинги. 80% объектов охраны — там, где GPS даёт ±50 м или не работает вовсе. BLE проходит сквозь стены и конструкции.</p></div>
+    <div class="adv-card"><h3>Доказательный журнал для суда и страховщика</h3><p>Каждая запись: ID охранника + уникальный ID маячка (привязан ко времени) + временна́я метка. Страховые компании принимают такой журнал как доказательство при страховом случае.</p></div>
+    <div class="adv-card"><h3>187-ФЗ КИИ и Приказ Росгвардии №149</h3><p>Охрана объектов КИИ обязана документировать обходы верифицируемым образом. DN·Guard закрывает требование без замены всей системы охраны.</p></div>
   </div>
 </section>
 

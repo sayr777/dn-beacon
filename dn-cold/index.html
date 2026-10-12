@@ -91,6 +91,18 @@
   footer{background:var(--slate);color:#94a3b8;text-align:center;padding:28px 5%;font-size:.85rem}
   footer strong{color:#fff}
   @media(max-width:600px){.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+.comp-wrap{overflow-x:auto;margin-top:28px}
+table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+table.vs tr:nth-child(even) td{background:#f8fafc}
+.c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #0e7490}
+.adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+.adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+.vs-callout{background:#f0fdfa;border:1px solid #99f6e4;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+.vs-callout strong{color:#0e7490}
 </style>
 </head>
 <body>
@@ -233,6 +245,67 @@
       <div class="spec-row"><span class="k">Фарма</span><span class="v ice">ГОСТ Р 52249, GDP EU</span></div>
       <div class="spec-row"><span class="k">Продукты питания</span><span class="v green">ТР ТС 021/2011, HACCP</span></div>
       <div class="spec-row"><span class="k">Ветеринария</span><span class="v green">ВетИС / Меркурий API</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0e7490;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Cold безопаснее зарубежных data loggers</h2>
+  <div class="vs-callout"><strong>Sensitech (Carrier/UTC, США) и ELPRO (ЕС) — официальные поставки в РФ прерваны после 2022 г.</strong> DN·Cold — российская сборка на nRF52832 с компонентами через Chipdip и Компэл.</div>
+  <div class="comp-wrap">
+    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Cold</th></tr></thead>
+    <tbody>
+      <tr><td>Одноразовый data logger</td><td>Sensitech TempTale4 (США)</td><td class="c-err">Санкции 2022 г. — официальные поставки прерваны; нет real-time</td><td class="c-ok">Российская сборка; данные в облаке в реальном времени</td></tr>
+      <tr><td>Многоразовый data logger</td><td>ELPRO Libero G/S (ЕС)</td><td class="c-err">Европейский экспорт в РФ нарушен с 2022 г.; данные — только при выгрузке</td><td class="c-ok">Компоненты из Chipdip/Компэл; непрерывный мониторинг онлайн</td></tr>
+      <tr><td>USB DataLogger</td><td>Различные</td><td class="c-warn">Нет real-time — данные читаются только при физической выгрузке устройства</td><td class="c-ok">T°, влажность, удар — в облаке без ручной выгрузки</td></tr>
+      <tr><td>LoRa температурные датчики</td><td>Milesight, Dragino</td><td class="c-warn">Нет совместимости с iBeacon; несовместимы с Teltonika/GalileoSky</td><td class="c-ok">Стандартный iBeacon — работает с любым BLE-сканнером и FMCS</td></tr>
+      <tr><td>Бумажные термографы</td><td>—</td><td class="c-err">Задержка данных; ошибки переноса; нет автотревоги при нарушении цепи</td><td class="c-ok">Мгновенная тревога при выходе температуры за заданные границы</td></tr>
+    </tbody></table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Cold</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Замена западному датчику</h3><p>После санкций 2022 г. Sensitech и ELPRO недоступны официально. DN·Cold — полностью доступная замена.</p></div>
+    <div class="adv-card"><h3>Real-time мониторинг</h3><p>Температура, влажность, удар — в облаке без ручной выгрузки. Тревога приходит до порчи груза.</p></div>
+    <div class="adv-card"><h3>Встроен в парк 257-ФЗ</h3><p>Работает с Teltonika FMB920 и GalileoSky 7x — оборудование уже куплено и оплачено.</p></div>
+    <div class="adv-card"><h3>IP67, −40°C…+85°C</h3><p>Морозильная камера −40°C, рефрижератор, горячий склад — работает без ограничений.</p></div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0e7490;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Sensitech TempTale: $12–20 за отгрузку и в мусор. DN·Cold — многоразовый маяк, 10 лет без замены</h2>
+  <div class="vs-callout"><strong>Одноразовые PDF-логгеры — главный источник потерь в холодовой цепи.</strong> Sensitech TempTale 4: $12–20 за каждую отгрузку, данные загружают вручную при приёмке. DN·Cold: BLE-маяк передаёт температуру в реальном времени, многоразовый, 10 лет на одной батарее.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Решение</th><th>Тип</th><th>Real-time</th><th>Стоимость отгрузки</th><th>Срок службы</th><th>Тревога в пути</th></tr></thead>
+      <tbody>
+        <tr><td><strong>DN·Cold</strong></td><td>BLE AES-128 + T°</td><td class="c-ok">Да (BLE Mesh)</td><td class="c-ok">~0 ₽ (многоразовый)</td><td class="c-ok">10 лет</td><td class="c-ok">Да, мгновенная</td></tr>
+        <tr><td>Sensitech TempTale 4</td><td>PDF-логгер</td><td class="c-err">Нет</td><td class="c-err">$12–20/отгрузка</td><td class="c-err">Одноразовый</td><td class="c-err">Нет</td></tr>
+        <tr><td>ELPRO LIBERO Ci</td><td>USB-логгер</td><td class="c-err">Нет</td><td class="c-warn">$8–15/отгрузка</td><td class="c-warn">100 использований</td><td class="c-err">Нет</td></tr>
+        <tr><td>Testo Saveris 2</td><td>WiFi T°-logger</td><td class="c-warn">Только WiFi-зона</td><td class="c-warn">€300 за устройство</td><td class="c-ok">5+ лет</td><td class="c-warn">Только в зоне WiFi</td></tr>
+        <tr><td>Teltonika TFT100</td><td>BLE T° + GSM</td><td class="c-ok">Да (GSM)</td><td class="c-warn">$40–80/устройство</td><td class="c-warn">2–3 года</td><td class="c-ok">Да</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="adv-grid">
+    <div class="adv-card">
+      <div class="adv-title">Ноль расходов на отгрузку</div>
+      <p>Многоразовый маяк: купил один раз — мониторит 10 лет. Sensitech TempTale: 1000 отгрузок в год × $15 = $15 000/год. DN·Cold: однократная закупка.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">Real-time тревога</div>
+      <p>BLE-шлюз в машине или на складе передаёт тревогу немедленно — не при разгрузке. Разрыв холодовой цепи фиксируется с точностью до минуты, а не задним числом.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">GDP / GOST Р 58603-2019</div>
+      <p>Данные хранятся 5 лет, экспорт в PDF/Excel для надзорных органов. Валидация по GDP-требованиям без доп. оборудования — датчик уже сертифицирован.</p>
+    </div>
+    <div class="adv-card">
+      <div class="adv-title">IP67 + −40°C</div>
+      <p>Работает при −40°C внутри морозильника. Корпус AK-W-70-4 IP67 — защита от влаги при разморозке. Testo Saveris/Teltonika теряют IP-рейтинг при конденсате.</p>
     </div>
   </div>
 </section>

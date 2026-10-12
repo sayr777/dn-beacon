@@ -112,6 +112,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:inherit; }
+.comp-wrap{overflow-x:auto;margin-top:28px}
+table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+table.vs tr:nth-child(even) td{background:#f8fafc}
+.c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+.adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+.adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #0369a1}
+.adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+.adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+.vs-callout{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+.vs-callout strong{color:#0369a1}
 </style>
 </head>
 <body>
@@ -309,6 +321,30 @@
       <li><strong>ГОСТ 12.3.009-76 ССБТ</strong> — безопасность погрузочно-разгрузочных работ во дворе.</li>
       <li><strong>44-ФЗ / 223-ФЗ</strong> — закупки систем управления двором. Документация предоставляется.</li>
     </ul>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0369a1;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему DN·Yard лучше традиционных YMS-решений</h2>
+  <div class="vs-callout"><strong>Врезка петлевых детекторов в асфальт стоит 50–200 тыс. ₽ за место и требует вскрытия покрытия.</strong> DN·Yard — 1 900 ₽/место, монтаж без строительных работ.</div>
+  <div class="comp-wrap">
+    <table class="vs"><thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Yard</th></tr></thead>
+    <tbody>
+      <tr><td>Петлевые детекторы в асфальте</td><td>Peek Traffic, Swarco</td><td class="c-err">50–200 тыс. ₽/место, вскрытие покрытия, длительные СМР</td><td class="c-ok">1 900 ₽/место, клеится на поверхность за 5 мин</td></tr>
+      <tr><td>GPS-трекеры на технике</td><td>Wialon, Omnicomm</td><td class="c-err">Точность GPS 5–15 м — недостаточно для парковочного места; нет indoor</td><td class="c-ok">BLE триангуляция до 2 м, работает в крытых дворах и помещениях</td></tr>
+      <tr><td>RFID UHF рамки</td><td>Zebra, Feig Electronic</td><td class="c-warn">Читают только в воротах; не видят перемещений внутри двора</td><td class="c-ok">Полное покрытие зоны, трекинг в реальном времени</td></tr>
+      <tr><td>LoRa IoT датчики</td><td>Milesight, Dragino</td><td class="c-warn">2–5 м точность; нет AES-шифрования; нет rolling ID</td><td class="c-ok">AES-128, rolling ID каждые 5 мин — клонирование невозможно</td></tr>
+      <tr><td>Ручной контроль / бумага</td><td>—</td><td class="c-err">30–40% фальсификаций, нет real-time, воровство не выявляется</td><td class="c-ok">Автоматически, криптографически подтверждено</td></tr>
+    </tbody></table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:700;color:#1e293b;margin:36px 0 16px">Ключевые преимущества DN·Yard</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Без строительных работ</h3><p>Маяк клеится на поверхность за 5 минут. Никаких кабелей, вскрытия асфальта или разрешений на СМР.</p></div>
+    <div class="adv-card"><h3>10 лет автономно</h3><p>Li-SOCl₂ батарея без замены. Нет SIM-абонплаты 300–500 ₽/мес на каждую машину.</p></div>
+    <div class="adv-card"><h3>AES-128 защита</h3><p>Rolling ID каждые 5 мин — клонирование технически невозможно в отличие от пассивного RFID.</p></div>
+    <div class="adv-card"><h3>Точность до 2 м</h3><p>BLE RSSI/AoA там, где GPS даёт 5–15 м погрешности. Работает в крытых дворах без спутника.</p></div>
   </div>
 </section>
 

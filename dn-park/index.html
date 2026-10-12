@@ -108,6 +108,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:var(--cyan); }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #0e7490}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#ecfeff;border:1px solid #67e8f9;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#0e7490}
 </style>
 </head>
 <body>
@@ -337,6 +349,31 @@
       <li><strong>44-ФЗ / 223-ФЗ</strong> — закупки систем управления парковочным пространством. Документация предоставляется.</li>
       <li><strong>Постановление Правительства РФ №916</strong> — требования к организации парковок при объектах транспортной инфраструктуры.</li>
     </ul>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0e7490;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Bosch €150/место — для 500 мест это €75 000. DN·Park в 10 раз дешевле при той же точности</h2>
+  <div class="vs-callout"><strong>Bosch ParkingSolution: от €150 за датчик на каждое место.</strong> 500 мест = €75,000 только на датчики. DN·Park: маячок на ТС + один ридер на въезд = снижение CAPEX в 5–10 раз при сопоставимом функционале.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Park</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Датчики на каждое место</strong></td><td>Bosch ParkingSolution, Libelium</td><td class="c-err">€100–200 за датчик на каждое парковочное место. 500 мест = €50–100K. Монтаж в асфальт. Требует Wi-Fi/LoRa инфраструктуры.</td><td class="c-ok">Маячок на ТС + ридер на въезде — CAPEX в 10× дешевле</td></tr>
+        <tr><td><strong>GPS-паркинг приложения</strong></td><td>ЯндексПаркинг, ParkJockey</td><td class="c-err">GPS погрешность 5–30 м. В подземных паркингах GPS нет вообще. Ручной ввод зоны пользователем — конверсия низкая.</td><td class="c-ok">BLE работает подземно, 1–3 м точность</td></tr>
+        <tr><td><strong>RFID/NFC заезд по карте</strong></td><td>Parsec, ITV Паркан</td><td class="c-warn">Карта в перчатках / кармане — неудобно. Статический ID клонируется. Нет идентификации ТС без участия водителя.</td><td class="c-ok">Автоидентификация ТС при въезде, 70 м</td></tr>
+        <tr><td><strong>LPR (распознавание номеров)</strong></td><td>Seenaptix, VisionLabs, RoadScan</td><td class="c-warn">Грязный номер, снег — распознавание падает. ФЗ-152: обработка номеров требует согласования. Нет бронирования и предоплаты.</td><td class="c-ok">Без камер, ФЗ-152 compliant, API бронирования</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Park</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Открытый шлагбаум до остановки</h3><p>Ридер считывает маячок за 10–70 м до ворот. Шлагбаум поднят к приезду — ноль секунд ожидания. GPS-системы определяют позицию после въезда, RFID — при поднесении карты.</p></div>
+    <div class="adv-card"><h3>CAPEX в 5–10 раз ниже</h3><p>Bosch, Libelium: датчик на каждое место. DN·Park: маячок на ТС (оплачивает владелец) + один ридер на въезд/выезд. Один ридер обслуживает всю парковку.</p></div>
+    <div class="adv-card"><h3>Подземные паркинги без GPS</h3><p>BLE не требует сотовой сети и не зависит от GPS. Работает на B2–B4 уровнях с нулевым спутниковым сигналом. LPR и GPS-паркинг там слепые.</p></div>
+    <div class="adv-card"><h3>Без сложностей ФЗ-152</h3><p>LPR обрабатывает госномер — персональные данные. BLE ID маячка привязан к абоненту только в зашифрованном приложении. Нет видеопотоков — никаких согласований.</p></div>
   </div>
 </section>
 

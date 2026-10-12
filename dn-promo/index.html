@@ -131,6 +131,18 @@
   footer strong { color: #fff; }
 
   @media(max-width:600px){.hero-stats{gap:24px}.how-step{border-right:none;border-bottom:1px solid var(--border)}.how-step:last-child{border-bottom:none}}
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #e11d48}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fff1f2;border:1px solid #fda4af;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#e11d48}
 </style>
 </head>
 <body>
@@ -356,6 +368,31 @@
       <div class="spec-row"><span class="k">GDPR / 152-ФЗ</span><span class="v green">opt-in, анонимизация</span></div>
       <div class="spec-row"><span class="k">Данные пользователя</span><span class="v green">хранение на стороне клиента</span></div>
     </div>
+  </div>
+</section>
+
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e11d48;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Статический UUID Estimote — любой купит клон за ₽800 и подделает точку взаимодействия</h2>
+  <div class="vs-callout"><strong>UUID маячка Estimote не меняется никогда.</strong> Злоумышленник покупает клон за ₽800 и разворачивает фальшивую «точку», перехватывая трафик приложения. DN·Promo меняет ID каждые 5 минут — спуфинг технически невозможен.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Promo</th></tr></thead>
+      <tbody>
+        <tr><td><strong>BLE-маячки (статические)</strong></td><td>Estimote, Kontakt.io, Gimbal</td><td class="c-err">UUID статичен. Клонируется за ₽800, создавая фейковые точки взаимодействия. IP54, батарея 2–3 года. Нет поставок в РФ с 2022.</td><td class="c-ok">AES-128 rolling, IP67, 10 лет</td></tr>
+        <tr><td><strong>NFC-метки на стендах</strong></td><td>NXP/UID-метки (массовые)</td><td class="c-err">Требует прикладывания за 10 см. Большинство посетителей игнорируют. Нет автоматического триггера. Клонируются NFC-писателями за ₽300.</td><td class="c-ok">Автоматический триггер при подходе, до 70 м</td></tr>
+        <tr><td><strong>QR-коды (сенсорный маркетинг)</strong></td><td>Массовые платформы</td><td class="c-warn">Конверсия 2–5% — большинство не сканирует. Нет аналитики «сколько прошло мимо». Нет proximity-триггера — только явное действие.</td><td class="c-ok">Автотриггер, аналитика пассажиропотока</td></tr>
+        <tr><td><strong>Wi-Fi маяки (SSID probe)</strong></td><td>Indoor кастомные решения</td><td class="c-warn">ФЗ-152: перехват MAC = персональные данные. Android 10+ рандомизирует MAC — погрешность 30–70%. Требует Wi-Fi инфраструктуры.</td><td class="c-ok">BLE без MAC-сбора, ФЗ-152 compliant</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Promo</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Конверсия 35–60% против 2–5% у QR</h3><p>Приложение получает push автоматически при входе в зону маячка. Не нужно доставать телефон, не нужно сканировать. Конверсия прокси-событий на порядок выше NFC и QR.</p></div>
+    <div class="adv-card"><h3>Тепловая карта без камер</h3><p>Rolling ID не позволяет отслеживать конкретного посетителя — только агрегированный пассажиропоток. ФЗ-152 не нарушается. ТЦ получают аналитику без видеоаналитики.</p></div>
+    <div class="adv-card"><h3>Anti-spoofing — бренд защищён</h3><p>Фейковая точка Estimote может отправить посетителя к конкуренту. AES-128 rolling: только авторизованный маячок триггерит приложение бренда — никакой подмены.</p></div>
+    <div class="adv-card"><h3>10 лет без батарей в витрине</h3><p>Estimote: замена батарей каждые 2–3 года. DN·Promo: Li-SOCl₂ на весь срок аренды торговой точки — никакой координации с арендодателем по замене оборудования.</p></div>
   </div>
 </section>
 

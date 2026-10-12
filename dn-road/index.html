@@ -121,6 +121,18 @@
   .norm-block ul { margin:0; padding-left:20px; }
   .norm-block li { margin-bottom:8px; color:var(--slate,#475569); }
   .norm-block a { color:inherit; }
+  .comp-wrap{overflow-x:auto;margin-top:28px}
+  table.vs{width:100%;border-collapse:collapse;font-size:.82rem}
+  table.vs th{background:#1e293b;color:#fff;padding:10px 14px;text-align:left;font-size:.77rem;font-weight:700}
+  table.vs td{padding:10px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top;line-height:1.45}
+  table.vs tr:nth-child(even) td{background:#f8fafc}
+  .c-ok{color:#16a34a;font-weight:600}.c-warn{color:#b45309}.c-err{color:#dc2626}
+  .adv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:28px}
+  .adv-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:20px;border-left:4px solid #ea580c}
+  .adv-card h3{font-size:.88rem;font-weight:700;margin-bottom:6px;color:#1e293b}
+  .adv-card p{font-size:.82rem;color:#64748b;line-height:1.5}
+  .vs-callout{background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:16px 20px;font-size:.9rem;color:#1e293b;margin-bottom:28px}
+  .vs-callout strong{color:#ea580c}
 </style>
 </head>
 <body>
@@ -295,7 +307,31 @@
   </div>
 </section>
 
-<!-- CTA -->
+<!-- COMP-VS -->
+<section style="background:#f8fafc;padding:72px 5%">
+  <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#ea580c;margin-bottom:12px">Сравнение с конкурентами</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Trimble $15 000–25 000 + GPS-зависимость — DN·Road в 20 раз дешевле без спутника</h2>
+  <div class="vs-callout"><strong>Trimble и Leica GNSS-системы для дорожных работ: $15 000–25 000 за комплект.</strong> Нуждаются в открытом небе — не работают в тоннелях и на путепроводах. DN·Road: BLE-маячок за ₽800 + смартфон, нулевая зависимость от GPS.</div>
+  <div class="comp-wrap">
+    <table class="vs">
+      <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Road</th></tr></thead>
+      <tbody>
+        <tr><td><strong>GNSS/GPS системы</strong></td><td>Trimble, Leica Geosystems, Topcon</td><td class="c-err">$15 000–25 000 за комплект. Нет сигнала в тоннелях, путепроводах, плотной застройке. Западное оборудование с ограниченным сервисом в РФ с 2022.</td><td class="c-ok">₽800/метку, GPS-независим, IP67</td></tr>
+        <tr><td><strong>GSM/LTE-маяки на конусах</strong></td><td>Отечественные решения (СМЭП)</td><td class="c-warn">₽300–800/мес/устройство на SIM. При падении сети — маяк молчит. В тоннелях нет покрытия. Маяк на 70 кмч отрывает антенну.</td><td class="c-ok">₽0 ежемесячно, работает без сотовой сети</td></tr>
+        <tr><td><strong>RFID-метки на знаках/конусах</strong></td><td>Кастомные пилоты</td><td class="c-warn">Пассивный RFID дальность 1–3 м: транспортное средство должно притормозить рядом. Нет автоматического уведомления при приближении.</td><td class="c-ok">70 м, уведомление при подъезде на скорости</td></tr>
+        <tr><td><strong>Ручной учёт ИТР на объекте</strong></td><td>Бумажные журналы, Excel</td><td class="c-err">ФЗ-52, 44-ФЗ требуют цифровой отчётности с 2024. Нет доказательства присутствия ИТР на объекте при расследовании НС. Журнал заполняется задним числом.</td><td class="c-ok">Timestamped log, доказательная база</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Road</h3>
+  <div class="adv-grid">
+    <div class="adv-card"><h3>Предупреждение водителю за 300 м</h3><p>Маячок на 1-м конусе зоны работ виден из кабины за 70 м, ретрансляторы продлевают до 300 м. Водитель получает сигнал на 3–5 секунд раньше, чем увидит ОДУ. GPS даёт уведомление только если зона внесена в карту.</p></div>
+    <div class="adv-card"><h3>В 20× дешевле Trimble</h3><p>Полный комплект DN·Road на бригаду из 5 человек + 20 конусов: ≈ ₽100 000. Trimble GCS900 один комплект: $20 000+. Для СМЭП с 50 бригадами — разница десятки миллионов.</p></div>
+    <div class="adv-card"><h3>Работает в тоннелях</h3><p>Тоннели, путепроводы, эстакады — именно там дорожные работы наиболее опасны. GPS там мёртв. BLE работает в закрытых пространствах без модификации.</p></div>
+    <div class="adv-card"><h3>Цифровой журнал для 44-ФЗ</h3><p>Каждое сближение рабочего с опасной зоной — криптографически подписанная запись с timestamp. Росавтодор, Ространснадзор, расследование НС — доказательная база без бумажных журналов.</p></div>
+  </div>
+</section>
+
 <section class="cta">
   <h2>Готовы автоматизировать контроль на вашем объекте?</h2>
   <p>Опишите задачу — подготовим схему расстановки меток, расчёт стоимости и техническое предложение за 1 рабочий день.</p>
