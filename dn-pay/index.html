@@ -146,9 +146,9 @@
   </div>
   <div class="hero-stats">
     <div class="hero-stat"><strong>&lt;200 мс</strong><span>полный цикл валидации</span></div>
-    <div class="hero-stat"><strong>AES-128</strong><span>защита от клонирования</span></div>
+    <div class="hero-stat"><strong>AES-128</strong><span>anti-fraud сменного ID</span></div>
     <div class="hero-stat"><strong>до 10 лет</strong><span>брелок без зарядки</span></div>
-    <div class="hero-stat"><strong>офлайн</strong><span>работает без интернета</span></div>
+    <div class="hero-stat"><strong>офлайн</strong><span>ограниченный closed-loop режим</span></div>
   </div>
 </section>
 
@@ -172,7 +172,7 @@
     <div class="flow-step">
       <div class="ico">🔐</div>
       <h3>Локальная валидация</h3>
-      <p>Считыватель проверяет AES-128 подпись. Сверяет баланс из кэша или запрашивает сервер.</p>
+      <p>Считыватель проверяет допустимый временной ID и полномочия метки. Баланс сверяется с локальным риск-лимитом либо сервером.</p>
       <div class="ms">~80 мс</div>
     </div>
     <div class="flow-step">
@@ -184,7 +184,7 @@
     <div class="flow-step">
       <div class="ico">📊</div>
       <h3>Синхронизация</h3>
-      <p>Данные транзакций передаются в биллинг при наличии соединения. Система работает и в офлайн-режиме.</p>
+      <p>Данные передаются в биллинг при наличии связи. Ограниченный офлайн-режим допустим только по заранее заданным лимитам, сроку кэша и правилам разрешения конфликтов.</p>
     </div>
   </div>
 </section>
@@ -195,12 +195,24 @@
   <h2>Что входит в платформу DN·Pay</h2>
   <p class="subtitle">Полный стек от аппаратной метки до биллинговой интеграции.</p>
   <div class="feat-grid">
-    <div class="feat-card"><h3><span class="ico">🔄</span>Динамический идентификатор</h3><p>Major и Minor BLE-пакета меняются каждые 5 минут (настраивается) по AES-128. Перехваченный сигнал устаревает раньше, чем злоумышленник успевает его использовать. Клонирование метки без знания ключа — невозможно.</p></div>
-    <div class="feat-card"><h3><span class="ico">📴</span>Офлайн-валидация</h3><p>Считыватель хранит локальный кэш: список активных меток и их балансов. При потере связи с сервером валидация продолжается до нескольких часов без деградации сервиса.</p></div>
-    <div class="feat-card"><h3><span class="ico">📱</span>Мобильная метка</h3><p>Смартфон с приложением DN·Pay работает как полноценная BLE-метка. Приложение эмулирует брелок — пассажир держит телефон в кармане и проходит без дополнительных действий.</p></div>
+    <div class="feat-card"><h3><span class="ico">🔄</span>Динамический идентификатор</h3><p>Major и Minor меняются каждые 5 минут (настраивается) по AES-128. Это ограничивает статический клон, но свежий replay/relay требует дедупликации, сессионной проверки и контекста валидатора.</p></div>
+    <div class="feat-card"><h3><span class="ico">📴</span>Контролируемый офлайн</h3><p>Считыватель хранит ограниченный кэш допусков и риск-лимитов. Срок автономной работы, максимальная сумма и урегулирование двойных списаний задаются оператором; банковский платёж не объявляется безусловно офлайн.</p></div>
+    <div class="feat-card"><h3><span class="ico">📱</span>Два мобильных режима</h3><p>Hands-free метка подходит для закрытого транспортного счёта. Для банковской оплаты применяется активная BLE-сессия: приложение открыто, сумма и терминал показаны пользователю, операция подтверждена биометрией.</p></div>
     <div class="feat-card"><h3><span class="ico">🗓️</span>Гибкие тарифы</h3><p>Поддержка разовых поездок, лимитных абонементов, льготных тарифов и зонного ценообразования. Тарифная логика конфигурируется без обновления прошивки метки.</p></div>
     <div class="feat-card"><h3><span class="ico">🔗</span>Мультимодальность</h3><p>Единая метка DN·Pay — единый лицевой счёт для автобуса, трамвая, троллейбуса и метро. Пересадочный тариф применяется автоматически.</p></div>
     <div class="feat-card"><h3><span class="ico">🛡️</span>Защита от подмены</h3><p>Сервер верифицирует каждую транзакцию по временному окну и маршрутному контексту. Воспроизведение старого сигнала распознаётся и отклоняется.</p></div>
+  </div>
+</section>
+
+<section style="background:#ede9fe;padding:72px 5%">
+  <div class="section-label">Рынок BLE-платежей на iPhone</div>
+  <h2>«ВЖУХ» и «Волна» подтверждают канал — но не протокол iBeacon</h2>
+  <p class="subtitle">Российские BLE-платежи показывают практический спрос на альтернативу NFC на iOS. Для DN·Pay это отдельный интеграционный контур, а не простая передача маячного ID.</p>
+  <div class="feat-grid">
+    <div class="feat-card"><h3><span class="ico">📈</span>Что это подтверждает</h3><p>BLE поддерживается iPhone, знаком пользователю и может связать банковское приложение с совместимым терминалом без доступа стороннего приложения к платёжному NFC-интерфейсу.</p></div>
+    <div class="feat-card"><h3><span class="ico">🔐</span>Безопасная схема</h3><p>Терминал и приложение устанавливают двустороннюю сессию, связывают одноразовые данные с суммой и торговой точкой, показывают детали и требуют Face ID/код. RSSI используется лишь как дополнительный сигнал.</p></div>
+    <div class="feat-card"><h3><span class="ico">⚠️</span>Ограничения</h3><p>Нужны поддерживаемая прошивка терминала, приложение конкретной экосистемы и управление разрешениями Bluetooth. Relay, ошибочный выбор соседней кассы, отказ связи и возвраты проверяются на пилоте.</p></div>
+    <div class="feat-card"><h3><span class="ico">🧩</span>Роль DN·Pay</h3><p>Базовая метка остаётся носителем для closed-loop проезда. Оплата телефоном проектируется как банковская интеграция с SDK/эквайрингом; dynamic-iBeacon не хранит банковские реквизиты и не заменяет платёжную токенизацию.</p></div>
   </div>
 </section>
 
@@ -223,7 +235,7 @@
       <tbody>
         <tr class="hl"><td>Нужно достать из кармана</td><td class="check">Нет</td><td class="mid">Иногда</td><td class="mid">Да</td><td class="cross">Да</td></tr>
         <tr><td>Дальность считывания</td><td class="check">0.5–5 м</td><td class="cross">до 10 см</td><td class="cross">до 10 см</td><td class="cross">прямая видимость</td></tr>
-        <tr class="hl"><td>Офлайн-валидация</td><td class="check">Да (часы)</td><td class="cross">Нет</td><td class="mid">Частично</td><td class="cross">Нет</td></tr>
+        <tr class="hl"><td>Офлайн-валидация</td><td class="check">По лимитам closed-loop</td><td class="mid">Зависит от схемы и терминала</td><td class="mid">Частично</td><td class="mid">Зависит от реализации</td></tr>
         <tr><td>Защита от клонирования</td><td class="check">AES-128, динамический ID</td><td class="check">Tokenization</td><td class="mid">Зависит от типа карты</td><td class="cross">Отсутствует</td></tr>
         <tr class="hl"><td>Работа без смартфона</td><td class="check">Да (брелок)</td><td class="check">Да (карта)</td><td class="check">Да (карта)</td><td class="cross">Нет</td></tr>
         <tr><td>Срок жизни носителя</td><td class="check">15 лет (брелок)</td><td class="mid">3–5 лет</td><td class="mid">3–5 лет</td><td class="cross">разовый</td></tr>
@@ -267,7 +279,7 @@
       <h3>Безопасность</h3>
       <div class="spec-row"><span class="label">Шифрование</span><span class="value violet">AES-128 ECB</span></div>
       <div class="spec-row"><span class="label">ID в эфире</span><span class="value green">не передаётся</span></div>
-      <div class="spec-row"><span class="label">Replay-защита</span><span class="value green">временное окно</span></div>
+      <div class="spec-row"><span class="label">Replay-контроль</span><span class="value green">окно + дедупликация; relay отдельно</span></div>
       <div class="spec-row"><span class="label">Изоляция ключей</span><span class="value green">по операторам</span></div>
       <div class="spec-row"><span class="label">Мобильное приложение</span><span class="value">iOS / Android</span></div>
     </div>
@@ -399,7 +411,8 @@
     <table class="vs">
       <thead><tr><th>Технология</th><th>Производитель / система</th><th>Ключевая слабость</th><th>DN·Pay</th></tr></thead>
       <tbody>
-        <tr><td><strong>NFC/EMV бесконтактная оплата</strong></td><td>Visa/MC/Мир, Тройка (Москва)</td><td class="c-warn">Требует поднести карту/телефон и держать 0,5–1,5 с. В перчатках, с сумками — 3–8 с. Apple Pay заблокирован в РФ с 2022.</td><td class="c-ok">Hands-free &lt;200 мс, смартфон не нужен</td></tr>
+        <tr><td><strong>NFC/EMV бесконтактная оплата</strong></td><td>Visa/MC/Мир, транспортные карты</td><td class="c-warn">Короткая дистанция и осознанное поднесение, зато зрелая платёжная модель и малая зона выбора.</td><td class="c-ok">Hands-free для closed-loop; иной профиль риска</td></tr>
+        <tr><td><strong>BLE-платёж телефоном</strong></td><td>«ВЖУХ», «Волна»</td><td class="c-warn">Нужно открыть приложение; совместимость зависит от банка, терминала и прошивки. Требуется защита сессии от relay/replay.</td><td class="c-ok">Рыночное подтверждение BLE-канала; интеграция через банковский SDK</td></tr>
         <tr><td><strong>Mifare Classic / Подорожник</strong></td><td>СПб Подорожник, региональные карты</td><td class="c-err">Mifare Classic взломан в 2008 (CRYPTO-1). Физический контакт обязателен — проблема для пожилых. Производство карт: 3–8 ₽/транзакция.</td><td class="c-ok">AES-128, без физ. контакта, работает без смартфона</td></tr>
         <tr><td><strong>QR-оплата</strong></td><td>СБП QR, Яндекс Транспорт</td><td class="c-err">Достать телефон → открыть приложение → показать QR: 4–10 с. В солнце / грязный экран — не работает. Не для пожилых без смартфона.</td><td class="c-ok">Пассивно, работает в кармане</td></tr>
         <tr><td><strong>Face Pay (биометрия)</strong></td><td>Сбербанк (Московский метро)</td><td class="c-warn">CAPEX 500 тыс. – 1,5 млн ₽/турникет. ФЗ-152 privacy-риски. Только помещения с controlled освещением. Vendor lock-in Сбербанк.</td><td class="c-ok">Без биометрии, CAPEX в 10× ниже</td></tr>

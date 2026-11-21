@@ -306,7 +306,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <div class="spec-card">
       <h3>Безопасность</h3>
       <div class="spec-row"><span class="k">Шифрование метки</span><span class="v brown">AES-128, 5 мин (настраивается)</span></div>
-      <div class="spec-row"><span class="k">Антиклонирование</span><span class="v green">невозможно</span></div>
+      <div class="spec-row"><span class="k">Антиклонирование</span><span class="v green">rolling ID, проверка окна</span></div>
       <div class="spec-row"><span class="k">Журнал перемещений</span><span class="v green">полный, 1 год</span></div>
     </div>
   </div>
@@ -335,7 +335,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
       <tr><td>Петлевые детекторы в асфальте</td><td>Peek Traffic, Swarco</td><td class="c-err">50–200 тыс. ₽/место, вскрытие покрытия, длительные СМР</td><td class="c-ok">1 900 ₽/место, клеится на поверхность за 5 мин</td></tr>
       <tr><td>GPS-трекеры на технике</td><td>Wialon, Omnicomm</td><td class="c-err">Точность GPS 5–15 м — недостаточно для парковочного места; нет indoor</td><td class="c-ok">BLE триангуляция до 2 м, работает в крытых дворах и помещениях</td></tr>
       <tr><td>RFID UHF рамки</td><td>Zebra, Feig Electronic</td><td class="c-warn">Читают только в воротах; не видят перемещений внутри двора</td><td class="c-ok">Полное покрытие зоны, трекинг в реальном времени</td></tr>
-      <tr><td>LoRa IoT датчики</td><td>Milesight, Dragino</td><td class="c-warn">2–5 м точность; нет AES-шифрования; нет rolling ID</td><td class="c-ok">AES-128, rolling ID каждые 5 мин — клонирование невозможно</td></tr>
+      <tr><td>LoRa IoT датчики</td><td>Milesight, Dragino</td><td class="c-warn">Точность и защита зависят от конкретной реализации</td><td class="c-ok">AES-128 rolling ID ограничивает статическое копирование</td></tr>
       <tr><td>Ручной контроль / бумага</td><td>—</td><td class="c-err">30–40% фальсификаций, нет real-time, воровство не выявляется</td><td class="c-ok">Автоматически, криптографически подтверждено</td></tr>
     </tbody></table>
   </div>
@@ -343,7 +343,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
   <div class="adv-grid">
     <div class="adv-card"><h3>Без строительных работ</h3><p>Маяк клеится на поверхность за 5 минут. Никаких кабелей, вскрытия асфальта или разрешений на СМР.</p></div>
     <div class="adv-card"><h3>10 лет автономно</h3><p>Li-SOCl₂ батарея без замены. Нет SIM-абонплаты 300–500 ₽/мес на каждую машину.</p></div>
-    <div class="adv-card"><h3>AES-128 защита</h3><p>Rolling ID каждые 5 мин — клонирование технически невозможно в отличие от пассивного RFID.</p></div>
+    <div class="adv-card"><h3>AES-128 anti-fraud</h3><p>Rolling ID каждые 5 минут затрудняет статическое клонирование. Replay текущего окна и relay требуют серверной дедупликации и контекста нескольких зон.</p></div>
     <div class="adv-card"><h3>Точность до 2 м</h3><p>BLE RSSI/AoA там, где GPS даёт 5–15 м погрешности. Работает в крытых дворах без спутника.</p></div>
   </div>
 </section>

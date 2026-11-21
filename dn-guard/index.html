@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DN·Guard — Контроль маршрутов патрулирования | DN·Beacon</title>
-<meta name="description" content="BLE-маячки на контрольных точках + считыватель у охранника. Автоматическая регистрация прохода: ID точки, время, последовательность. Динамический ID исключает фальсификацию маршрута.">
+<meta name="description" content="BLE-маячки на контрольных точках + считыватель у охранника: ID точки, время, последовательность и anti-fraud динамический идентификатор.">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--c:#2e4060;--cd:#1e2d45;--cl:#eef2f8;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--radius:12px}
@@ -148,7 +148,7 @@
 <section class="hero">
   <div class="hero-label">Охрана · Патрулирование · Безопасность объектов</div>
   <h1>Маршрут пройден —<br><span>и это доказано</span></h1>
-  <p>BLE-маячок на каждой контрольной точке, считыватель у охранника. Факт присутствия записывается автоматически при подходе: ID точки, метка времени, последовательность. Динамический ID исключает фальсификацию маршрута на аппаратном уровне.</p>
+  <p>BLE-маячок на каждой контрольной точке, считыватель у охранника. Система записывает ID точки, время и последовательность. Динамический ID снижает риск простого копирования; доказательность усиливают идентификация сотрудника, контекст маршрута и контроль аномалий.</p>
   <div class="hero-btns">
     <a href="mailto:sayr@inbox.ru?subject=Запрос DN·Guard" class="btn-primary">Запросить пилот</a>
     <a href="#how" class="btn-outline">Как это работает</a>
@@ -460,7 +460,7 @@
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#2e4060;margin-bottom:12px">Сравнение с конкурентами</div>
   <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Почему все существующие системы можно обмануть — кроме одной</h2>
-  <div class="vs-callout"><strong>Охранник не может отметиться там, где его нет — физически.</strong> По экспертным оценкам, 40–60% охранных обходов в России фальсифицируются или не выполняются полностью. Rolling AES-128 закрывает эту дыру на аппаратном уровне.</div>
+  <div class="vs-callout"><strong>Rolling AES-128 делает заранее скопированный статический чек-пойнт существенно менее полезным.</strong> Но свежий пакет можно ретранслировать, а считыватель — передать другому человеку: поэтому журнал не объявляется абсолютным доказательством без второго фактора и серверной аналитики.</div>
   <div class="comp-wrap">
     <table class="vs">
       <thead><tr><th>Технология</th><th>Производитель</th><th>Как фальсифицируется</th><th>DN·Guard</th></tr></thead>
@@ -468,7 +468,7 @@
         <tr><td><strong>NFC-обходник</strong></td><td>Detex WandReader, GuardScan</td><td class="c-err">Статич. NFC — сфотографировал метку на первом обходе, потом копирует с телефона. Зарубежные, ограниченные поставки в РФ с 2022.</td><td class="c-ok">Rolling ID: сканированный сигнал устаревает через 5 мин</td></tr>
         <tr><td><strong>RFID 125 kHz</strong></td><td>Datastor, ГардТех, Guardware</td><td class="c-err">EM4100 дублируется T5577-записывателем за 200 ₽. «Цифровой» журнал — но с той же дырой, что и бумажный.</td><td class="c-ok">AES-128: клон бессмыслен через 5 мин</td></tr>
         <tr><td><strong>GPS-трекинг охранников</strong></td><td>Wialon Guard, SCOUT, МегаФон ГеоМониторинг</td><td class="c-err">GPS не работает в зданиях, подвалах, металлических конструкциях. Точность ±10–50 м — охранник «у двери» по GPS фактически в курилке.</td><td class="c-ok">BLE: работает там, где нет GPS</td></tr>
-        <tr><td><strong>QR-чек-пойнты</strong></td><td>Guardtek, кастомные решения</td><td class="c-err">QR фотографируется раз → сканируется с любого места, без прихода на точку. Нет временно́й уникальности.</td><td class="c-ok">Уникальный ID каждые 5 мин — replay невозможен</td></tr>
+        <tr><td><strong>QR-чек-пойнты</strong></td><td>Guardtek, кастомные решения</td><td class="c-err">QR фотографируется раз и остаётся статичным; нет временно́й уникальности.</td><td class="c-ok">Сменный ID ограничивает replay; relay закрывается отдельно</td></tr>
         <tr><td><strong>Бумажный журнал</strong></td><td>—</td><td class="c-err">Заполняется задним числом. Нет цифрового следа. При страховом случае — не доказательство.</td><td class="c-ok">Timestamped cryptographic log — доказательство в суде</td></tr>
       </tbody>
     </table>

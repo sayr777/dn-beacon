@@ -364,7 +364,7 @@
     <div class="spec-card">
       <h3>Безопасность</h3>
       <div class="spec-row"><span class="k">Шифрование ID</span><span class="v rose">AES-128, смена каждые 5 мин (настраивается)</span></div>
-      <div class="spec-row"><span class="k">Клонирование сети</span><span class="v green">невозможно без ключа</span></div>
+      <div class="spec-row"><span class="k">Статическое клонирование</span><span class="v green">ограничено rolling ID</span></div>
       <div class="spec-row"><span class="k">GDPR / 152-ФЗ</span><span class="v green">opt-in, анонимизация</span></div>
       <div class="spec-row"><span class="k">Данные пользователя</span><span class="v green">хранение на стороне клиента</span></div>
     </div>
@@ -375,7 +375,7 @@
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#e11d48;margin-bottom:12px">Сравнение с конкурентами</div>
   <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Статический UUID Estimote — любой купит клон за ₽800 и подделает точку взаимодействия</h2>
-  <div class="vs-callout"><strong>UUID маячка Estimote не меняется никогда.</strong> Злоумышленник покупает клон за ₽800 и разворачивает фальшивую «точку», перехватывая трафик приложения. DN·Promo меняет ID каждые 5 минут — спуфинг технически невозможен.</div>
+  <div class="vs-callout"><strong>Статический ID легко воспроизвести как фальшивую точку.</strong> DN·Promo меняет ID каждые 5 минут и сервер проверяет слот. Replay текущего окна и relay остаются в модели угроз и ограничиваются контекстом кампании, дедупликацией и мониторингом.</div>
   <div class="comp-wrap">
     <table class="vs">
       <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Promo</th></tr></thead>
@@ -383,7 +383,7 @@
         <tr><td><strong>BLE-маячки (статические)</strong></td><td>Estimote, Kontakt.io, Gimbal</td><td class="c-err">UUID статичен. Клонируется за ₽800, создавая фейковые точки взаимодействия. IP54, батарея 2–3 года. Нет поставок в РФ с 2022.</td><td class="c-ok">AES-128 rolling, IP67, 10 лет</td></tr>
         <tr><td><strong>NFC-метки на стендах</strong></td><td>NXP/UID-метки (массовые)</td><td class="c-err">Требует прикладывания за 10 см. Большинство посетителей игнорируют. Нет автоматического триггера. Клонируются NFC-писателями за ₽300.</td><td class="c-ok">Автоматический триггер при подходе, до 70 м</td></tr>
         <tr><td><strong>QR-коды (сенсорный маркетинг)</strong></td><td>Массовые платформы</td><td class="c-warn">Конверсия 2–5% — большинство не сканирует. Нет аналитики «сколько прошло мимо». Нет proximity-триггера — только явное действие.</td><td class="c-ok">Автотриггер, аналитика пассажиропотока</td></tr>
-        <tr><td><strong>Wi-Fi маяки (SSID probe)</strong></td><td>Indoor кастомные решения</td><td class="c-warn">ФЗ-152: перехват MAC = персональные данные. Android 10+ рандомизирует MAC — погрешность 30–70%. Требует Wi-Fi инфраструктуры.</td><td class="c-ok">BLE без MAC-сбора, ФЗ-152 compliant</td></tr>
+        <tr><td><strong>Wi-Fi маяки (SSID probe)</strong></td><td>Indoor кастомные решения</td><td class="c-warn">Сбор сетевых идентификаторов создаёт риски приватности; рандомизация снижает стабильность аналитики.</td><td class="c-ok">BLE можно внедрить без сбора MAC телефонов; соответствие ФЗ-152 зависит от всей обработки</td></tr>
       </tbody>
     </table>
   </div>
@@ -391,7 +391,7 @@
   <div class="adv-grid">
     <div class="adv-card"><h3>Конверсия 35–60% против 2–5% у QR</h3><p>Приложение получает push автоматически при входе в зону маячка. Не нужно доставать телефон, не нужно сканировать. Конверсия прокси-событий на порядок выше NFC и QR.</p></div>
     <div class="adv-card"><h3>Тепловая карта без камер</h3><p>Rolling ID не позволяет отслеживать конкретного посетителя — только агрегированный пассажиропоток. ФЗ-152 не нарушается. ТЦ получают аналитику без видеоаналитики.</p></div>
-    <div class="adv-card"><h3>Anti-spoofing — бренд защищён</h3><p>Фейковая точка Estimote может отправить посетителя к конкуренту. AES-128 rolling: только авторизованный маячок триггерит приложение бренда — никакой подмены.</p></div>
+    <div class="adv-card"><h3>Anti-spoofing лучше статического ID</h3><p>Приложение принимает только актуальные серверно проверяемые идентификаторы. Это ограничивает постоянный клон; свежий replay/relay выявляется контекстом и мониторингом аномалий.</p></div>
     <div class="adv-card"><h3>10 лет без батарей в витрине</h3><p>Estimote: замена батарей каждые 2–3 года. DN·Promo: Li-SOCl₂ на весь срок аренды торговой точки — никакой координации с арендодателем по замене оборудования.</p></div>
   </div>
 </section>

@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DN·Beacon — Решения на базе динамической BLE-метки</title>
-<meta name="description" content="Портфолио коммерческих решений на базе промышленной BLE-метки с AES-128 шифрованием и сроком службы батареи до 10 лет.">
+<title>DN·Beacon — Решения на базе динамической BLE-метки с AES-128 anti-fraud механизмом. ML-предиктивная аналитика и Edge-ML — проектируемые модули.</title>
+<meta name="description" content="DN·Beacon — Решения на базе динамической BLE-метки с AES-128 anti-fraud механизмом. ML-предиктивная аналитика и Edge-ML — проектируемые модули.">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -209,6 +209,11 @@
   .card-tsp .label { color: #15803d; }
   .card-tsp .tag { background: #f0fdf4; color: #15803d; }
   .card-tsp .cta-link { color: #15803d; }
+  /* Flow AI — electric violet */
+  .card-flow .card-head { border-top: 4px solid #6d28d9; background: linear-gradient(135deg,#fff 65%,#f5f3ff); }
+  .card-flow .label { color: #6d28d9; }
+  .card-flow .tag { background: #ede9fe; color: #6d28d9; }
+  .card-flow .cta-link { color: #6d28d9; }
 
   /* ── Сервисные страницы ── */
   .services { padding: 64px 5%; background: #f1f5f9; }
@@ -240,6 +245,19 @@
   .why-item h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
   .why-item p { font-size: .88rem; color: var(--muted); }
 
+  .security { padding: 72px 5%; background: #0f172a; color: #e2e8f0; }
+  .security h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); color: #fff; margin-bottom: 12px; }
+  .security > p { color: #94a3b8; max-width: 860px; margin-bottom: 32px; }
+  .security-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .security-card { padding: 24px; border: 1px solid #334155; border-radius: var(--radius); background: #1e293b; }
+  .security-card.good { border-top: 4px solid #22c55e; }
+  .security-card.risk { border-top: 4px solid #f59e0b; }
+  .security-card.controls { border-top: 4px solid #60a5fa; }
+  .security-card h3 { color: #fff; font-size: 1.05rem; margin-bottom: 12px; }
+  .security-card li { color: #cbd5e1; font-size: .9rem; margin: 7px 0 0 18px; }
+  .security-note { margin-top: 24px; padding: 18px 20px; border-radius: 10px; background: #451a03; border: 1px solid #92400e; color: #fde68a; font-size: .92rem; }
+  .security-link { display: inline-block; margin-top: 24px; color: #93c5fd; font-weight: 700; }
+
   .contact { padding: 80px 5%; background: linear-gradient(135deg, var(--slate) 0%, #0f1e3c 100%); color: #fff; text-align: center; }
   .contact h2 { font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800; margin-bottom: 14px; }
   .contact p { color: #94a3b8; font-size: 1rem; max-width: 520px; margin: 0 auto 36px; }
@@ -265,7 +283,7 @@
 <section class="hero">
   <div class="hero-badge"><span class="dot"></span>Промышленный образец · dynamic-iBeacon</div>
   <h1>Решения на базе<br><span>динамической BLE-метки</span></h1>
-  <p>Автономные маячки с шифрованием AES-128, сроком службы батареи до 10 лет и защитой от клонирования — для транспорта, инфраструктуры и логистики.</p>
+  <p>Промышленные BLE-маяки с AES-128 anti-fraud механизмом динамических ID. ML-предиктивная аналитика и Edge-ML — проектируемые модули для транспорта, складов и инфраструктуры; результаты подтвердим на пилоте.</p>
   <div class="hero-chips">
     <div class="chip"><strong>nRF52832</strong> · Nordic Semiconductor</div>
     <div class="chip"><strong>IP67</strong> · для улицы и объектов</div>
@@ -296,10 +314,61 @@
   </div><!-- /platform-body -->
 </section>
 
+<section class="security" id="ble-security">
+  <h2>BLE без мифов: преимущества, риски и границы решений</h2>
+  <p>Рекламный пакет BLE открыт для радиоприёма по определению. Dynamic-iBeacon повышает стойкость к простому копированию статического ID, но безопасность продукта обеспечивается всей системой: меткой, считывателем, сервером, ключами, приложением и регламентом.</p>
+  <div class="security-grid">
+    <article class="security-card good">
+      <h3>Что платформа действительно улучшает</h3>
+      <ul>
+        <li>AES-128 и сменный ID сокращают окно полезности перехваченного пакета и затрудняют долговременное связывание метки.</li>
+        <li>Низкое энергопотребление, работа без GPS и SIM, регулируемые мощность и интервал.</li>
+        <li>Стандартный BLE принимают смартфоны, шлюзы и бортовые трекеры; IP67 подходит для улицы и производства.</li>
+      </ul>
+    </article>
+    <article class="security-card risk">
+      <h3>Что остаётся проблемой</h3>
+      <ul>
+        <li>Пакет можно записать и повторить в пределах допустимого окна либо ретранслировать из другой точки.</li>
+        <li>RSSI не измеряет расстояние: люди, металл, ориентация антенны и многолучевость меняют сигнал.</li>
+        <li>Метка не доказывает личность носителя; эфир можно глушить, а GATT, OTA, шлюзы и ключи — атаковать.</li>
+        <li>Журналы перемещений и идентификаторы требуют минимизации, сроков хранения и контроля доступа.</li>
+      </ul>
+    </article>
+    <article class="security-card controls">
+      <h3>Как строится защищённое решение</h3>
+      <ul>
+        <li>Короткое временное окно, уникальность события, синхронизация часов, отзыв и ротация ключей.</li>
+        <li>Контекст нескольких считывателей/датчиков; для важных действий — challenge-response или второй фактор.</li>
+        <li>Закрытые GATT-характеристики, подписанная прошивка, защищённый OTA и запрет дефолтных ключей.</li>
+        <li>Радиообследование, мониторинг аномалий, fail-safe режим и пилот с измерением пропусков и ложных тревог.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="security-note"><strong>Критичные решения нельзя принимать по одному BLE advertisement.</strong> Открытие двери, платёж, подача топлива, приоритет светофора и управление техникой требуют независимой авторизации и безопасного поведения при потере или противоречии данных.</div>
+  <a class="security-link" href="ble-security/index.html">Подробная модель угроз и разбор тезисов статьи →</a>
+</section>
+
 <section class="products">
   <h2>Коммерческие решения</h2>
-  <p class="sub">29 готовых продуктов для транспорта, инфраструктуры, логистики, безопасности и маркетинга.</p>
+  <p class="sub">30 прикладных направлений и отдельная концепция DN·Flow AI для промышленной Edge-аналитики. Готовность конкретной комплектации и моделей уточняется перед пилотом.</p>
   <div class="prod-grid">
+
+    <a href="dn-flow-ai/index.html" class="prod-card card-flow">
+      <div class="card-head">
+        <div class="label">Планируемый продукт · Industrial IoT · Edge AI</div>
+        <h3>DN·Flow AI</h3>
+        <p>Локальная аналитика материальных потоков: BLE-зоны, TinyML-состояние актива, поиск отклонений и прогноз задержек без обязательной передачи данных в облако.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">TinyML</span>
+          <span class="tag">On-premise</span>
+          <span class="tag">RTLS</span>
+        </div>
+        <span class="cta-link">Концепция и статьи →</span>
+      </div>
+    </a>
 
     <a href="dn-fleet/index.html" class="prod-card card-fleet">
       <div class="card-head">
@@ -353,7 +422,7 @@
       <div class="card-head">
         <div class="label">Оплата проезда · Контроль доступа</div>
         <h3>DN·Pay</h3>
-        <p>Безбарьерная оплата проезда: пассажир проходит через турникет без касания — система считывает BLE-метку автоматически за &lt;200 мс.</p>
+        <p>Closed-loop проезд по автономной BLE-метке и отдельный контур оплаты iPhone через активную защищённую BLE-сессию по модели «ВЖУХ/Волна».</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -481,7 +550,7 @@
       <div class="card-head">
         <div class="label">Железная дорога · Метро · ТПУ</div>
         <h3>DN·Rail</h3>
-        <p>Доказательство присутствия обходчика у стрелочного перевода. Навигация по вокзалу и метро без GPS. Фиктивные отчёты исключены.</p>
+        <p>Проверяемый журнал обходов у стрелочных переводов и навигация без GPS. Rolling ID снижает простое копирование; личность и маршрут подтверждаются дополнительным контекстом.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -513,7 +582,7 @@
       <div class="card-head">
         <div class="label">Промышленная безопасность · BLE AoA</div>
         <h3>DN·Safe</h3>
-        <p>Погрузчик тормозит до контакта с рабочим. Точность 10–30 см — метки на касках и технике, локаторы на потолке. BLE Angle of Arrival.</p>
+        <p>Пилот предупреждения об опасном сближении по BLE AoA. Заявленная точность 10–30 см и любая функция торможения требуют валидации на объекте и отдельного safety-контура.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -593,7 +662,7 @@
       <div class="card-head">
         <div class="label">BLE Mesh · Шахты · Подземные склады</div>
         <h3>DN·Mesh</h3>
-        <p>BLE Mesh сеть из маячков без WiFi и кабелей. Self-healing топология: один узел вышел — трафик идёт через соседей. Подземные пространства, тоннели, шахты.</p>
+        <p>Пилот локальной multi-hop сети для малых пакетов без Internet. Питаемые relay/шлюзы, store-and-forward, измерение связности, задержки и энергобюджета.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -657,7 +726,7 @@
       <div class="card-head">
         <div class="label">ТКО · Мусоровозы · ЖКХ</div>
         <h3>DN·Waste</h3>
-        <p>Метка на контейнере + считыватель на манипуляторе мусоровоза. Факт вывоза фиксируется автоматически: ID контейнера, GPS, timestamp. Исключает приписки и серые схемы.</p>
+        <p>Метка на контейнере + считыватель на манипуляторе: журнал ID, GPS и времени снижает риск приписок; подтверждение вывоза требует контекста операции и контроля аномалий.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -671,9 +740,9 @@
 
     <a href="dn-fuel/index.html" class="prod-card card-fuel">
       <div class="card-head">
-        <div class="label">АЗС · Топливо · Флот</div>
+        <div class="label">АЗС · Топливо · Автопарк</div>
         <h3>DN·Fuel</h3>
-        <p>Пистолет ТРК разблокируется только при наличии метки авторизованного ТС в зоне 10–30 см. Слив в канистры и заправка чужих машин исключены на аппаратном уровне.</p>
+        <p>BLE-метка дополняет авторизацию ТРК. Для подачи топлива нужны свежий ID, сессия контроллера и независимое подтверждение контекста: один RSSI не доказывает дистанцию 10–30 см.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -753,7 +822,7 @@
       <div class="card-head">
         <div class="label">Охрана · Патрулирование · Безопасность объектов</div>
         <h3>DN·Guard</h3>
-        <p>Маячок у каждой контрольной точки, считыватель у охранника. Факт прохода фиксируется автоматически. Динамический ID исключает фальсификацию маршрута на аппаратном уровне.</p>
+        <p>Маячок у контрольной точки и считыватель у охранника создают проверяемый журнал. Динамический ID снижает простое копирование; relay и передачу считывателя закрывают контекстом и идентификацией сотрудника.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -835,8 +904,8 @@
     </div>
     <div class="why-item">
       <div class="ico">🔐</div>
-      <h3>Нельзя скопировать</h3>
-      <p>Идентификатор меняется каждые 5 минут (настраивается) по AES-128. Перехваченный сигнал устаревает быстрее, чем его успевают использовать.</p>
+      <h3>Устойчивее к статическому клону</h3>
+      <p>Идентификатор меняется каждые 5 минут (настраивается) по AES-128. Это сокращает окно replay, но не устраняет ретрансляцию и не заменяет аутентификацию.</p>
     </div>
     <div class="why-item">
       <div class="ico">🌧️</div>
@@ -866,7 +935,7 @@
     <div class="why-item">
       <div class="ico">🧱</div>
       <h3>Компенсация экранирования</h3>
-      <p>TxPower регулируется от −40 до +4 дБм: от локальной зоны 10 см до открытого пространства 70 м. Программная фильтрация RSSI (скользящее среднее + фильтр Калмана) устраняет ложные срабатывания от металлических конструкций, арматуры тоннелей и скоплений людей.</p>
+      <p>TxPower регулируется от −40 до +4 дБм. Фильтрация RSSI снижает шум, но не превращает сигнал в измерение расстояния и не устраняет влияние металла, людей и многолучевости; пороги настраиваются по радиообследованию.</p>
     </div>
     <div class="why-item">
       <div class="ico">🔄</div>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Пилот DN·Flow AI для AI-акселератора</title>
+<meta name="description" content="План MVP и пилота DN·Flow AI: стенд, датасет, baseline, метрики Edge RTLS и TinyML, критерии перехода и структура выступления.">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#6d28d9}nav{padding:18px 5%;background:#111827}nav a{color:#ddd6fe;text-decoration:none;font-weight:700;margin-right:24px}.hero{padding:70px 5%;background:linear-gradient(135deg,#4c1d95,#111827);color:#fff}.wrap{max-width:1050px;margin:auto}.hero p{max-width:800px;color:#ddd6fe}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.12}main{max-width:1050px;margin:auto;padding:30px 24px 70px}h2{margin-top:52px;font-size:clamp(1.45rem,3vw,2rem)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px}.card p,.card li{font-size:.91rem;color:#475569}.card ul{padding-left:18px}.phase{border-top:4px solid #7c3aed}.note{padding:20px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;margin:24px 0}.warn{background:#fffbeb;border-color:#fcd34d}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:#fff;min-width:760px}th,td{padding:12px;border:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#1e293b;color:#fff}blockquote{margin:25px 0;padding:22px;border-left:5px solid #7c3aed;background:#fff;font-size:1.08rem}footer{padding:24px;text-align:center;background:#111827;color:#94a3b8}
+</style>
+</head>
+<body>
+<nav><a href="index.html">DN·Flow AI</a><a href="../index.html">Все решения</a></nav>
+<header class="hero"><div class="wrap"><p>Статья 04 · MVP, данные и выступление</p><h1>Пилот, который проверяет AI, а не иллюстрирует презентацию</h1><p>Первый результат — не обещанный процент экономии, а воспроизводимый датасет, baseline, измеренные ошибки и решение о следующем этапе.</p></div></header>
+<main>
+<h2>Границы первого пилота</h2>
+<div class="grid">
+  <article class="card"><h3>Один процесс</h3><p>Оборотная тара проходит 4–6 известных зон с измеримым временем цикла.</p></article>
+  <article class="card"><h3>Активы, не люди</h3><p>Начало с контейнеров и тележек уменьшает privacy и трудовые риски.</p></article>
+  <article class="card"><h3>Read-only</h3><p>Система уведомляет и объясняет, но не управляет производством и безопасностью.</p></article>
+  <article class="card"><h3>Независимый эталон</h3><p>Разметка по журналу операции, наблюдению или согласованному видео, а не по собственному сигналу модели.</p></article>
+</div>
+
+<h2>Этапы</h2>
+<div class="grid">
+  <article class="card phase"><h3>0. Обследование</h3><p>Карта зон, маршрут, классы активов, SLA, радиообстановка, роли и политика данных.</p></article>
+  <article class="card phase"><h3>1. Наблюдение</h3><p>Обычные BLE-метки, шлюзы, сырой журнал, базовая точность зон и качество часов.</p></article>
+  <article class="card phase"><h3>2. Rules baseline</h3><p>Гистерезис зон, допустимый граф переходов, статистические квантили dwell и простые алерты.</p></article>
+  <article class="card phase"><h3>3. Edge ML shadow</h3><p>Модель работает параллельно правилам, не влияет на процесс. Ошибки и unknown разбираются человеком.</p></article>
+  <article class="card phase"><h3>4. TinyML</h3><p>IMU-метки на части активов; профилирование памяти, энергии и вклада motion state в итоговое качество.</p></article>
+  <article class="card phase"><h3>5. Решение</h3><p>Сравнение rules и ML, экономика, ограничения, требования к тиражу либо остановка гипотезы.</p></article>
+</div>
+
+<h2>Метрики до старта</h2>
+<div class="table"><table>
+  <thead><tr><th>Контур</th><th>Метрики</th><th>Почему важны</th></tr></thead>
+  <tbody>
+    <tr><td>RTLS</td><td>Zone F1, confusion matrix, unknown-rate, p95 перехода, age данных</td><td>Не скрывать ошибки соседних зон средним процентом</td></tr>
+    <tr><td>Process AI</td><td>Precision/recall отклонений, ложные алерты на актив-день, lead time прогноза</td><td>Проверить операционную полезность</td></tr>
+    <tr><td>TinyML</td><td>Качество классов, RAM/Flash, latency, энергия/событие, пакеты/сутки</td><td>Подтвердить возможность работы на батарее</td></tr>
+    <tr><td>Эксплуатация</td><td>Доступность, потери, время восстановления, подтверждение оператором</td><td>ML бесполезен без надёжных данных</td></tr>
+    <tr><td>Бизнес</td><td>Cycle time, dwell, WIP, найденные активы, потребность в таре</td><td>Эффект оценивается относительно исходного периода</td></tr>
+  </tbody>
+</table></div>
+<div class="note warn"><strong>Численные пороги не выдумываются для презентации.</strong> Заказчик и команда утверждают их после обследования, а итоговый отчёт показывает объём выборки и неопределённость.</div>
+
+<h2>Демонстрационный стенд</h2>
+<ul>
+  <li>несколько BLE-меток, одна из них — с IMU;</li>
+  <li>3–4 условные производственные зоны;</li>
+  <li>локальный шлюз и dashboard без Internet;</li>
+  <li>нормальный маршрут, пропуск этапа и аномальное ожидание;</li>
+  <li>сравнение rules и ML в одном журнале;</li>
+  <li>отображение confidence, unknown и версии модели;</li>
+  <li>счётчик обработанных локально и переданных событий.</li>
+</ul>
+
+<h2>Структура выступления</h2>
+<ol>
+  <li><strong>Проблема:</strong> координата не объясняет состояние материального потока.</li>
+  <li><strong>Решение:</strong> BLE + TinyML + on-premise Process AI.</li>
+  <li><strong>Демонстрация:</strong> нормальный и нарушенный маршрут.</li>
+  <li><strong>AI:</strong> признаки, baseline, модель, uncertainty и обратная связь.</li>
+  <li><strong>Data moat:</strong> размеченные последовательности и причины задержек.</li>
+  <li><strong>Рынок:</strong> производство и логистика; один вертикальный вход.</li>
+  <li><strong>Пилот:</strong> этапы, метрики и безопасные границы.</li>
+  <li><strong>Запрос:</strong> площадка, экспертиза, партнёр по шлюзам/интеграции.</li>
+</ol>
+
+<h2>60-секундный питч</h2>
+<blockquote>Производственные RTLS-системы показывают, где находится контейнер, но не понимают, почему материальный поток остановился. DN·Flow AI объединяет BLE-события зон, состояние движения от TinyML и технологическую последовательность операций. Локальный Edge AI выявляет неправильный маршрут, необычное ожидание и риск задержки, показывая причину и уверенность. Данные могут оставаться в контуре предприятия, а автономная метка передаёт только значимые события. Первый пилот — оборотная тара на одном процессе. Мы сравниваем AI с прозрачными правилами и масштабируемся только после подтверждения точности, энергобюджета и экономического эффекта.</blockquote>
+
+<h2>Критерий хорошего результата</h2>
+<p>Успех пилота — не обязательное подтверждение исходной гипотезы. Хороший результат содержит данные, baseline, ошибки, ограничения и аргументированное решение: внедрять, дорабатывать или отказаться.</p>
+<p><a href="index.html">← Вернуться к обзору DN·Flow AI</a></p>
+</main>
+<footer>DN·Flow AI · Статья 04 · <a href="index.html">Оглавление</a></footer>
+</body>
+</html>

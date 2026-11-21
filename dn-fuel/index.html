@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DN·Fuel — Контроль топливозаправки на ведомственных АЗС | DN·Beacon</title>
-<meta name="description" content="BLE-авторизация заправки: пистолет ТРК разблокируется только при наличии метки авторизованного ТС. Исключает слив топлива, заправку чужих машин и приписки.">
+<meta name="description" content="BLE как дополнительный фактор авторизации заправки: динамический ID, контроллер ТРК, журнал событий и проверка контекста операции.">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--c:#92400e;--cd:#78350f;--cl:#fffbeb;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--amber:#d97706;--radius:12px}
@@ -137,16 +137,16 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
 </nav>
 
 <section class="hero">
-  <div class="hero-label">АЗС · Топливо · Флот · Контроль заправки</div>
+  <div class="hero-label">АЗС · Топливо · Автопарк · Контроль заправки</div>
   <h1>Пистолет разблокируется только для <span>авторизованной машины</span></h1>
-  <p>DN·Fuel — BLE-метка у заливной горловины ТС и считыватель на заправочном пистолете. Подача топлива начинается строго при наличии метки авторизованного автомобиля в зоне 10–30 см. Слив в канистру и заправка чужих машин исключены на физическом уровне.</p>
+  <p>DN·Fuel — BLE-метка у заливной горловины ТС и считыватель на заправочном пистолете. Свежий ID становится дополнительным фактором авторизации; подача топлива разрешается контроллером только после проверки сессии и контекста операции.</p>
   <div class="hero-btns">
     <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
     <a href="#sectors" class="btn-outline">Сценарии применения</a>
   </div>
   <div class="hero-stats">
     <div class="hero-stat"><strong>0</strong><span>несанкционированных заправок при активной системе</span></div>
-    <div class="hero-stat"><strong>10–30 см</strong><span>дальность считывания — исключает соседнюю машину</span></div>
+    <div class="hero-stat"><strong>10–30 см</strong><span>целевая зона, подтверждается на объекте</span></div>
     <div class="hero-stat"><strong>100%</strong><span>автоматический лог: ТС · водитель · литраж · время</span></div>
     <div class="hero-stat"><strong>10 лет</strong><span>батарея метки без обслуживания</span></div>
   </div>
@@ -245,7 +245,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
       </div>
     </div>
     <div class="features">
-      <div class="feat"><div class="feat-ico">🔐</div><div class="feat-text"><h3>Физическая авторизация</h3><p>Не пин-код, не карточка, не приложение — а физическое присутствие метки у горловины. Невозможно передать, не отдав ключи от машины.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔐</div><div class="feat-text"><h3>Дополнительный фактор</h3><p>Метка связывает операцию с ТС, но не доказывает близость сама по себе. Контроллер проверяет свежесть, одноразовость сессии и датчики положения пистолета; relay тестируется отдельно.</p></div></div>
       <div class="feat"><div class="feat-ico">📊</div><div class="feat-text"><h3>Автоматический экспорт в 1С</h3><p>Журнал заправок поступает в 1С без ручного ввода: ТС, водитель, объём, время. Сверка с путевым листом — одним кликом.</p></div></div>
       <div class="feat"><div class="feat-ico">🚨</div><div class="feat-text"><h3>Алерт при попытке обхода</h3><p>Несанкционированная попытка заправки фиксируется мгновенно: уведомление оператору, запись в журнал инцидентов, блокировка ТРК.</p></div></div>
       <div class="feat"><div class="feat-ico">🏪</div><div class="feat-text"><h3>Мультизонная АЗС</h3><p>Несколько ТРК на одной площадке — каждый пистолет авторизует конкретную машину у конкретной колонки. Нет путаницы при одновременной заправке нескольких ТС.</p></div></div>
@@ -260,7 +260,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <div class="sc-card">
       <div class="ico">⛏️</div>
       <h3>Карьеры и шахты</h3>
-      <p>Парк самосвалов и карьерной техники. Расход топлива — одна из крупнейших статей затрат. DN·Fuel исключает хищение на ведомственных топливных пунктах.</p>
+      <p>Парк самосвалов и карьерной техники. DN·Fuel добавляет проверяемую авторизацию и журнал операций, снижая риск хищений; физические обходы и сговор контролируются регламентом и аудитом.</p>
       <ul>
         <li>Авторизация по метке у горловины</li>
         <li>Журнал для геолого-маркшейдерской службы</li>
@@ -338,7 +338,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <div class="fraud-row">
       <div class="fraud-item">
         <h4>«Чужая машина» — заправка не своего ТС</h4>
-        <p>Пистолет разблокируется только при наличии метки конкретного UUID в радиусе 10–30 см. Чужое ТС без метки — ТРК не откроется физически.</p>
+        <p>Пистолет разблокируется после проверки актуального ID и контекста сессии. Порог RSSI настраивается под целевую зону 10–30 см, но не используется как точное измерение расстояния.</p>
       </div>
       <div class="fraud-item">
         <h4>«Клонированная метка» — дубликат ID</h4>
@@ -354,7 +354,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
       </div>
       <div class="fraud-item">
         <h4>«Слив через шланг» — обход пистолета</h4>
-        <p>Клапан подачи топлива управляется реле контроллера. Без активной сессии авторизации — механически закрыт, шунтирование невозможно.</p>
+        <p>Клапан подачи топлива управляется контроллером и без активной сессии остаётся закрыт. Физическое шунтирование, отказ реле и вмешательство в проводку входят в модель угроз и контролируются отдельно.</p>
       </div>
       <div class="fraud-item">
         <h4>«Скрытая канистра» — заправка сверх лимита</h4>
@@ -375,7 +375,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <div class="vehicle-card">
       <span class="vtag">Строительная техника</span>
       <h3>Экскаваторы, грейдеры, погрузчики</h3>
-      <p>Метка на раме рядом с баком, скрытая от доступа. TxPower −20 dBm — дальность 20–25 см. Исключает заправку одним пистолетом сразу двух единиц техники.</p>
+      <p>Метка на раме рядом с баком, скрытая от доступа. TxPower −20 dBm формирует целевую ближнюю зону, но фактическая граница проверяется на технике; выбор ТС подтверждают датчики операции и контроллер.</p>
     </div>
     <div class="vehicle-card">
       <span class="vtag">Коммунальный транспорт</span>
@@ -432,7 +432,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <table class="vs">
       <thead><tr><th>Решение</th><th>Технология</th><th>Клонирование</th><th>Real-time учёт</th><th>Цена токена</th><th>Дальность</th></tr></thead>
       <tbody>
-        <tr><td><strong>DN·Fuel</strong></td><td>BLE AES-128 rolling</td><td class="c-ok">Невозможно</td><td class="c-ok">Да, BLE</td><td class="c-ok">3 000–5 000 ₽</td><td class="c-ok">До 70 м</td></tr>
+        <tr><td><strong>DN·Fuel</strong></td><td>BLE AES-128 rolling</td><td class="c-ok">Снижено; relay тестируется</td><td class="c-ok">Да, BLE + контекст</td><td class="c-ok">3 000–5 000 ₽</td><td class="c-ok">Настраивается</td></tr>
         <tr><td>iButton DS1990 (Omnicomm)</td><td>Dallas 1-Wire</td><td class="c-err">За $5, 30 сек</td><td class="c-warn">Лог (не RT)</td><td class="c-ok">150–300 ₽</td><td class="c-err">Контакт</td></tr>
         <tr><td>RFID-карта TopazCard</td><td>Mifare Classic 1K</td><td class="c-err">Полностью (2008 г.)</td><td class="c-warn">При считывании</td><td class="c-ok">100–500 ₽</td><td class="c-warn">3–10 см</td></tr>
         <tr><td>ANPR-камера</td><td>Распознавание номеров</td><td class="c-warn">Смена номеров</td><td class="c-ok">Да</td><td class="c-err">150–300 К₽/камера</td><td class="c-ok">До 10 м</td></tr>

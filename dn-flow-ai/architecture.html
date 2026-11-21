@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Архитектура DN·Flow AI: BLE, TinyML и Edge RTLS</title>
+<meta name="description" content="Проектная архитектура DN·Flow AI: сенсорная метка nRF52832, TinyML, on-premise Edge RTLS, Process AI, MLOps и защита данных.">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#6d28d9}nav{padding:18px 5%;background:#111827}nav a{color:#ddd6fe;text-decoration:none;font-weight:700;margin-right:24px}.hero{padding:70px 5%;background:linear-gradient(135deg,#2e1065,#111827);color:#fff}.wrap{max-width:1050px;margin:auto}.hero p{max-width:800px;color:#ddd6fe}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.12}main{max-width:1050px;margin:auto;padding:30px 24px 70px}h2{margin-top:52px;font-size:clamp(1.45rem,3vw,2rem)}h3{margin-bottom:5px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px}.card p,.card li{font-size:.91rem;color:#475569}.card ul{padding-left:18px}.note{padding:20px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;margin:24px 0}.warn{background:#fffbeb;border-color:#fcd34d}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:#fff;min-width:740px}th,td{padding:12px;border:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#1e293b;color:#fff}code{background:#e2e8f0;border-radius:4px;padding:2px 5px}footer{padding:24px;text-align:center;background:#111827;color:#94a3b8}
+</style>
+</head>
+<body>
+<nav><a href="index.html">DN·Flow AI</a><a href="../index.html">Все решения</a></nav>
+<header class="hero"><div class="wrap"><p>Статья 01 · Проектная архитектура</p><h1>Где заканчивается BLE-метка и начинается Edge AI</h1><p>Гибридная архитектура нужна не ради количества слов «AI», а чтобы разделить энергобюджет, задержку, вычисления, данные и ответственность.</p></div></header>
+<main>
+<div class="note"><strong>Статус:</strong> целевая архитектура, а не описание готовой реализации. Сенсор, частота выборки, модели и ресурс батареи выбираются и подтверждаются экспериментально.</div>
+
+<h2>1. Сенсорный узел</h2>
+<div class="grid">
+  <article class="card"><h3>Аппаратура</h3><p>nRF52832 + low-power IMU с прерыванием и FIFO. Для обычного движения рассматривается диапазон порядка ±16 g; для коротких сильных импульсов может понадобиться high-g датчик.</p></article>
+  <article class="card"><h3>Событийная работа</h3><p>IMU будит MCU только по событию. Буфер хранит окно до и после триггера. Непрерывный инференс и постоянное сканирование не предполагаются.</p></article>
+  <article class="card"><h3>TinyML</h3><p>Компактная int8-модель классифицирует движение, вибрацию, импульс, наклон, вмешательство и unknown. Обучение выполняется вне метки.</p></article>
+</div>
+<p>nRF52832 имеет ограниченные RAM и Flash. Начальный baseline — признаки временного ряда и небольшая модель дерева/линейный классификатор. 1D CNN применяется только при измеримом преимуществе и после профилирования арены памяти, времени и энергии.</p>
+<div class="note warn"><strong>До 10 лет батареи нельзя переносить на TinyML-версию.</strong> Автономность зависит от IMU, ODR, числа событий, времени работы CPU, интервала BLE и температуры.</div>
+
+<h2>2. Контракт события</h2>
+<pre class="note"><code>{
+  "event_id": "01J...",
+  "node_id": "rotating-token",
+  "event": "motion|impulse|tilt|tamper|unknown",
+  "confidence": 0.84,
+  "features": {"peak_g": 8.2, "duration_ms": 44},
+  "model_version": "tag-0.2.0",
+  "battery_mv": 3520,
+  "captured_at": "...",
+  "raw_window_ref": null
+}</code></pre>
+<p>Сырые окна передаются выборочно: для unknown, низкой уверенности, калибровочной выборки и расследования. Это уменьшает радиообмен, но не должно уничтожать данные, необходимые для проверки качества модели.</p>
+
+<h2>3. Edge RTLS и Process AI</h2>
+<div class="table"><table>
+  <thead><tr><th>Компонент</th><th>Задача</th><th>Возможный baseline</th><th>ML после проверки</th></tr></thead>
+  <tbody>
+    <tr><td>Tracking engine</td><td>Вероятная зона, переход, возраст и качество данных</td><td>RSSI-гистерезис, несколько шлюзов</td><td>HMM/particle filter</td></tr>
+    <tr><td>Process engine</td><td>Сопоставление с разрешённым маршрутом</td><td>Конечный автомат и правила</td><td>Sequence model</td></tr>
+    <tr><td>Dwell analytics</td><td>Необычное время ожидания</td><td>Квантили по типу операции</td><td>Isolation Forest/GBM</td></tr>
+    <tr><td>Delay prediction</td><td>Риск нарушения срока</td><td>Очередь + среднее время цикла</td><td>LightGBM/XGBoost</td></tr>
+    <tr><td>Recommendation</td><td>Объяснимое действие оператору</td><td>Утверждённые правила</td><td>Ранжирование вариантов; без автономного управления</td></tr>
+  </tbody>
+</table></div>
+
+<h2>4. Server ML и MLOps</h2>
+<div class="grid">
+  <article class="card"><h3>Разметка</h3><p>Подтверждение диспетчера, журнал операции и независимое наблюдение. Сигнал самой системы не используется как единственная истинная метка.</p></article>
+  <article class="card"><h3>Разделение данных</h3><p>Train/validation/test делятся по объектам, сменам и временным периодам. Соседние окна одного события не попадают в разные выборки.</p></article>
+  <article class="card"><h3>Версии и откат</h3><p>Версии датасета, признаков, модели и порога записываются в событие. Обновление подписывается, сначала работает в shadow mode и допускает откат.</p></article>
+  <article class="card"><h3>Drift</h3><p>Контролируются unknown-rate, распределение признаков и качество после изменения креплений, планировки или оборудования.</p></article>
+</div>
+
+<h2>5. Локальность и безопасность</h2>
+<p>On-premise означает, что операционные события, модели и журналы могут обрабатываться внутри контура заказчика. Это не «100% суверенность» автоматически: отдельно проверяются телеметрия обновлений, резервные копии, удалённая поддержка, журналы и зависимости.</p>
+<ul>
+  <li>динамический BLE-ID ограничивает статическое копирование, но не устраняет relay;</li>
+  <li>TLS/mTLS между шлюзами и сервером;</li>
+  <li>уникальные ключи, отзыв и ротация;</li>
+  <li>подписанные модели и прошивки;</li>
+  <li>роли, аудит, сроки хранения и удаление;</li>
+  <li>статус «данные неизвестны» при потере heartbeat.</li>
+</ul>
+<p><a href="tinyml.html">Далее: практический TinyML на nRF52832 →</a></p>
+</main>
+<footer>DN·Flow AI · Статья 01 · <a href="index.html">Оглавление</a></footer>
+</body>
+</html>

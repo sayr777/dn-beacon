@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLE-позиционирование с AI без маркетинговых мифов — DN·Flow AI</title>
+<meta name="description" content="Зональный BLE RTLS, RSSI, AoA, AI-аналитика, неопределённость, on-premise и приватность в проекте DN·Flow AI.">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#6d28d9}nav{padding:18px 5%;background:#111827}nav a{color:#ddd6fe;text-decoration:none;font-weight:700;margin-right:24px}.hero{padding:70px 5%;background:linear-gradient(135deg,#312e81,#111827);color:#fff}.wrap{max-width:1050px;margin:auto}.hero p{max-width:800px;color:#c7d2fe}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.12}main{max-width:1050px;margin:auto;padding:30px 24px 70px}h2{margin-top:52px;font-size:clamp(1.45rem,3vw,2rem)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px}.card p,.card li{font-size:.91rem;color:#475569}.card ul{padding-left:18px}.note{padding:20px;background:#eef2ff;border:1px solid #a5b4fc;border-radius:10px;margin:24px 0}.warn{background:#fff7ed;border-color:#fdba74}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:#fff;min-width:760px}th,td{padding:12px;border:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#1e293b;color:#fff}.good{color:#15803d;font-weight:700}.bad{color:#b45309;font-weight:700}footer{padding:24px;text-align:center;background:#111827;color:#94a3b8}
+</style>
+</head>
+<body>
+<nav><a href="index.html">DN·Flow AI</a><a href="../index.html">Все решения</a></nav>
+<header class="hero"><div class="wrap"><p>Статья 03 · RTLS и доверие к данным</p><h1>AI не превращает RSSI в точную координату</h1><p>Позиционирование должно передавать не только зону, но также уверенность, возраст данных и причины неопределённости. Иначе Process AI обучается на красивых, но ложных координатах.</p></div></header>
+<main>
+<h2>Три разных уровня позиционирования</h2>
+<div class="table"><table>
+  <thead><tr><th>Уровень</th><th>Оборудование</th><th>Что можно заявлять</th><th>Ограничения</th></tr></thead>
+  <tbody>
+    <tr><td>Зональный BLE</td><td>Обычные метки и несколько шлюзов</td><td>Вероятная зона и переход</td><td>Металл, люди, груз, соседние зоны</td></tr>
+    <tr><td>Fingerprinting</td><td>Карта сигналов и калибровка</td><td>Улучшенная оценка внутри стабильной планировки</td><td>Повторное обучение при изменениях</td></tr>
+    <tr><td>BLE AoA</td><td>CTE-метки и антенные решётки</td><td>Угол и более точная геометрия после испытаний</td><td>Другая аппаратура; nRF52832 не является CTE-тегом</td></tr>
+  </tbody>
+</table></div>
+<div class="note warn"><strong>RSSI — не расстояние.</strong> Фильтр Калмана или нейросеть могут сгладить шум и улучшить оценку на похожих данных, но не устраняют NLOS, экранирование и изменение среды.</div>
+
+<h2>Что именно добавляет AI</h2>
+<div class="grid">
+  <article class="card"><h3>Стабилизация состояния</h3><p>Модель учитывает историю: объект не «прыгает» между зонами из-за одного сильного пакета.</p></article>
+  <article class="card"><h3>Сенсорное слияние</h3><p>BLE дополняется движением IMU, временем перехода и допустимым технологическим маршрутом.</p></article>
+  <article class="card"><h3>Поиск аномалий</h3><p>Выявляется необычная последовательность и dwell, а не подозрительное поведение человека по одной координате.</p></article>
+  <article class="card"><h3>Оценка неопределённости</h3><p>Система возвращает несколько гипотез или unknown, когда данных недостаточно.</p></article>
+</div>
+
+<h2>Чем DN·Flow AI должен отличаться от «локальных AI-агентов»</h2>
+<div class="table"><table>
+  <thead><tr><th>Маркетинговое обещание</th><th>Проверяемая формулировка DN·Flow AI</th></tr></thead>
+  <tbody>
+    <tr><td>«Точное BLE-позиционирование»</td><td>Точность и матрица ошибок публикуются отдельно для каждой зоны и конфигурации.</td></tr>
+    <tr><td>«100% data sovereignty»</td><td>Локальный режим с документированным data egress, обновлениями, поддержкой и резервными копиями.</td></tr>
+    <tr><td>«AI понимает контекст»</td><td>Перечислены входные признаки, модель, baseline, confidence и правила подтверждения.</td></tr>
+    <tr><td>«Предотвращает инциденты»</td><td>Выявляет наблюдаемое отклонение и уведомляет человека; safety-функции проектируются отдельно.</td></tr>
+    <tr><td>«Рекомендации в реальном времени»</td><td>Измеряются p50/p95 задержки и польза рекомендации относительно процесса без неё.</td></tr>
+  </tbody>
+</table></div>
+
+<h2>Приватность и безопасность</h2>
+<p>Трекинг людей требует большей осторожности, чем учёт тары. Для первого MVP рекомендуются неперсонифицированные производственные активы. Если позднее обрабатываются данные работников:</p>
+<ul>
+  <li>фиксируются цель и правовое основание;</li>
+  <li>собирается минимальная детализация;</li>
+  <li>ограничиваются роли и срок хранения;</li>
+  <li>не выводятся поведенческие оценки без проверки и процедуры обжалования;</li>
+  <li>не принимаются дисциплинарные или safety-critical решения только по модели.</li>
+</ul>
+<p>Динамические идентификаторы снижают долговременную наблюдаемость в открытом эфире, но сервер всё равно связывает события с активом. Поэтому приватность определяется всей системой, а не форматом BLE-пакета.</p>
+
+<h2>Результат tracking engine</h2>
+<div class="note"><code>zone=B-12 · confidence=0.78 · age=4s · motion=stationary · alternatives=[B-11:0.17] · quality=degraded</code></div>
+<p>Process AI обязан учитывать <code>confidence</code>, <code>age</code> и <code>quality</code>. Низкое качество не должно молча превращаться в уверенную бизнес-рекомендацию.</p>
+<p><a href="pilot.html">Далее: как проверить продукт на пилоте →</a></p>
+</main>
+<footer>DN·Flow AI · Статья 03 · <a href="index.html">Оглавление</a></footer>
+</body>
+</html>

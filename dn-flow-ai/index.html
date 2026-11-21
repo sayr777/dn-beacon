@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DN·Flow AI — локальная Edge AI-аналитика материальных потоков</title>
+<meta name="description" content="Концепция DN·Flow AI: BLE-зоны, TinyML на автономной метке, on-premise Edge RTLS, выявление отклонений и прогноз задержек материального потока.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}:root{--c:#6d28d9;--d:#2e1065;--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;--bg:#f8fafc;--white:#fff;--ok:#15803d;--warn:#b45309}body{font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}a{color:var(--c);text-decoration:none}a:hover{text-decoration:underline}nav{height:64px;padding:0 5%;background:#111827;display:flex;align-items:center;justify-content:space-between}.logo{font-size:1.15rem;font-weight:800;color:#fff}.logo span{color:#c4b5fd}.back{color:#cbd5e1}.hero{padding:82px 5%;color:#fff;background:radial-gradient(circle at 85% 15%,#7c3aed 0,transparent 30%),linear-gradient(135deg,#111827,var(--d))}.wrap{max-width:1120px;margin:auto}.badge{display:inline-block;border:1px solid #8b5cf6;border-radius:20px;padding:5px 13px;color:#ddd6fe;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.hero h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;margin:20px 0}.hero h1 span{color:#c4b5fd}.hero p{max-width:790px;color:#d1d5db;font-size:1.12rem}.status{margin-top:28px;padding:15px 18px;max-width:850px;background:rgba(15,23,42,.68);border:1px solid #7c3aed;border-radius:10px;color:#e9d5ff}section{padding:68px 5%}h2{font-size:clamp(1.55rem,3vw,2.25rem);margin-bottom:14px}.lead{color:var(--muted);max-width:850px;margin-bottom:30px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:20px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:25px}.card h3{margin-bottom:9px;font-size:1.05rem}.card p,.card li{font-size:.91rem;color:#475569}.card ul{padding-left:18px}.card li{margin:6px 0}.step{border-top:4px solid var(--c)}.articles{background:#ede9fe}.article{display:flex;flex-direction:column}.article .num{font-weight:900;color:#8b5cf6;font-size:2rem}.article a{margin-top:auto;padding-top:15px;font-weight:750}.callout{padding:22px;border:1px solid #c4b5fd;border-radius:12px;background:#f5f3ff;margin-top:26px}.flow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}.flow div{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center;font-weight:700}.flow span{display:block;color:var(--muted);font-size:.78rem;font-weight:500;margin-top:5px}.cta{background:#2e1065;color:#fff;text-align:center}.cta p{color:#ddd6fe;max-width:680px;margin:0 auto 24px}.btn{display:inline-block;background:#fff;color:#5b21b6;padding:13px 25px;border-radius:8px;font-weight:800}footer{padding:25px;text-align:center;background:#111827;color:#94a3b8;font-size:.84rem}@media(max-width:650px){nav{height:auto;min-height:60px;gap:15px}.hero{padding-top:60px}.flow{display:grid}}
+</style>
+</head>
+<body>
+<nav><a class="logo" href="../index.html">DN·<span>Flow AI</span></a><a class="back" href="../index.html">← Все решения</a></nav>
+<header class="hero"><div class="wrap">
+  <span class="badge">Планируемый продукт · Industrial IoT · Edge AI</span>
+  <h1>Не только «где объект».<br><span>Что происходит с процессом?</span></h1>
+  <p>DN·Flow AI — концепция локальной платформы, которая объединяет BLE-события зон, состояние движения от сенсоров и технологический маршрут, чтобы выявлять неправильную последовательность операций и заранее замечать риск задержки.</p>
+  <div class="status"><strong>Статус:</strong> продуктовая гипотеза и архитектура пилота. Готовой обученной модели, подтверждённой точности и доказанного процента экономии пока нет — их должен установить пилот.</div>
+</div></header>
+<main>
+<section><div class="wrap">
+  <h2>Первый фокус — оборотная тара и внутрипроизводственная логистика</h2>
+  <p class="lead">Контейнеры, паллеты и тележки проходят известную последовательность зон. Обычный RTLS показывает последнее положение. DN·Flow AI должен восстановить состояние процесса, обнаружить отклонение и объяснить рекомендацию.</p>
+  <div class="grid">
+    <article class="card"><h3>Аномальное ожидание</h3><p>Объект находится в правильной зоне, но дольше диапазона, характерного для этого типа операции, смены и загрузки.</p></article>
+    <article class="card"><h3>Неверная последовательность</h3><p>Пропущена обязательная операция либо объект попал в зону, не разрешённую текущим технологическим состоянием.</p></article>
+    <article class="card"><h3>Риск узкого места</h3><p>Очередь и длительность цикла растут одновременно. Модель оценивает вероятность нарушения SLA, не выдавая автоматических команд оборудованию.</p></article>
+    <article class="card"><h3>Состояние актива</h3><p>IMU помогает отличить «метка видна» от реального движения, удара, падения или вмешательства в крепление.</p></article>
+  </div>
+  <div class="callout"><strong>Главная формула продукта:</strong> BLE даёт наблюдение, TinyML — состояние, Edge AI — контекст, а подтверждение оператора создаёт собственный размеченный датасет.</div>
+</div></section>
+<section style="background:#fff"><div class="wrap">
+  <h2>Три уровня локального интеллекта</h2>
+  <div class="flow">
+    <div>BLE + IMU<span>сигнал зоны и временной ряд</span></div>
+    <div>TinyML<span>движение, импульс, наклон, unknown</span></div>
+    <div>Edge RTLS<span>вероятная зона и качество данных</span></div>
+    <div>Process AI<span>маршрут, dwell, аномалия, прогноз</span></div>
+    <div>Человек<span>подтверждение причины и действия</span></div>
+  </div>
+</div></section>
+<section class="articles"><div class="wrap">
+  <h2>Материалы раздела</h2>
+  <p class="lead">Четыре статьи отделяют продуктовую идею от инженерных ограничений и плана проверки.</p>
+  <div class="grid">
+    <article class="card article"><span class="num">01</span><h3>Архитектура BLE + TinyML + Edge AI</h3><p>Что выполняется на nRF52832, что остаётся на питаемом шлюзе и как строится воспроизводимый ML-конвейер.</p><a href="architecture.html">Читать архитектуру →</a></article>
+    <article class="card article"><span class="num">02</span><h3>Практический TinyML на nRF52832</h3><p>IMU-окна, baseline, int8, TFLite Micro/CMSIS-NN, память BLE-стека и измерение энергии на событие.</p><a href="tinyml.html">Читать TinyML-план →</a></article>
+    <article class="card article"><span class="num">03</span><h3>Позиционирование без маркетинговых мифов</h3><p>Зональный RSSI, AoA, неопределённость, приватность, on-premise и границы «AI-агентов».</p><a href="positioning.html">Читать о позиционировании →</a></article>
+    <article class="card article"><span class="num">04</span><h3>MVP и пилот для AI-акселератора</h3><p>Стенд, данные, baseline, метрики, этапы и короткий питч без обещаний неподтверждённого эффекта.</p><a href="pilot.html">Читать план пилота →</a></article>
+  </div>
+</div></section>
+<section><div class="wrap">
+  <h2>Почему AI здесь нужен</h2>
+  <div class="grid">
+    <article class="card step"><h3>Не заменяет правила</h3><p>Сначала process rules и статистические пороги. ML внедряется только если лучше baseline на независимых данных.</p></article>
+    <article class="card step"><h3>Работает с последовательностью</h3><p>Ценность появляется при объединении переходов зон, времени ожидания, типа актива, движения и загрузки процесса.</p></article>
+    <article class="card step"><h3>Показывает неизвестность</h3><p>Низкая уверенность, старые данные и противоречивые шлюзы должны давать статус unknown, а не ложную точную координату.</p></article>
+    <article class="card step"><h3>Обучается на обратной связи</h3><p>Причина задержки и действие диспетчера превращаются в разметку для следующей версии модели.</p></article>
+  </div>
+</div></section>
+<section class="cta"><div class="wrap"><h2>Ищем площадку для ограниченного пилота</h2><p>Нужен один процесс с понятной последовательностью зон, измеримым временем цикла и ответственным за разметку отклонений.</p><a class="btn" href="mailto:sayr@inbox.ru?subject=Пилот DN Flow AI">Обсудить DN·Flow AI</a></div></section>
+</main>
+<footer>DN·Flow AI · Планируемый продукт DN·Beacon · <a href="../ble-security/index.html">Модель угроз BLE</a></footer>
+</body>
+</html>

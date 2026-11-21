@@ -199,7 +199,7 @@
       </div>
     </div>
     <div class="patrol-desc">
-      <div class="pd-item"><div class="pd-ico">🔒</div><div class="pd-text"><h3>Фиктивный обход невозможен</h3><p>Маячок фиксирует присутствие только при физическом подходе ближе 3 метров. Нельзя «подписать» точку дистанционно, задним числом или из кабины дрезины.</p></div></div>
+      <div class="pd-item"><div class="pd-ico">🔒</div><div class="pd-text"><h3>Сложнее сфальсифицировать обход</h3><p>Сменный ID, время и последовательность лучше статической отметки. RSSI не доказывает дистанцию 3 м, поэтому relay и передачу считывателя выявляют вторым фактором и анализом маршрута.</p></div></div>
       <div class="pd-item"><div class="pd-ico">🌨️</div><div class="pd-text"><h3>Работает в −40°C и IP67</h3><p>Маячок установлен на открытой инфраструктуре. Промышленный корпус AK-W-70-4, батарея Li-SOCl₂ стабильна в экстремальных температурах.</p></div></div>
       <div class="pd-item"><div class="pd-ico">📱</div><div class="pd-text"><h3>Обходчику — только смартфон</h3><p>Никакого специального оборудования. Корпоративное приложение на Android-смартфоне считывает маячок в фоне. Сотрудник видит список точек и галочки по мере обхода.</p></div></div>
       <div class="pd-item"><div class="pd-ico">⚡</div><div class="pd-text"><h3>Наряд-допуск закрывается автоматически</h3><p>Все 14 точек пройдены → наряд закрывается в системе документооборота без ручного ввода. Инспектор видит неизменяемый журнал с криптографической подписью.</p></div></div>
@@ -264,7 +264,7 @@
       <div class="spec-row"><span class="k">Дальность регистрации</span><span class="v navy">0.5–5 м (настр.)</span></div>
       <div class="spec-row"><span class="k">Точность RSSI</span><span class="v navy">1–3 м</span></div>
       <div class="spec-row"><span class="k">Смена ID</span><span class="v navy">AES-128, каждые 5 мин (настраивается)</span></div>
-      <div class="spec-row"><span class="k">Фальсификация</span><span class="v green">невозможна</span></div>
+      <div class="spec-row"><span class="k">Антифрод</span><span class="v green">rolling ID + контекст маршрута</span></div>
     </div>
     <div class="spec-card">
       <h3>Интеграция</h3>
@@ -304,7 +304,7 @@
     <table class="vs">
       <thead><tr><th>Технология</th><th>Производитель</th><th>Как фальсифицируется</th><th>DN·Rail</th></tr></thead>
       <tbody>
-        <tr><td><strong>NFC-контрольные точки</strong></td><td>РЖД-пилоты, кастомные решения</td><td class="c-err">Статич. NFC тег: сфотографировал один раз → воспроизводится с телефона без выхода на объект. Нет доказательства физического присутствия.</td><td class="c-ok">Rolling ID: воспроизвести удалённо невозможно</td></tr>
+        <tr><td><strong>NFC-контрольные точки</strong></td><td>РЖД-пилоты, кастомные решения</td><td class="c-err">Статичный UID можно заранее скопировать; защита зависит от типа тега и протокола.</td><td class="c-ok">Rolling ID сокращает окно копии; relay требует контрмер</td></tr>
         <tr><td><strong>QR-код точки</strong></td><td>Guardtek, кастомные</td><td class="c-err">QR фотографируется → сканируется из офиса. Нет временно́й уникальности. В темноте и перчатках — не работает.</td><td class="c-ok">Уникальный ID каждые 5 мин, бесконтактный</td></tr>
         <tr><td><strong>Detex WandReader / Datastor RFID</strong></td><td>Detex (США), Datastor РФ</td><td class="c-warn">Статический RFID: копируется T5577-записывателем за ₽1,500. Металлические кнопки ржавеют. Detex недоступен в РФ с 2022.</td><td class="c-ok">Rolling AES-128, IP67, 10 лет батарея</td></tr>
         <tr><td><strong>Бумажный журнал</strong></td><td>—</td><td class="c-err">Заполняется задним числом. Ространснадзор не принимает как нефальсифицируемое доказательство после обновления ПТЭ ЖД.</td><td class="c-ok">Криптографически timestamped log</td></tr>

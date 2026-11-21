@@ -132,49 +132,49 @@
 </nav>
 
 <section class="hero">
-  <div class="hero-label">BLE Mesh · Без WiFi · Без кабелей · Self-healing</div>
+  <div class="hero-label">BLE Mesh · Локальный контур · Store-and-forward · Пилот</div>
   <h1>Покрытие там, где <span>WiFi нет и не будет</span></h1>
-  <p>DN·Mesh — сеть BLE-узлов без WiFi и кабельной разводки. Relay-узлы на сменной батарее расставляются по тоннелю или шахте за один день. Конечные устройства на работниках — долгоживущие маячки. Один узел отключился — пакеты идут в обход. Сеть восстанавливается сама.</p>
+  <p>DN·Mesh — локальная сеть BLE-узлов без обязательного Internet. Для гарантированного покрытия применяются питаемые relay/шлюзы; батарейные ретрансляторы рассматриваются только после измерения duty cycle и доступности. Конечные маячки остаются низкопотребляющими.</p>
   <div class="hero-btns">
     <a href="mailto:sayr@inbox.ru" class="btn-primary">Запросить КП</a>
     <a href="#sectors" class="btn-outline">По отраслям</a>
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><strong>0 кабелей</strong><span>к каждому relay-узлу сети</span></div>
-    <div class="hero-stat"><strong>Self-healing</strong><span>топология восстанавливается при потере узла</span></div>
-    <div class="hero-stat"><strong>200+ м</strong><span>глубина покрытия без единой точки доступа</span></div>
-    <div class="hero-stat"><strong>1–2 года</strong><span>батарея relay-узла, замена за 2 минуты</span></div>
+    <div class="hero-stat"><strong>offline</strong><span>локальная доставка без Internet</span></div>
+    <div class="hero-stat"><strong>multi-hop</strong><span>альтернативные пути при достаточной плотности</span></div>
+    <div class="hero-stat"><strong>TTL</strong><span>ограничение ретрансляций и дублей</span></div>
+    <div class="hero-stat"><strong>измеряемо</strong><span>доставка, задержка и энергобюджет пилота</span></div>
   </div>
 </section>
 
 <section class="arch">
   <div class="section-label">Архитектура сети</div>
   <h2>Два типа узлов — разные роли и срок батареи</h2>
-  <p class="subtitle">Relay-узел слушает эфир и ретранслирует пакеты — это десятки-сотни мкА. End-устройство только отправляет — пять мкА. Батарея до 10 лет только у конечных маячков.</p>
+  <p class="subtitle">Relay постоянно или часто слушает эфир, поэтому его энергобюджет на порядки выше маяка. Питаемые узлы — базовый вариант; ресурс батарейного relay нельзя переносить с advertising-метки и нужно измерять на выбранной прошивке.</p>
   <div class="arch-grid">
     <div class="arch-card relay">
       <span class="arch-badge badge-relay">Relay-узел · инфраструктура</span>
       <h3>Ретранслятор сети</h3>
       <ul>
         <li>Постоянное прослушивание эфира + ретрансляция</li>
-        <li>Ток потребления: 50–300 мкА в среднем</li>
+        <li>Ток потребления зависит от scan duty cycle, плотности и трафика</li>
         <li>Монтаж: 1 дюбель, 5 минут</li>
         <li>Расстановка с шагом 30–50 м вдоль выработки</li>
-        <li>Нет кабеля питания — только батарея</li>
+        <li>Питание PoE/сеть; батарейный режим — опция пилота</li>
       </ul>
       <div class="battery-life">
-        <p><strong>Батарея ER14505H-LD — сменная.</strong> При среднем токе 100–200 мкА: 1–2 года работы. Замена: открыть крышку корпуса, вставить новый элемент. Без инструментов, без настройки.</p>
+        <p><strong>Ресурс подтверждается измерением.</strong> Даже расчёт 2700 мА·ч / средний ток должен учитывать саморазряд, температуру, импульсную нагрузку и резерв. Непрерывное сканирование может потребовать стационарного питания.</p>
       </div>
     </div>
     <div class="arch-card lpn">
       <span class="arch-badge badge-lpn">End-устройство · на работнике / активе</span>
       <h3>Low Power Node (маяк)</h3>
       <ul>
-        <li>Только отправляет пакеты, не ретранслирует</li>
+        <li>Advertising-маяк либо Bluetooth Mesh LPN — разные режимы прошивки</li>
         <li>Ток потребления: 5 мкА (день), 1 мкА (ночь)</li>
         <li>Данные уходят через ближайший relay-узел</li>
         <li>Крепится к каске, жилету, технике, активу</li>
-        <li>Стандартный iBeacon-протокол</li>
+        <li>iBeacon для телеметрии; LPN требует Friend-узла и отдельной проверки</li>
       </ul>
       <div style="margin-top:16px;padding:14px;background:rgba(30,58,138,.08);border-radius:8px;border:1px solid rgba(30,58,138,.2)">
         <p style="font-size:.86rem;color:#1e3a8a"><strong>Батарея ER14505H-LD — до 10 лет</strong> без замены. Стандартная долгоживущая метка DN·Beacon.</p>
@@ -183,10 +183,23 @@
   </div>
 </section>
 
+<section style="background:#eff6ff;padding:72px 5%">
+  <div class="section-label">Уроки bitchat</div>
+  <h2>Мессенджер подтверждает multi-hop — и показывает его цену</h2>
+  <p class="subtitle">bitchat — полезный референс прикладной ad-hoc сети, но не реализация стандартного Bluetooth Mesh и не готовая промышленная архитектура DN·Mesh.</p>
+  <div class="features">
+    <div class="feat"><div class="feat-ico">✅</div><div class="feat-text"><h3>Что подтверждено практикой</h3><p>BLE может обнаруживать соседей, передавать пакеты несколькими хопами, хранить их до появления маршрута и работать без Internet. TTL, дедупликация, jitter и лимиты памяти обязательны.</p></div></div>
+    <div class="feat"><div class="feat-ico">🧭</div><div class="feat-text"><h3>Плотность определяет связность</h3><p>Без соседнего relay сообщение не движется. Дальность одного радио не равна дальности сети; измеряются вероятность доставки, задержка, число хопов и поведение при разделении сети.</p></div></div>
+    <div class="feat"><div class="feat-ico">🔐</div><div class="feat-text"><h3>Шифрование не решает идентичность</h3><p>Текущий whitepaper bitchat описывает Noise для приватных сессий, но также стабильный peer ID и открытые announcements. DN·Mesh отдельно проектирует аутентификацию узлов, метаданные и ротацию ключей.</p></div></div>
+    <div class="feat"><div class="feat-ico">🔋</div><div class="feat-text"><h3>Телефон и маяк — разные энергопрофили</h3><p>Активное сканирование и ретрансляция расходуют существенно больше передачи beacon. Срок конечной метки нельзя обещать relay-узлу; батарея, трафик и задержка проверяются вместе.</p></div></div>
+  </div>
+  <p style="margin-top:24px"><a href="https://github.com/permissionlesstech/bitchat" target="_blank" rel="noopener">Официальный репозиторий bitchat ↗</a></p>
+</section>
+
 <section class="compare">
   <div class="section-label">DN·Mesh vs WiFi в подземных объектах</div>
   <h2>Почему WiFi сложно развернуть под землёй</h2>
-  <p class="subtitle">Развернуть WiFi в шахте — это кабельная трасса, герметичные коробы, постоянное питание к каждой точке доступа. DN·Mesh — узлы на батарее, установка за часы.</p>
+  <p class="subtitle">BLE может снизить объём инфраструктуры для малых пакетов, но не заменяет Wi‑Fi/leaky feeder по пропускной способности и гарантии связи. Выбор делается после обследования и расчёта доступности.</p>
   <div class="cmp-grid">
     <div class="cmp-card bad cmp-bad">
       <h3>WiFi в подземных пространствах</h3>
@@ -204,9 +217,9 @@
       <ul>
         <li>Relay-узлы — только 1 дюбель, без кабелей</li>
         <li>Нет строительных работ, нет кабельного ввода</li>
-        <li>Питание — сменная батарея, замена 1–2 раза в год</li>
-        <li>Один узел упал — трафик идёт через соседей</li>
-        <li>Развёртывание 100 узлов — 1 рабочий день</li>
+        <li>Питаемые relay для гарантии; батарейные — по энерготесту</li>
+        <li>Обход возможен только при физически доступном соседнем пути</li>
+        <li>Срок развёртывания определяется обследованием и монтажом</li>
         <li>Обслуживание — плановая замена батарей</li>
       </ul>
     </div>
@@ -226,8 +239,8 @@
       <p>Данные от маяка работника на горизонте −160 м передаются хоп за хопом через relay-узлы до шлюза у выхода из шахты. Шлюз отдаёт трафик в интернет по LTE или Ethernet.</p>
     </div>
     <div class="how-step">
-      <h3>Self-healing: узел упал — сеть перестроилась</h3>
-      <p>Если relay-узел разрядился или повреждён, соседи перестраивают маршруты. Система автоматически уведомляет о разрядке батареи — плановая замена вместо аварийного простоя.</p>
+      <h3>Альтернативный путь при наличии покрытия</h3>
+      <p>Сеть может доставить пакет через соседей, если граф после отказа остаётся связным. Пилот проверяет потерю каждого критичного узла, разделение сети, задержку и восстановление.</p>
     </div>
     <div class="how-step">
       <h3>Батарея relay-узла: уведомление заранее</h3>
@@ -260,8 +273,8 @@
     </div>
     <div class="features">
       <div class="feat"><div class="feat-ico">🔋</div><div class="feat-text"><h3>Плановая замена вместо аварий</h3><p>Система предупреждает о разрядке за 3–4 недели. Обходчик меняет батарею по плану, а не в аварийном порядке. Замена — открыть крышку, вставить новый элемент ER14505H-LD, закрыть. Без настройки.</p></div></div>
-      <div class="feat"><div class="feat-ico">🔄</div><div class="feat-text"><h3>Self-healing при любом сбое</h3><p>Разряженный, повреждённый, потерянный узел — сеть перестраивает маршруты через соседей автоматически. Персонал под землёй не теряет связи из-за одного севшего relay.</p></div></div>
-      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Один шлюз на весь объект</h3><p>Достаточно одного выходного шлюза с LTE у входа в тоннель. Все узлы глубоко под землёй передают данные через mesh-цепочку к этому шлюзу.</p></div></div>
+      <div class="feat"><div class="feat-ico">🔄</div><div class="feat-text"><h3>Устойчивость по результатам теста</h3><p>Избыточные маршруты снижают влияние единичного отказа, но не гарантируют связь при разрыве линейного тоннеля. Критичные участки проектируются с резервом.</p></div></div>
+      <div class="feat"><div class="feat-ico">📡</div><div class="feat-text"><h3>Шлюзы без единой точки отказа</h3><p>Один шлюз достаточен для лабораторного пилота. Промышленный контур требует резервирования питания, backhaul и граничных шлюзов по целевой доступности.</p></div></div>
       <div class="feat"><div class="feat-ico">⚡</div><div class="feat-text"><h3>Развёртывание за день</h3><p>100 relay-узлов — это 100 дюбелей. Без кабеля, без строительных работ. Сеть самонастраивается после включения каждого узла.</p></div></div>
     </div>
   </div>
@@ -301,9 +314,9 @@
     <div class="spec-card"><h3>Relay-узел (ретранслятор)</h3>
       <div class="spec-row"><span class="k">Чипсет</span><span class="v">Nordic nRF52832</span></div>
       <div class="spec-row"><span class="k">Стандарт</span><span class="v green">Bluetooth Mesh 1.0</span></div>
-      <div class="spec-row"><span class="k">Средний ток</span><span class="v warn">50–300 мкА</span></div>
-      <div class="spec-row"><span class="k">Батарея</span><span class="v warn">ER14505H-LD · сменная</span></div>
-      <div class="spec-row"><span class="k">Срок батареи</span><span class="v warn">1–2 года</span></div>
+      <div class="spec-row"><span class="k">Средний ток</span><span class="v warn">измеряется с профилем сканирования</span></div>
+      <div class="spec-row"><span class="k">Питание</span><span class="v warn">PoE/сеть; батарея — опционально</span></div>
+      <div class="spec-row"><span class="k">Срок батареи</span><span class="v warn">не заявляется до энерготеста</span></div>
       <div class="spec-row"><span class="k">Замена</span><span class="v green">без инструментов · 2 мин</span></div>
     </div>
     <div class="spec-card"><h3>End-устройство (маяк)</h3>
@@ -322,7 +335,7 @@
     <div class="spec-card"><h3>Сеть и шлюз</h3>
       <div class="spec-row"><span class="k">Топология</span><span class="v accent">Self-healing mesh</span></div>
       <div class="spec-row"><span class="k">Макс. relay-узлов</span><span class="v green">32 767 (спецификация)</span></div>
-      <div class="spec-row"><span class="k">Шлюз</span><span class="v green">1 · LTE / Ethernet</span></div>
+      <div class="spec-row"><span class="k">Шлюзы</span><span class="v green">LTE / Ethernet · резерв по проекту</span></div>
       <div class="spec-row"><span class="k">Шифрование</span><span class="v green">AES-128 CCM</span></div>
     </div>
   </div>
@@ -331,15 +344,15 @@
 <!-- COMP-VS -->
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#1e3a8a;margin-bottom:12px">Сравнение с конкурентами</div>
-  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Leaky feeder кабель — $50 000 за 1 км шахты. BLE mesh — в 20 раз дешевле</h2>
-  <div class="vs-callout"><strong>Leaky feeder (текущий кабель) в шахте или тоннеле: $30 000–80 000 за 1 км.</strong> DN·Mesh: relay-узел каждые 50–70 м на батарее 10 лет = $500–800 за тот же километр. В 20–40 раз дешевле без кабельных работ.</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Сравниваем по функции, а не только по цене радио</h2>
+  <div class="vs-callout"><strong>BLE mesh переносит малые статусы, но не эквивалентен leaky feeder или Wi‑Fi.</strong> TCO включает питание, взрывозащиту, монтаж, резервирование, обслуживание батарей и проверку покрытия. Цена пилота не доказывает стоимость километра промышленной связи.</div>
   <div class="comp-wrap">
     <table class="vs">
       <thead><tr><th>Технология</th><th>Производитель</th><th>Ключевая слабость</th><th>DN·Mesh</th></tr></thead>
       <tbody>
         <tr><td><strong>Leaky feeder (РЧ-кабель)</strong></td><td>Prysmian, CommScope, Belden</td><td class="c-err">$30 000–80 000 за 1 км. Требует остановки работ на монтаж. Обрыв кабеля = потеря связи по всей шахте. CommScope недоступен в РФ с 2022.</td><td class="c-ok">$500–800 за км, battery-only, нет кабеля</td></tr>
         <tr><td><strong>Wi-Fi в шахтах/туннелях</strong></td><td>Cisco, Meraki underground</td><td class="c-warn">AP каждые 30–50 м требует питания (220В или PoE) — прокладка кабеля 220В по взрывоопасной зоне: ATEX-сертификация +40% к стоимости. Cisco в РФ недоступен.</td><td class="c-ok">Батарейный, ГОСТ Р 52350 ATEX</td></tr>
-        <tr><td><strong>LoRaWAN подземный</strong></td><td>Kerlink, Semtech</td><td class="c-warn">Шлюз каждые 2–5 км требует питания. Пропускная способность 250 бит/с — только статусы. Нет маршрутизации mesh — одно кольцо отказа.</td><td class="c-ok">BLE mesh маршрутизация, 1 Мбит/с</td></tr>
+        <tr><td><strong>LoRaWAN подземный</strong></td><td>Kerlink, Semtech</td><td class="c-warn">Низкая скорость, звездообразная архитектура и зависимость покрытия от геометрии.</td><td class="c-ok">Multi-hop для малых пакетов; 1 Мбит/с PHY не равен throughput сети</td></tr>
         <tr><td><strong>UHF RFID + считыватели</strong></td><td>Zebra, Honeywell (горнодобыча)</td><td class="c-warn">Считыватель каждые 3–5 м для надёжной идентификации = высокая плотность оборудования. Zebra RFID недоступен в РФ. Нет двусторонней связи.</td><td class="c-ok">BLE bidirectional, 70 м/узел</td></tr>
       </tbody>
     </table>
@@ -347,9 +360,9 @@
   <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Mesh</h3>
   <div class="adv-grid">
     <div class="adv-card"><h3>Нет кабельных работ = нет остановки производства</h3><p>Leaky feeder требует остановки шахты на 2–6 недель для монтажа. DN·Mesh: relay-узлы на стяжках, батарейные — монтаж 1 узла за 10 минут, без остановки добычи.</p></div>
-    <div class="adv-card"><h3>В 20× дешевле за километр</h3><p>1 км leaky feeder: $50 000–80 000. 1 км DN·Mesh (14 узлов × $50): $700. Для 5 км горной выработки — разница $250 000 против $3 500. Окупаемость — первый месяц.</p></div>
-    <div class="adv-card"><h3>Самовосстановление mesh</h3><p>Один узел вышел из строя — соседи автоматически перестроили маршрут. Leaky feeder: обрыв в одном месте = вся ветка без связи. Mesh: нет единой точки отказа.</p></div>
-    <div class="adv-card"><h3>Замена через 10 лет, не 2 года</h3><p>Wi-Fi AP и LoRa-шлюзы в шахте: замена аккумуляторов каждые 1–2 года в труднодоступных зонах. Li-SOCl₂ 10 лет: на всё время действия лицензии на добычу.</p></div>
+    <div class="adv-card"><h3>Экономика проверяется пилотом</h3><p>Сравниваются одинаковые функции и SLA: статусы, двусторонняя связь, аварийное оповещение, резервирование и обслуживание. Итог зависит от объекта.</p></div>
+    <div class="adv-card"><h3>Избыточные пути</h3><p>Mesh может обойти единичный отказ там, где радиограф имеет резервный маршрут. В линейной выработке без перекрытия любой узел может остаться точкой разрыва.</p></div>
+    <div class="adv-card"><h3>Разные сроки разных ролей</h3><p>До 10 лет относится к редко передающему маяку. Relay со сканированием и приёмом имеет другой энергобюджет и обычно требует питания либо регулярного обслуживания.</p></div>
   </div>
 </section>
 

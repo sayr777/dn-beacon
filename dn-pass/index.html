@@ -166,7 +166,7 @@
   <div class="hero-stats">
     <div class="hero-stat"><strong>0</strong><span>действий от водителя</span></div>
     <div class="hero-stat"><strong>10 лет</strong><span>метка без замены батареи</span></div>
-    <div class="hero-stat"><strong>AES-128</strong><span>метку нельзя скопировать</span></div>
+    <div class="hero-stat"><strong>AES-128</strong><span>защита от статического клона</span></div>
     <div class="hero-stat"><strong>50 м</strong><span>дальность считывания</span></div>
   </div>
 </section>
@@ -357,7 +357,7 @@
       <tbody>
         <tr><td><strong>Em-Marine 125 kHz брелок</strong></td><td>Vizit, Eltis, Slinex, RoboMind</td><td class="c-err">Нет шифрования. Клонировщик за 300–600 ₽ = копия за 10 сек. Дальность 5–15 см — нужно поднести.</td><td class="c-ok">AES-128, rolling ID, дальность до 70 м</td></tr>
         <tr><td><strong>Mifare Classic / DESFire</strong></td><td>HID, NXP, Parsec</td><td class="c-warn">Mifare Classic взломан в 2008 (CRYPTO-1). DESFire дороже, дальность 5–10 см. HID ограничен в РФ с 2022.</td><td class="c-ok">Шифрование AES-128 без фиксированного UID</td></tr>
-        <tr><td><strong>UHF RFID на лобовое стекло</strong></td><td>Nedap TRANSIT, Feig IDENT</td><td class="c-warn">Статический ID → relay-атака открывает чужой шлагбаум из соседней полосы. Недоступен в РФ с 2022.</td><td class="c-ok">Нет relay-атаки · динамич. ID</td></tr>
+        <tr><td><strong>UHF RFID на лобовое стекло</strong></td><td>Nedap TRANSIT, Feig IDENT</td><td class="c-warn">Статический ID упрощает клонирование; широкая зона может давать ошибочный выбор полосы.</td><td class="c-ok">Динамический ID + временная проверка; relay требует отдельных мер</td></tr>
         <tr><td><strong>Dallas iButton DS1990</strong></td><td>Analog Devices (Maxim)</td><td class="c-err">Контактный — прижать к считывателю металлом. Эмулятор за 800 ₽. Не работает в перчатках при −30°C.</td><td class="c-ok">Бесконтактный, IP67, −40°C</td></tr>
         <tr><td><strong>BLE-теги</strong></td><td>Estimote, Kontakt.io</td><td class="c-warn">Статический UUID — перехватывается BLE-сниффером. IP54, −20°C max. Батарея 1–2 года (CR2477).</td><td class="c-ok">Rolling AES-128 · IP67 · 10 лет ER14505H-LD</td></tr>
       </tbody>
@@ -365,7 +365,7 @@
   </div>
   <h3 style="font-size:1.1rem;font-weight:800;color:#1e293b;margin:36px 0 0">Ключевые преимущества DN·Pass</h3>
   <div class="adv-grid">
-    <div class="adv-card"><h3>70 м — въезд без остановки</h3><p>Шлагбаум открывается при подъезде — водитель не притормаживает, не поднимает телефон. Работает в перчатках и любую погоду.</p></div>
+    <div class="adv-card"><h3>Настраиваемая зона обнаружения</h3><p>Въезд без поднесения телефона возможен после радиообследования. RSSI не равен расстоянию, поэтому направление, полоса и право доступа подтверждаются дополнительным контекстом.</p></div>
     <div class="adv-card"><h3>10 лет без замены батареи</h3><p>Estimote/Kontakt.io — замена каждые 1–2 года. Li-SOCl₂ ER14505H-LD: 10 лет без обслуживания = нулевые расходы на эксплуатацию.</p></div>
     <div class="adv-card"><h3>Не привязана к машине</h3><p>Метка носится на водителе (каска, брелок, жилет) — работает в любом транспортном средстве. UHF RFID привязан к конкретному лобовому стеклу.</p></div>
     <div class="adv-card"><h3>Регуляторный попутный ветер</h3><p>ФСТЭК и ФСБ методологически рекомендуют отказ от 125 kHz на объектах с требованиями безопасности. DN·Pass уже соответствует этим требованиям.</p></div>
