@@ -8,6 +8,11 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}:root{--c:#6d28d9;--d:#2e1065;--ink:#1e293b;--muted:#64748b;--line:#e2e8f0;--bg:#f8fafc;--white:#fff;--ok:#15803d;--warn:#b45309}body{font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--bg)}a{color:var(--c);text-decoration:none}a:hover{text-decoration:underline}nav{height:64px;padding:0 5%;background:#111827;display:flex;align-items:center;justify-content:space-between}.logo{font-size:1.15rem;font-weight:800;color:#fff}.logo span{color:#c4b5fd}.back{color:#cbd5e1}.hero{padding:82px 5%;color:#fff;background:radial-gradient(circle at 85% 15%,#7c3aed 0,transparent 30%),linear-gradient(135deg,#111827,var(--d))}.wrap{max-width:1120px;margin:auto}.badge{display:inline-block;border:1px solid #8b5cf6;border-radius:20px;padding:5px 13px;color:#ddd6fe;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em}.hero h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;margin:20px 0}.hero h1 span{color:#c4b5fd}.hero p{max-width:790px;color:#d1d5db;font-size:1.12rem}.status{margin-top:28px;padding:15px 18px;max-width:850px;background:rgba(15,23,42,.68);border:1px solid #7c3aed;border-radius:10px;color:#e9d5ff}section{padding:68px 5%}h2{font-size:clamp(1.55rem,3vw,2.25rem);margin-bottom:14px}.lead{color:var(--muted);max-width:850px;margin-bottom:30px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:20px}.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:25px}.card h3{margin-bottom:9px;font-size:1.05rem}.card p,.card li{font-size:.91rem;color:#475569}.card ul{padding-left:18px}.card li{margin:6px 0}.step{border-top:4px solid var(--c)}.articles{background:#ede9fe}.article{display:flex;flex-direction:column}.article .num{font-weight:900;color:#8b5cf6;font-size:2rem}.article a{margin-top:auto;padding-top:15px;font-weight:750}.callout{padding:22px;border:1px solid #c4b5fd;border-radius:12px;background:#f5f3ff;margin-top:26px}.flow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap}.flow div{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;text-align:center;font-weight:700}.flow span{display:block;color:var(--muted);font-size:.78rem;font-weight:500;margin-top:5px}.cta{background:#2e1065;color:#fff;text-align:center}.cta p{color:#ddd6fe;max-width:680px;margin:0 auto 24px}.btn{display:inline-block;background:#fff;color:#5b21b6;padding:13px 25px;border-radius:8px;font-weight:800}footer{padding:25px;text-align:center;background:#111827;color:#94a3b8;font-size:.84rem}@media(max-width:650px){nav{height:auto;min-height:60px;gap:15px}.hero{padding-top:60px}.flow{display:grid}}
 </style>
+<style>
+.deck-nav{padding:18px 5%;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}.deck-nav .wrap{display:flex;gap:18px;overflow-x:auto;white-space:nowrap}.deck-nav a{font-size:.84rem;font-weight:700;color:#475569}.eyebrow{color:var(--c);font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-bottom:9px}.speaker{margin-top:22px;border:1px dashed #a78bfa;border-radius:10px;background:#faf5ff;padding:13px 16px}.speaker summary{cursor:pointer;color:#5b21b6;font-weight:800}.speaker p{margin-top:9px;color:#475569;font-size:.91rem}.audience{background:#fff}.problem{border-left:4px solid #ef4444}.value{border-left:4px solid #22c55e}.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}.timeline article{background:#fff;padding:22px}.timeline strong{display:block;color:var(--c);font-size:.76rem;text-transform:uppercase;margin-bottom:7px}.timeline p{font-size:.88rem;color:#475569}.mock{background:#111827;color:#cbd5e1;border-radius:14px;padding:24px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.mock-head{color:#c4b5fd;font-weight:800;margin-bottom:14px}.mock-row{padding:12px 0;border-bottom:1px solid #334155;display:flex;justify-content:space-between;gap:20px}.mock-row b{color:#fbbf24}.mock-row .ok{color:#86efac}.mock-row .alert{color:#fca5a5}.two{display:grid;grid-template-columns:1fr 1fr;gap:25px}.compare{overflow-x:auto;border:1px solid var(--line);border-radius:12px}.compare table{border-collapse:collapse;width:100%;min-width:760px;background:#fff}.compare th,.compare td{padding:13px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top;font-size:.89rem}.compare th{background:#1e293b;color:#fff}.metric{font-size:1.8rem;font-weight:900;color:var(--c);display:block}.ask{border:2px solid #8b5cf6}.roadmap article{position:relative;padding-top:48px}.roadmap .num{position:absolute;top:17px;left:25px;color:#a78bfa;font-weight:900}.hero-facts{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}.hero-facts span{padding:7px 12px;border:1px solid #6d28d9;border-radius:20px;color:#ddd6fe;font-size:.8rem}.section-dark{background:#111827;color:#fff}.section-dark .lead{color:#cbd5e1}.section-dark .card{background:#1e293b;border-color:#334155}.section-dark .card h3{color:#fff}.section-dark .card p,.section-dark .card li{color:#cbd5e1}
+.mermaid-wrap{margin-top:28px;padding:28px 18px;background:#fff;border:1px solid #c4b5fd;border-radius:14px;overflow-x:auto}.mermaid-wrap .mermaid{min-width:760px;text-align:center}.diagram-caption{text-align:center;color:#64748b;font-size:.88rem;margin-top:12px}
+@media(max-width:800px){.timeline{grid-template-columns:1fr}.two{grid-template-columns:1fr}.deck-nav{position:static}}
+</style>
 </head>
 <body>
 <nav><a class="logo" href="../index.html">DN·<span>Flow AI</span></a><a class="back" href="../index.html">← Все решения</a></nav>
@@ -15,10 +20,53 @@
   <span class="badge">Планируемый продукт · Industrial IoT · Edge AI</span>
   <h1>Не только «где объект».<br><span>Что происходит с процессом?</span></h1>
   <p>DN·Flow AI — концепция локальной платформы, которая объединяет BLE-события зон, состояние движения от сенсоров и технологический маршрут, чтобы выявлять неправильную последовательность операций и заранее замечать риск задержки.</p>
+  <div class="hero-facts"><span>On-premise по умолчанию</span><span>Edge AI + TinyML</span><span>Оборотная тара и WIP</span><span>Объяснимые рекомендации</span></div>
   <div class="status"><strong>Статус:</strong> продуктовая гипотеза и архитектура пилота. Готовой обученной модели, подтверждённой точности и доказанного процента экономии пока нет — их должен установить пилот.</div>
 </div></header>
 <main>
-<section><div class="wrap">
+<div class="deck-nav"><div class="wrap"><a href="#audience">Аудитория</a><a href="#problem">Проблема</a><a href="#story">Сценарий</a><a href="#architecture">Архитектура</a><a href="#ai">AI</a><a href="#result">Результат</a><a href="#pilot">Пилот</a><a href="#roadmap">Roadmap</a><a href="#ask">Запрос</a></div></div>
+
+<section class="audience" id="audience"><div class="wrap">
+  <div class="eyebrow">Для кого эта презентация</div>
+  <h2>Один продукт — четыре заинтересованные роли</h2>
+  <p class="lead">DN·Flow AI начинается не с выбора нейросети, а с общей операционной задачи: видеть движение незавершённого производства и понимать причину отклонения до того, как оно превратилось в простой.</p>
+  <div class="grid">
+    <article class="card"><h3>Директор производства</h3><p>Цикл, WIP, простои, пропускная способность участка и выполнение производственного плана.</p></article>
+    <article class="card"><h3>Руководитель логистики</h3><p>Где тара, почему она задержалась, какая очередь растёт и какой маршрут нарушен.</p></article>
+    <article class="card"><h3>ИТ и Data-команда</h3><p>On-premise, интеграция с WMS/MES, качество данных, версии моделей и контролируемый data egress.</p></article>
+    <article class="card"><h3>Эксплуатация</h3><p>Состояние меток и шлюзов, батарея, неизвестные события, обслуживание и понятный ручной процесс.</p></article>
+  </div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>«Я не предлагаю ещё одну карту с точками. Я предлагаю общий язык для производства, логистики и ИТ: актив, операция, отклонение, причина и действие».</p></details>
+</div></section>
+
+<section id="problem"><div class="wrap">
+  <div class="eyebrow">Проблема</div>
+  <h2>Координата не отвечает на главный вопрос</h2>
+  <p class="lead">Даже если RTLS правильно определил зону, оператору всё ещё неизвестно, является ли ожидание нормальным, пропущен ли этап и успеет ли партия завершить цикл.</p>
+  <div class="grid">
+    <article class="card problem"><h3>Последнее положение ≠ состояние</h3><p>Метка видна в зоне, но объект может двигаться, стоять, быть снятым с тележки или лежать отдельно от актива.</p></article>
+    <article class="card problem"><h3>Норма зависит от контекста</h3><p>Одинаковые 20 минут могут быть нормой ночью и признаком очереди в пиковую смену.</p></article>
+    <article class="card problem"><h3>Отклонение замечают поздно</h3><p>Проблема становится видимой после нарушения срока, ручного обхода или остановки следующего участка.</p></article>
+    <article class="card problem"><h3>Данные разорваны</h3><p>BLE, WMS/MES, сменный журнал и действия диспетчера существуют отдельно и не образуют обучающий контур.</p></article>
+  </div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>Покажите разницу на простом примере: «контейнер в зоне B» — это факт наблюдения; «контейнер ждёт дольше нормы и создаст задержку через 25 минут» — уже операционное знание.</p></details>
+</div></section>
+
+<section class="section-dark" id="story"><div class="wrap">
+  <div class="eyebrow" style="color:#c4b5fd">История одного контейнера</div>
+  <h2>Как появляется полезное решение</h2>
+  <p class="lead">Контейнер C-184 должен пройти приёмку, контроль, производство, комплектацию и отгрузку.</p>
+  <div class="timeline">
+    <article><strong>08:10 · Приёмка</strong><p>BLE-шлюзы подтверждают зону. IMU фиксирует движение.</p></article>
+    <article><strong>08:22 · Контроль</strong><p>Переход соответствует технологическому графу.</p></article>
+    <article><strong>08:41 · Производство</strong><p>Операция завершена, объект должен двигаться дальше.</p></article>
+    <article><strong>09:28 · Ожидание</strong><p>Motion = stationary. Dwell вышел за характерный диапазон.</p></article>
+    <article><strong>09:31 · Рекомендация</strong><p>Растёт очередь аналогичных контейнеров; проверить участок комплектации.</p></article>
+  </div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>AI не «угадывает аварию». Он объединяет наблюдаемые признаки: завершённый этап, отсутствие движения, необычный dwell и рост очереди. Затем показывает вероятность и объяснение человеку.</p></details>
+</div></section>
+
+<section id="architecture"><div class="wrap">
   <h2>Первый фокус — оборотная тара и внутрипроизводственная логистика</h2>
   <p class="lead">Контейнеры, паллеты и тележки проходят известную последовательность зон. Обычный RTLS показывает последнее положение. DN·Flow AI должен восстановить состояние процесса, обнаружить отклонение и объяснить рекомендацию.</p>
   <div class="grid">
@@ -27,9 +75,32 @@
     <article class="card"><h3>Риск узкого места</h3><p>Очередь и длительность цикла растут одновременно. Модель оценивает вероятность нарушения SLA, не выдавая автоматических команд оборудованию.</p></article>
     <article class="card"><h3>Состояние актива</h3><p>IMU помогает отличить «метка видна» от реального движения, удара, падения или вмешательства в крепление.</p></article>
   </div>
-  <div class="callout"><strong>Главная формула продукта:</strong> BLE даёт наблюдение, TinyML — состояние, Edge AI — контекст, а подтверждение оператора создаёт собственный размеченный датасет.</div>
+  <div class="mermaid-wrap" aria-label="Главная формула продукта DN Flow AI">
+    <pre class="mermaid">
+flowchart LR
+    BLE["BLE + IMU<br/>Наблюдение"] --> TINY["TinyML<br/>Состояние"]
+    TINY --> EDGE["Edge AI<br/>Контекст процесса"]
+    EDGE --> HUMAN["Оператор<br/>Подтверждение причины"]
+    HUMAN --> DATA["Размеченный<br/>датасет"]
+    DATA -. "обновление модели" .-> TINY
+    DATA -. "обучение и проверка" .-> EDGE
+
+    classDef sensor fill:#ede9fe,stroke:#7c3aed,color:#2e1065,stroke-width:2px;
+    classDef edge fill:#dbeafe,stroke:#2563eb,color:#172554,stroke-width:2px;
+    classDef human fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px;
+    classDef data fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:2px;
+    class BLE,TINY sensor;
+    class EDGE edge;
+    class HUMAN human;
+    class DATA data;
+    </pre>
+    <p class="diagram-caption">BLE даёт наблюдение, TinyML — состояние, Edge AI — контекст, а подтверждение оператора замыкает цикл обучения.</p>
+  </div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>Первый вертикальный вход специально узкий: неперсонифицированные активы, известный маршрут и измеримый цикл. Людей, больницы и режимные объекты не нужно смешивать с первым MVP.</p></details>
 </div></section>
-<section style="background:#fff"><div class="wrap">
+
+<section style="background:#fff" id="ai"><div class="wrap">
+  <div class="eyebrow">Как устроен AI</div>
   <h2>Три уровня локального интеллекта</h2>
   <div class="flow">
     <div>BLE + IMU<span>сигнал зоны и временной ряд</span></div>
@@ -38,7 +109,81 @@
     <div>Process AI<span>маршрут, dwell, аномалия, прогноз</span></div>
     <div>Человек<span>подтверждение причины и действия</span></div>
   </div>
+  <div class="grid" style="margin-top:25px">
+    <article class="card"><h3>Rules baseline</h3><p>Разрешённый граф переходов, гистерезис зон и статистические пороги dwell. Это обязательная точка сравнения.</p></article>
+    <article class="card"><h3>TinyML</h3><p>На метке: motion, vibration, impulse, tilt, tamper и unknown. Не координата и не решение о безопасности.</p></article>
+    <article class="card"><h3>Edge ML</h3><p>HMM/particle filter для состояния зоны, anomaly detection для dwell и GBM для риска задержки.</p></article>
+    <article class="card"><h3>Human feedback</h3><p>Причина, подтверждение и действие оператора создают разметку; модель не обучается на собственных алертах как на истине.</p></article>
+  </div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>Главное отличие от AI-washing: у каждого уровня есть вход, выход, baseline и метрика. Если ML не улучшает правила на независимых данных, в продукте остаются правила.</p></details>
 </div></section>
+
+<section id="result"><div class="wrap">
+  <div class="eyebrow">Что видит пользователь</div>
+  <h2>Не поток координат, а очередь решений</h2>
+  <div class="two">
+    <div class="mock">
+      <div class="mock-head">DN·Flow AI / Смена 2 / 09:31</div>
+      <div class="mock-row"><span>C-184 · Комплектация</span><b class="alert">Риск SLA 82%</b></div>
+      <div class="mock-row"><span>Причина</span><b>dwell +31 мин</b></div>
+      <div class="mock-row"><span>Контекст</span><b>очередь 14 ед.</b></div>
+      <div class="mock-row"><span>Позиция</span><b class="ok">зона B · 0.91</b></div>
+      <div class="mock-row"><span>Состояние</span><b>stationary</b></div>
+      <div class="mock-row"><span>Рекомендация</span><b>проверить участок C</b></div>
+    </div>
+    <div>
+      <div class="grid" style="grid-template-columns:1fr 1fr">
+        <article class="card value"><span class="metric">Zone + state</span><p>Положение передаётся вместе с уверенностью, возрастом и движением.</p></article>
+        <article class="card value"><span class="metric">Why</span><p>Каждый алерт содержит признаки и понятную операционную причину.</p></article>
+        <article class="card value"><span class="metric">Unknown</span><p>Недостаток данных показывается явно, а не маскируется точной координатой.</p></article>
+        <article class="card value"><span class="metric">Feedback</span><p>Оператор подтверждает причину и действие для развития датасета.</p></article>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section style="background:#fff"><div class="wrap">
+  <div class="eyebrow">Позиционирование на рынке</div>
+  <h2>Чем продукт отличается от обычного RTLS</h2>
+  <div class="compare"><table>
+    <thead><tr><th>Подход</th><th>Что показывает</th><th>Ограничение</th><th>DN·Flow AI</th></tr></thead>
+    <tbody>
+      <tr><td>Карта BLE/RFID</td><td>Последнее место актива</td><td>Нет состояния процесса</td><td>Добавляет маршрут, dwell и motion</td></tr>
+      <tr><td>WMS/MES</td><td>Зарегистрированные операции</td><td>Ручной ввод и слепые интервалы</td><td>Даёт независимый физический контекст</td></tr>
+      <tr><td>Облачная аналитика</td><td>Централизованные отчёты</td><td>Зависимость от канала и политики данных</td><td>Штатный инференс локально on-premise</td></tr>
+      <tr><td>«AI-agent» без модели</td><td>Общие рекомендации</td><td>Непонятны признаки и качество</td><td>Версия модели, confidence, baseline и аудит</td></tr>
+    </tbody>
+  </table></div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>Конкурируем не «точностью нейросети», а полнотой операционного контура: наблюдение → контекст → объяснение → действие → разметка.</p></details>
+</div></section>
+
+<section id="pilot"><div class="wrap">
+  <div class="eyebrow">Как проверить гипотезу</div>
+  <h2>Пилот начинается с данных, а не с обещанного процента экономии</h2>
+  <div class="grid">
+    <article class="card step"><h3>1. Обследование</h3><p>Один процесс, 4–6 зон, типы тары, исходный cycle time, роли и правила разметки.</p></article>
+    <article class="card step"><h3>2. Наблюдение</h3><p>BLE-журнал и качество зон. Никаких рекомендаций до проверки покрытия и часов.</p></article>
+    <article class="card step"><h3>3. Baseline</h3><p>Правила маршрута и dwell. Фиксируются ложные события, пропуски и unknown.</p></article>
+    <article class="card step"><h3>4. Shadow AI</h3><p>Модель сравнивается с правилами, но не влияет на операционный процесс.</p></article>
+    <article class="card step"><h3>5. TinyML</h3><p>Часть активов получает IMU. Измеряются вклад motion state и реальная энергия.</p></article>
+    <article class="card step"><h3>6. Решение</h3><p>Тираж, доработка или остановка гипотезы по заранее согласованным метрикам.</p></article>
+  </div>
+  <div class="callout"><strong>Ключевые метрики:</strong> ошибки зон, p95 перехода, false alerts на актив-день, lead time прогноза, unknown-rate, cycle time, dwell и измеренный энергобюджет TinyML-метки.</div>
+  <details class="speaker"><summary>Тезис лектора</summary><p>Пилот должен иметь право опровергнуть гипотезу. Для акселератора это признак инженерной зрелости, а не слабость продукта.</p></details>
+</div></section>
+
+<section id="roadmap" class="section-dark"><div class="wrap">
+  <div class="eyebrow" style="color:#c4b5fd">Roadmap продукта</div>
+  <h2>От одной линии к платформе материального потока</h2>
+  <div class="grid roadmap">
+    <article class="card"><span class="num">01</span><h3>Flow Observe</h3><p>Зоны, переходы, dwell, качество данных и dashboard одного процесса.</p></article>
+    <article class="card"><span class="num">02</span><h3>Flow Explain</h3><p>Process rules, причины отклонений, подтверждение оператором и датасет.</p></article>
+    <article class="card"><span class="num">03</span><h3>Flow Predict</h3><p>Прогноз риска задержки и ранжирование операционных рекомендаций.</p></article>
+    <article class="card"><span class="num">04</span><h3>Flow Tiny</h3><p>Сенсорные состояния на метке, адаптивное вещание и механические события.</p></article>
+    <article class="card"><span class="num">05</span><h3>Flow Platform</h3><p>Несколько линий, интеграция WMS/MES и перенос моделей между объектами с контролем drift.</p></article>
+  </div>
+</div></section>
+
 <section class="articles"><div class="wrap">
   <h2>Материалы раздела</h2>
   <p class="lead">Четыре статьи отделяют продуктовую идею от инженерных ограничений и плана проверки.</p>
@@ -58,8 +203,23 @@
     <article class="card step"><h3>Обучается на обратной связи</h3><p>Причина задержки и действие диспетчера превращаются в разметку для следующей версии модели.</p></article>
   </div>
 </div></section>
+<section id="ask"><div class="wrap">
+  <div class="eyebrow">Что требуется от акселератора</div>
+  <h2>Конкретный запрос, а не общий поиск инвестиций</h2>
+  <div class="grid">
+    <article class="card ask"><h3>Пилотная площадка</h3><p>Один повторяемый процесс с оборотной тарой, 4–6 зонами и ответственным за подтверждение отклонений.</p></article>
+    <article class="card ask"><h3>Индустриальный партнёр</h3><p>Интегратор WMS/MES или производственная команда, которая поможет определить корректный process baseline.</p></article>
+    <article class="card ask"><h3>AI/Embedded экспертиза</h3><p>Проверка временных рядов, TinyML deployment, MLOps и измерение энергопрофиля целевой метки.</p></article>
+    <article class="card ask"><h3>Результат программы</h3><p>Стенд, датасет, baseline, shadow-модель, отчёт по метрикам и спецификация следующего пилота.</p></article>
+  </div>
+  <details class="speaker" open><summary>Финальная фраза лектора</summary><p>«Мы ищем не место, где можно повесить много маяков. Мы ищем один процесс, где координата сегодня уже есть или может быть получена, но решения всё ещё принимаются слишком поздно».</p></details>
+</div></section>
 <section class="cta"><div class="wrap"><h2>Ищем площадку для ограниченного пилота</h2><p>Нужен один процесс с понятной последовательностью зон, измеримым временем цикла и ответственным за разметку отклонений.</p><a class="btn" href="mailto:sayr@inbox.ru?subject=Пилот DN Flow AI">Обсудить DN·Flow AI</a></div></section>
 </main>
 <footer>DN·Flow AI · Планируемый продукт DN·Beacon · <a href="../ble-security/index.html">Модель угроз BLE</a></footer>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({startOnLoad:true,securityLevel:"strict",theme:"base",flowchart:{curve:"basis",htmlLabels:true}});
+</script>
 </body>
 </html>
