@@ -102,12 +102,25 @@ flowchart LR
 <section style="background:#fff" id="ai"><div class="wrap">
   <div class="eyebrow">Как устроен AI</div>
   <h2>Три уровня локального интеллекта</h2>
-  <div class="flow">
-    <div>BLE + IMU<span>сигнал зоны и временной ряд</span></div>
-    <div>TinyML<span>движение, импульс, наклон, unknown</span></div>
-    <div>Edge RTLS<span>вероятная зона и качество данных</span></div>
-    <div>Process AI<span>маршрут, dwell, аномалия, прогноз</span></div>
-    <div>Человек<span>подтверждение причины и действия</span></div>
+  <div class="mermaid-wrap" aria-label="Три уровня локального интеллекта DN Flow AI">
+    <pre class="mermaid">
+flowchart LR
+    SENSOR["BLE + IMU<br/>Сигнал зоны<br/>Временной ряд"] --> TINY["TinyML<br/>Движение<br/>Импульс · Наклон · Unknown"]
+    TINY --> RTLS["Edge RTLS<br/>Вероятная зона<br/>Качество данных"]
+    RTLS --> PROCESS["Process AI<br/>Маршрут · Dwell<br/>Аномалия · Прогноз"]
+    PROCESS --> HUMAN["Человек<br/>Подтверждение причины<br/>и выбор действия"]
+    HUMAN -. "обратная связь" .-> PROCESS
+
+    classDef sensor fill:#ede9fe,stroke:#7c3aed,color:#2e1065,stroke-width:2px;
+    classDef location fill:#dbeafe,stroke:#2563eb,color:#172554,stroke-width:2px;
+    classDef process fill:#fef3c7,stroke:#d97706,color:#78350f,stroke-width:2px;
+    classDef human fill:#dcfce7,stroke:#16a34a,color:#14532d,stroke-width:2px;
+    class SENSOR,TINY sensor;
+    class RTLS location;
+    class PROCESS process;
+    class HUMAN human;
+    </pre>
+    <p class="diagram-caption"><strong>Как читать схему:</strong> сенсорный сигнал последовательно превращается в состояние актива, вероятное положение и понимание технологического процесса. Process AI предлагает объяснимый прогноз, а человек подтверждает причину и выбирает действие; его обратная связь используется для проверки и улучшения модели.</p>
   </div>
   <div class="grid" style="margin-top:25px">
     <article class="card"><h3>Rules baseline</h3><p>Разрешённый граф переходов, гистерезис зон и статистические пороги dwell. Это обязательная точка сравнения.</p></article>
