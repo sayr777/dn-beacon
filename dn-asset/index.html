@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DN·Asset — Отслеживание активов с датчиком движения</title>
-<meta name="description" content="BLE-метка с акселерометром: актив не двигался 3 дня — алерт. Покинул периметр — алерт. Логистика, стройка, аренда оборудования. Понятный ROI за 2–3 месяца.">
+<meta name="description" content="Зональный BLE-мониторинг активов с датчиком движения: поиск, простой, utilisation, возвратная тара, медицинское и строительное оборудование. Эффект проверяется пилотом.">
 <style>
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   :root{--c:#065f46;--cd:#064e3b;--cl:#ecfdf5;--slate:#1e293b;--text:#1e293b;--muted:#64748b;--border:#e2e8f0;--bg:#f8fafc;--white:#fff;--green:#059669;--radius:12px}
@@ -108,10 +108,10 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <a href="#sectors" class="btn-outline">По отраслям</a>
   </div>
   <div class="hero-stats">
-    <div class="hero-stat"><strong>−80%</strong><span>потерь оборудования на строй-площадках</span></div>
-    <div class="hero-stat"><strong>30 сек</strong><span>поиск нужного актива на складе</span></div>
-    <div class="hero-stat"><strong>2–3 мес</strong><span>типичный срок окупаемости</span></div>
-    <div class="hero-stat"><strong>10 лет</strong><span>батарея без обслуживания</span></div>
+    <div class="hero-stat"><strong>4 KPI</strong><span>поиск · простой · utilisation · потери</span></div>
+    <div class="hero-stat"><strong>Zone + motion</strong><span>честный выход вместо ложной координаты</span></div>
+    <div class="hero-stat"><strong>On-premise</strong><span>данные могут оставаться у заказчика</span></div>
+    <div class="hero-stat"><strong>Пилот</strong><span>эффект и автономность измеряются</span></div>
   </div>
 </section>
 
@@ -125,7 +125,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     </div>
     <div class="how-step">
       <h3>BLE-шлюзы по периметру</h3>
-      <p>Шлюзы на воротах, въезде, в складских секциях получают сигналы всех меток. Координата актива определяется по зоне шлюза с наилучшим RSSI. Покинул периметр — алерт немедленно.</p>
+      <p>Шлюзы на воротах, въезде и в складских секциях получают сигналы меток. Система оценивает вероятную зону по нескольким observations, гистерезису и карте переходов. Выход из периметра подтверждается правилами и качеством радиоданных.</p>
     </div>
     <div class="how-step">
       <h3>Акселерометр: движется или нет</h3>
@@ -133,7 +133,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     </div>
     <div class="how-step">
       <h3>Алерт и история перемещений</h3>
-      <p>Нарушение правила (нет движения/выход из зоны/потеря связи) → алерт в Telegram или email. История: где был актив каждый час за последние 90 дней. Для споров с арендаторами и подрядчиками.</p>
+      <p>Нарушение правила (нет движения/выход из зоны/потеря связи) создаёт проверяемый алерт. История содержит gateway, время приёма, confidence и возраст события — этого достаточно для расследования, но не для обещания точной траектории.</p>
     </div>
     <div class="how-step">
       <h3>Интеграция с ERP/WMS</h3>
@@ -167,7 +167,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <div class="features">
       <div class="feat"><div class="feat-ico">🗺️</div><div class="feat-text"><h3>Карта активов в реальном времени</h3><p>На плане склада или строй-площадки каждый актив — точка с цветовой индикацией: зелёный — в норме, жёлтый — простой, красный — нарушение зоны.</p></div></div>
       <div class="feat"><div class="feat-ico">📊</div><div class="feat-text"><h3>Отчёт об использовании</h3><p>Экскаватор работал 3 часа из 8 смены — KPI видно сразу. Аренда оборудования: журнал реального использования против выставленного счёта.</p></div></div>
-      <div class="feat"><div class="feat-ico">🚨</div><div class="feat-text"><h3>Алерт о краже в секунды</h3><p>Актив пересёк периметр → немедленный алерт на телефон охраны. До приезда злоумышленника на точку с оборудованием — есть время среагировать.</p></div></div>
+      <div class="feat"><div class="feat-ico">🚨</div><div class="feat-text"><h3>Контролируемый выход из зоны</h3><p>Несколько reads у ворот и процессный контекст создают алерт с confidence. Задержка зависит от advertising, scan window и канала gateway и измеряется на объекте.</p></div></div>
       <div class="feat"><div class="feat-ico">🔗</div><div class="feat-text"><h3>Интеграция с 1С и SAP</h3><p>Физическое местонахождение актива синхронизируется с карточкой в ERP. Инвентаризация — автоматически, без ручного сканирования.</p></div></div>
     </div>
   </div>
@@ -182,9 +182,13 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     <div class="sc-card"><div class="ico">📦</div><h3>Складская логистика</h3><p>«Потерянный» паллет — это часы поиска. Просроченный срок хранения из-за неизвестного местонахождения — это списание.</p>
     <ul><li>Поиск паллета за 30 секунд</li><li>Контроль FIFO/FEFO автоматически</li><li>Инвентаризация без сканирования</li></ul></div>
     <div class="sc-card"><div class="ico">🚢</div><h3>Портовые терминалы</h3><p>Тысячи контейнеров на площадке. Поиск нужного без DN·Asset — экскаватор катается по полю часами.</p>
-    <ul><li>Координата каждого контейнера</li><li>История перемещений</li><li>Интеграция с TOS (terminal operating system)</li></ul></div>
+    <ul><li>Последняя подтверждённая зона контейнера</li><li>История переходов между зонами</li><li>Интеграция с TOS (terminal operating system)</li></ul></div>
     <div class="sc-card"><div class="ico">🔧</div><h3>Аренда оборудования</h3><p>Клиент говорит: «работали 4 часа». Вы знаете: 12 часов по данным акселерометра. Документированный журнал — ваша защита.</p>
     <ul><li>Журнал реального использования</li><li>Геозона арендатора</li><li>Алерт при вывозе с объекта</li></ul></div>
+    <div class="sc-card"><div class="ico">🏥</div><h3>Медицинское оборудование</h3><p>Мировые hospital RTLS-кейсы показывают ценность поиска насосов, каталок и кроватей. Для России первый пилот — только активы, без трекинга пациентов.</p>
+    <ul><li>Статус: доступно / используется / мойка / ремонт</li><li>Поиск по корпусу и этажу</li><li>Utilisation и обоснование закупки</li></ul></div>
+    <div class="sc-card"><div class="ico">♻️</div><h3>Возвратная тара и паллетные пулы</h3><p>Метка связывает отгрузку, приёмку, пустую тару и возврат. Автомобильный BLE-шлюз закрывает участок пути между площадками.</p>
+    <ul><li>Lost/found при погрузке</li><li>Цикл оборота и dwell у контрагента</li><li>Баланс тары по площадкам</li></ul></div>
   </div>
 </section>
 
@@ -200,7 +204,7 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
     </div>
     <div class="spec-card"><h3>Корпус и питание</h3>
       <div class="spec-row"><span class="k">Корпус</span><span class="v">IP67 · 70×40×20 мм</span></div>
-      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · до 10 лет</span></div>
+      <div class="spec-row"><span class="k">Батарея</span><span class="v green">ER14505H-LD · ресурс по измеренному профилю</span></div>
       <div class="spec-row"><span class="k">Температура</span><span class="v accent">−40°C…+85°C</span></div>
       <div class="spec-row"><span class="k">Крепление</span><span class="v green">винт, магнит, стяжка</span></div>
     </div>
@@ -235,43 +239,44 @@ table.vs tr:nth-child(even) td{background:#f8fafc}
 <!-- COMP-VS -->
 <section style="background:#f8fafc;padding:72px 5%">
   <div style="font-size:.8rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#0891b2;margin-bottom:12px">Сравнение с конкурентами</div>
-  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">AirTag умрёт через год. Zebra ZB200 стоит $45 и закрывает в проприетарную экосистему. DN·Asset — 10 лет, открытый стандарт</h2>
-  <div class="vs-callout"><strong>Apple AirTag: батарея CR2032 — год, после нужно менять вручную на каждом из тысяч активов.</strong> Zebra MotionWorks ZB200 — $45/тег и только Zebra RFID-ридеры. DN·Asset: ER14505H-LD, 10 лет без обслуживания, стандартный BLE-приёмник.</div>
+  <h2 style="font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:800;color:#1e293b;margin-bottom:16px">Промышленный учёт — это шлюзы, API и эксплуатация, а не потребительский поиск вещей</h2>
+  <div class="vs-callout"><strong>AirTag, корпоративный RTLS и автомобильный BLE gateway решают разные задачи.</strong> DN·Asset сравнивается не по цене брелока, а по покрытию процесса, открытому API, on-premise режиму, ЗИП и полной стоимости владения в рублях.</div>
   <div class="comp-wrap">
     <table class="vs">
-      <thead><tr><th>Решение</th><th>Принцип</th><th>Срок батареи</th><th>Защита ID</th><th>Цена тега</th><th>Экосистема</th></tr></thead>
+      <thead><tr><th>Класс решения</th><th>Принцип</th><th>Сильная сторона</th><th>Ограничение</th><th>Модель эксплуатации</th><th>Роль</th></tr></thead>
       <tbody>
-        <tr><td><strong>DN·Asset</strong></td><td>BLE iBeacon AES-128</td><td class="c-ok">10 лет</td><td class="c-ok">Rolling AES-128</td><td class="c-ok">3 000–5 000 ₽</td><td class="c-ok">Открытый BLE</td></tr>
-        <tr><td>Apple AirTag</td><td>UWB + BLE (Find My)</td><td class="c-warn">1 год</td><td class="c-warn">Apple Find My</td><td class="c-warn">$29/шт.</td><td class="c-err">Только Apple</td></tr>
-        <tr><td>Zebra MotionWorks ZB200</td><td>BLE проприетарный</td><td class="c-warn">2–3 года</td><td class="c-warn">Статический UUID</td><td class="c-err">$45/шт.</td><td class="c-err">Только Zebra</td></tr>
-        <tr><td>Teltonika TAT100</td><td>BLE + GPS (гибрид)</td><td class="c-warn">2–3 года</td><td class="c-warn">Статический</td><td class="c-warn">$30–50/шт.</td><td class="c-ok">Открытый</td></tr>
-        <tr><td>Kontakt.io Asset Tag</td><td>BLE Eddystone</td><td class="c-warn">1–2 года</td><td class="c-warn">Статический UUID</td><td class="c-warn">$25–40/шт.</td><td class="c-ok">Открытый</td></tr>
+        <tr><td><strong>DN·Asset</strong></td><td>BLE advertising + локальные шлюзы</td><td class="c-ok">Открытый API и российский on-premise</td><td class="c-warn">Зональная, не сантиметровая локация</td><td class="c-ok">CAPEX + локальная поддержка</td><td class="c-ok">Корпоративные активы</td></tr>
+        <tr><td>Consumer Find My</td><td>Краудсорсинговая сеть телефонов</td><td class="c-ok">Поиск личной вещи вне объекта</td><td class="c-err">Нет производственного workflow и SLA</td><td class="c-warn">Потребительская экосистема</td><td>Личные вещи</td></tr>
+        <tr><td>Enterprise RTLS</td><td>BLE/Wi‑Fi/UWB tags + anchors</td><td class="c-ok">Готовые hospital/warehouse workflows</td><td class="c-warn">Интеграция и vendor lock зависят от поставщика</td><td class="c-warn">Лицензия + infrastructure</td><td>Крупные объекты</td></tr>
+        <tr><td>Vehicle gateway</td><td>BLE sensor + GNSS/LTE трекер</td><td class="c-ok">Груз получает контекст машины</td><td class="c-warn">Нет собственной координаты метки</td><td class="c-ok">Использует бортовую телематику</td><td>Перевозка</td></tr>
+        <tr><td>Пассивный RFID</td><td>Метка без батареи + портал/ручной reader</td><td class="c-ok">Низкая цена массовой маркировки</td><td class="c-warn">Событие только в точке чтения</td><td class="c-ok">Порталы и операции сканирования</td><td>Инвентаризация</td></tr>
       </tbody>
     </table>
   </div>
   <div class="adv-grid">
     <div class="adv-card">
-      <div class="adv-title">10 лет без обслуживания</div>
-      <p>ER14505H-LD Li-SOCl₂ 2700 мАч: нет плановых замен батарей, нет простоев на обслуживание. AirTag — замена каждый год, тысячи тегов = тысячи выездов техника.</p>
+      <div class="adv-title">Измеряемая автономность</div>
+      <p>Базовая метка рассчитана на многолетнюю работу. Для версии с IMU ресурс пересчитывается по частоте событий, температуре, режиму радио и фактическому профилю тока.</p>
     </div>
     <div class="adv-card">
-      <div class="adv-title">AES-128 против кражи</div>
-      <p>Rolling ID: каждые 5 минут UUID меняется. Нельзя клонировать тег, нельзя отследить маршрут актива по перехваченному радиосигналу — данные защищены аппаратно.</p>
+      <div class="adv-title">Сокращённое окно копирования</div>
+      <p>Rolling ID затрудняет долговременное связывание и копирование статического идентификатора, но не исключает replay/relay. Критичные события подтверждаются временем, несколькими gateways и процессным контекстом.</p>
     </div>
     <div class="adv-card">
       <div class="adv-title">Открытый стандарт</div>
       <p>Стандартный iBeacon/Eddystone — работает с любым BLE-шлюзом, любым смартфоном. Zebra ZB200 привязывает к проприетарным ридерам, Apple — к iOS-устройствам.</p>
     </div>
     <div class="adv-card">
-      <div class="adv-title">Импортозамещение</div>
-      <p>Нет зависимости от Apple/Zebra — обе компании под рисками импортных ограничений. nRF52832 доступен через отечественных дистрибьюторов.</p>
+      <div class="adv-title">Контролируемая локализация</div>
+      <p>Схема, прошивка, сервер, корпусирование, сборка и поддержка локальны; Nordic остаётся импортной компонентной базой. Для поставки фиксируются запас, второй источник и план редизайна.</p>
     </div>
   </div>
 </section>
 
+<section style="padding:38px 5%;background:#f0f9ff;text-align:center"><strong>Мировая практика:</strong> hospital RTLS, vehicle gateways и возвратная тара разобраны в <a href="../global-beacon-review/index.html">глобальном обзоре iBeacon/BLE →</a></section>
 <section class="cta-section">
   <h2>Знайте, где каждый актив — прямо сейчас</h2>
-  <p>Укажите тип активов и масштаб площадки. Рассчитаем количество меток и шлюзов, окупаемость — за 1 день.</p>
+  <p>Укажите тип активов и масштаб площадки. Подготовим схему обследования, состав пилота и модель полной стоимости владения в рублях.</p>
   <div class="cta-btns">
     <a href="mailto:sayr@inbox.ru" class="btn-white">Запросить КП</a>
     <a href="mailto:sayr@inbox.ru?subject=Пилот DN·Asset" class="btn-ow">Обсудить пилот</a>

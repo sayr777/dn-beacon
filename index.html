@@ -240,6 +240,11 @@
   .card-ai-guide .label { color: #7c3aed; }
   .card-ai-guide .tag { background: #f5f3ff; color: #6d28d9; }
   .card-ai-guide .cta-link { color: #7c3aed; }
+  /* Global review — cyan */
+  .card-global .card-head { border-top: 4px solid #0284c7; }
+  .card-global .label { color: #0369a1; }
+  .card-global .tag { background: #f0f9ff; color: #075985; }
+  .card-global .cta-link { color: #0284c7; }
   .why { padding: 72px 5%; background: var(--white); }
   .why h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; text-align: center; margin-bottom: 12px; }
   .why .sub { text-align: center; color: var(--muted); margin-bottom: 48px; }
@@ -358,7 +363,7 @@
       <div class="card-head">
         <div class="label">Общественный транспорт · Умный город</div>
         <h3>DN·City</h3>
-        <p>Точная идентификация остановок при деградации GPS, доступная среда для слабовидящих, пассажирское информирование и аналитика потока.</p>
+        <p>Дополнительная идентификация остановок при деградации ГЛОНАСС, пассажирское информирование и доступный голосовой маршрут в ТПУ.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -452,15 +457,15 @@
 
     <a href="dn-promo/index.html" class="prod-card card-promo">
       <div class="card-head">
-        <div class="label">Геоконтекстная реклама · LBA</div>
+        <div class="label">Retail assistant · Opt-in proximity</div>
         <h3>DN·Promo</h3>
-        <p>Маячок у полки, входа или остановки — персонализированное предложение на смартфон в нужный момент. Точность 1–3 м против 50 м у GPS.</p>
+        <p>Поиск товара, список покупок, выдача заказа и добровольные предложения внутри приложения сети. Эффект проверяется A/B-тестом.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
           <span class="tag">Ритейл</span>
           <span class="tag">ТРЦ</span>
-          <span class="tag">LBA</span>
+          <span class="tag">Opt-in</span>
         </div>
         <span class="cta-link">Подробнее →</span>
       </div>
@@ -486,7 +491,7 @@
       <div class="card-head">
         <div class="label">Музеи · Выставки · Аэропорты</div>
         <h3>DN·Expo</h3>
-        <p>Посетитель подходит к экспонату — телефон автоматически запускает аудиогид. Навигация по ТПУ и аэропортам без GPS.</p>
+        <p>Зональный аудиогид, offline-контент и доступная навигация. BLE дополняется QR/NFC и эксплуатационным реестром маяков.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -566,7 +571,7 @@
       <div class="card-head">
         <div class="label">Складская логистика · BLE AoA</div>
         <h3>DN·Pick</h3>
-        <p>Рука сборщика потянулась не в ту ячейку — сигнал до того, как товар взят. Ноль ошибок комплектования. BLE Angle of Arrival.</p>
+        <p>Пилот BLE AoA для контроля выбора ячейки. Штрихкод сохраняется как baseline, пока точность и ложные тревоги не подтверждены.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -582,13 +587,13 @@
       <div class="card-head">
         <div class="label">Рефрижераторы · Холодовая цепь · Фарма</div>
         <h3>DN·Cold</h3>
-        <p>BLE-датчик температуры в кузове рефрижератора. Данные через GPS-трекер водителя — температура и координаты в одном пакете. Алерт и PDF-журнал для регулятора.</p>
+        <p>Калибруемый BLE-регистратор: температура через бортовой или складской gateway, локальный буфер, audit trail и тревога до приёмки.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
           <span class="tag">Термодатчик</span>
           <span class="tag">GDP/HACCP</span>
-          <span class="tag">±0.1°C</span>
+          <span class="tag">Audit trail</span>
         </div>
         <span class="cta-link">Подробнее →</span>
       </div>
@@ -612,9 +617,9 @@
 
     <a href="dn-asset/index.html" class="prod-card card-asset">
       <div class="card-head">
-        <div class="label">Логистика · Стройка · Активы</div>
+        <div class="label">Активы · Медицина · Возвратная тара</div>
         <h3>DN·Asset</h3>
-        <p>BLE-метка с акселерометром на контейнере, паллете или технике. Актив не двигался 3 дня — алерт. Вышел за периметр — алерт. Понятный ROI за 2–3 месяца.</p>
+        <p>Зональный поиск, motion, utilisation и lost/found для оборудования, паллет, тары и медицинских активов. ROI измеряется пилотом.</p>
       </div>
       <div class="card-foot">
         <div class="tag-list">
@@ -809,6 +814,22 @@
   <h2>База знаний и документы</h2>
   <p class="sub">Технологические обзоры, проверяемые кейсы и шаблоны для интеграторов, партнёров и команд закупок.</p>
   <div class="svc-grid">
+
+    <a href="global-beacon-review/index.html" class="prod-card card-global">
+      <div class="card-head">
+        <div class="label">Мировая практика · Стратегия портфеля</div>
+        <h3>Где iBeacon стал бизнесом</h3>
+        <p>Глобальная карта BLE-вертикалей, реальные ограничения, рекомендации для текущих продуктов и пять новых продуктовых гипотез.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Global cases</span>
+          <span class="tag">Product strategy</span>
+          <span class="tag">New bets</span>
+        </div>
+        <span class="cta-link">Открыть обзор →</span>
+      </div>
+    </a>
 
     <a href="ai-beacons/index.html" class="prod-card card-ai-guide">
       <div class="card-head">
