@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iBeacon без мифов — геолокация, ритейл, плюсы и ограничения</title>
+<meta name="description" content="Практический обзор iBeacon и BLE-позиционирования: архитектуры indoor-навигации, сценарии для ритейла, сравнение с AoA, UWB, Wi-Fi, GPS, NFC и QR, плюсы, минусы и план пилота.">
+<style>
+  *,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#2563eb}nav{height:62px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;background:#0f172a;position:sticky;top:0;z-index:10}nav a{color:#bfdbfe;text-decoration:none;font-weight:700}.brand{color:#fff}.hero{padding:78px 5%;background:linear-gradient(135deg,#172554,#0f172a);color:#fff}.wrap{max-width:1120px;margin:auto}.eyebrow{color:#93c5fd;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.hero h1{max-width:900px;margin:14px 0 18px;font-size:clamp(2rem,5vw,3.7rem);line-height:1.08}.hero p{max-width:790px;color:#cbd5e1;font-size:1.12rem}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:28px}.chip{padding:6px 12px;border:1px solid #475569;border-radius:20px;color:#dbeafe;font-size:.82rem}main{max-width:1120px;margin:auto;padding:24px 24px 80px}section{padding-top:54px}h2{font-size:clamp(1.45rem,3vw,2.15rem);line-height:1.2;margin:0 0 14px}h3{line-height:1.3}.lead{max-width:850px;color:#64748b;margin:0 0 28px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:23px}.card h3{margin:0 0 9px;font-size:1.02rem}.card p,.card li{color:#475569;font-size:.91rem}.card ul{padding-left:18px;margin-bottom:0}.num{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#dbeafe;color:#1d4ed8;font-weight:800;margin-bottom:12px}.note{padding:20px 22px;border:1px solid #93c5fd;border-radius:12px;background:#eff6ff;margin:24px 0}.warn{border-color:#fbbf24;background:#fffbeb}.good{border-top:4px solid #16a34a}.risk{border-top:4px solid #f59e0b}.table{overflow:auto;border-radius:12px;border:1px solid #e2e8f0;background:#fff}table{width:100%;border-collapse:collapse;min-width:820px;font-size:.88rem}th{background:#1e293b;color:#fff;text-align:left}th,td{padding:13px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top}tbody tr:last-child td{border-bottom:0}.tag{display:inline-block;padding:2px 8px;border-radius:12px;background:#e0e7ff;color:#3730a3;font-size:.72rem;font-weight:800}.cases .card{border-left:4px solid #e11d48}.source{display:block;color:inherit;text-decoration:none}.source:hover{border-color:#60a5fa}.source small{display:block;color:#64748b;margin-top:10px}.checklist{counter-reset:item}.checklist .card::before{counter-increment:item;content:counter(item);float:right;color:#bfdbfe;font-size:2.2rem;font-weight:900}.cta{text-align:center;padding:54px 24px;border-radius:18px;background:#172554;color:#fff;margin-top:60px}.cta h2{color:#fff}.cta p{color:#cbd5e1}.btn{display:inline-block;padding:13px 26px;background:#2563eb;color:#fff;text-decoration:none;border-radius:8px;font-weight:800}footer{text-align:center;padding:26px;background:#0f172a;color:#94a3b8;font-size:.84rem}@media(max-width:600px){nav{position:static}.hero{padding-top:56px}}
+</style>
+</head>
+<body>
+<nav><a class="brand" href="../index.html">DN·Beacon</a><a href="#pilot">Как проверить на пилоте</a></nav>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Обзор технологии · indoor location · retail</div>
+    <h1>iBeacon без мифов: от события «рядом» до indoor-навигации</h1>
+    <p>BLE-маяк передаёт идентификатор, а координату или бизнес-событие вычисляет приложение либо инфраструктура. Разбираем, где достаточно proximity-зоны, где нужна карта сигналов, а где следует выбрать AoA или UWB.</p>
+    <div class="chips"><span class="chip">Proximity</span><span class="chip">Зональный RTLS</span><span class="chip">Fingerprinting</span><span class="chip">BLE AoA</span><span class="chip">Ритейл</span><span class="chip">Приватность</span></div>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Сначала — три разные задачи</h2>
+    <p class="lead">Словом «геолокация» часто называют решения с принципиально разной точностью, стоимостью и ответственностью.</p>
+    <div class="grid">
+      <article class="card"><span class="num">1</span><h3>Proximity: «объект рядом»</h3><p>Телефон или шлюз обнаруживает маяк и формирует событие входа/выхода из зоны. Подходит для контента у экспоната, чек-листа у оборудования и предложения в отделе магазина.</p></article>
+      <article class="card"><span class="num">2</span><h3>Навигация: «покажи на карте»</h3><p>Приложение сопоставляет сигналы нескольких маяков с картой этажа, инерциальными датчиками и маршрутом. Нужны калибровка, фильтрация и тесты на разных телефонах.</p></article>
+      <article class="card"><span class="num">3</span><h3>RTLS: «где актив сейчас»</h3><p>Стационарные шлюзы принимают метку на товаре, тележке или оборудовании. Сервер оценивает зону, время пребывания и переходы; смартфон владельца не требуется.</p></article>
+    </div>
+    <div class="note warn"><strong>RSSI — не рулетка.</strong> Уровень сигнала зависит от модели телефона, положения антенны, тела человека, металла, стен и отражений. «Near / far» и вероятная зона обычно надёжнее обещания универсальной координаты с точностью 1–3 м.</div>
+  </section>
+
+  <section>
+    <h2>Архитектуры indoor-геолокации</h2>
+    <div class="table"><table>
+      <thead><tr><th>Подход</th><th>Как работает</th><th>Где уместен</th><th>Главное ограничение</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Один маяк + порог RSSI</strong></td><td>Событие при устойчивом сигнале выше настроенного порога</td><td>Вход, отдел, витрина, контрольная точка</td><td>Граница зоны «плавает»; порог настраивают на объекте</td></tr>
+        <tr><td><strong>Несколько маяков + карта</strong></td><td>Телефон сравнивает сигналы, использует карту и датчики движения</td><td>ТРЦ, музей, аэропорт, больница</td><td>Различия iOS/Android и моделей устройств, обслуживание карты</td></tr>
+        <tr><td><strong>Fingerprinting</strong></td><td>Наблюдаемый «отпечаток» сигналов сравнивается с предварительно снятой картой</td><td>Стабильные помещения с достаточной плотностью точек</td><td>Перестановки, толпа и ремонт требуют повторной калибровки</td></tr>
+        <tr><td><strong>Зональный RTLS</strong></td><td>Шлюзы принимают пакеты меток; сервер выбирает вероятную зону</td><td>Активы, тележки, тара, персонал при наличии основания</td><td>Это зона, а не доказанная геометрическая дистанция</td></tr>
+        <tr><td><strong>BLE Direction Finding</strong></td><td>AoA/AoD использует CTE и антенные решётки для оценки угла</td><td>Точная локализация после радиообследования</td><td>Нужны совместимые метки и локаторы; обычного iBeacon недостаточно</td></tr>
+        <tr><td><strong>UWB</strong></td><td>Измеряется время прохождения широкополосного импульса</td><td>Задачи, где оправданы десятки сантиметров</td><td>Выше цена и энергопотребление, нужна отдельная инфраструктура</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Ритейл: полезные сценарии вместо «рассылки всем»</h2>
+    <p class="lead">Исторические кейсы Carrefour, Macy’s, Target, Woolworths, Tesco и других показывают не один рецепт, а несколько повторяемых паттернов. Бренды ниже — примеры из публикации 2017 года, а не подтверждение их текущих программ.</p>
+    <div class="grid cases">
+      <article class="card"><span class="tag">Навигация</span><h3>Маршрут к товару</h3><p>Поиск отдела или позиции из списка покупок. Ценность для клиента возникает до рекламного сообщения; особенно полезно в гипермаркете и ТРЦ.</p></article>
+      <article class="card"><span class="tag">Click & collect</span><h3>Подготовить заказ к приходу</h3><p>Устойчивое событие приближения уведомляет персонал. Клиент меньше ждёт, магазин измеряет время от прибытия до выдачи.</p></article>
+      <article class="card"><span class="tag">Лояльность</span><h3>Контекст в приложении</h3><p>Показ карты лояльности, списка покупок, доступных сервисов или бонуса внутри приложения — без навязчивого push на каждом проходе.</p></article>
+      <article class="card"><span class="tag">Контент</span><h3>Информация у категории</h3><p>Состав, отзывы, совместимость, рецепты или помощь консультанта. Событие зоны выбирает контекст, но пользователь сохраняет контроль.</p></article>
+      <article class="card"><span class="tag">Промо</span><h3>Ограниченная частота</h3><p>Предложение выдаётся по согласию, с frequency cap и контрольной группой. Метрика — дополнительная покупка, а не число обнаруженных телефонов.</p></article>
+      <article class="card"><span class="tag">Операции</span><h3>Тележки и корзины</h3><p>Метка находится на инвентаре, а принимают её стационарные шлюзы. Так можно анализировать маршруты без зависимости от приложения покупателя.</p></article>
+    </div>
+    <div class="note"><strong>Что требуется на телефоне:</strong> установленное приложение, разрешения ОС, включённый Bluetooth и корректно настроенная доставка уведомлений. Сам маяк не может произвольно отправить push любому проходящему смартфону.</div>
+  </section>
+
+  <section>
+    <h2>Плюсы и минусы iBeacon</h2>
+    <div class="grid">
+      <article class="card good"><h3>Сильные стороны</h3><ul><li>низкое энергопотребление и годы автономной работы;</li><li>работа внутри зданий без GPS и SIM;</li><li>массовые BLE-приёмники: телефоны, шлюзы, трекеры;</li><li>дешёвое развёртывание proximity-зон;</li><li>идентификатор отделён от контента — сценарий меняется на сервере.</li></ul></article>
+      <article class="card risk"><h3>Ограничения</h3><ul><li>RSSI нестабилен и не доказывает расстояние;</li><li>фоновые режимы и разрешения различаются между ОС и устройствами;</li><li>карты, батареи, крепления и радиообследование требуют эксплуатации;</li><li>открытый advertising можно записать, повторить или заглушить;</li><li>история посещений может стать персональными данными.</li></ul></article>
+      <article class="card"><h3>Что улучшает dynamic-iBeacon</h3><p>Сменный ID затрудняет постоянный статический клон и долговременное связывание пакетов. Но он не устраняет свежий replay/relay, не подтверждает физическую дистанцию и не заменяет согласие пользователя, защищённый сервер и контроль доступа.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Когда выбрать другую технологию</h2>
+    <div class="table"><table>
+      <thead><tr><th>Задача</th><th>Базовый выбор</th><th>Почему</th></tr></thead>
+      <tbody>
+        <tr><td>Определить магазин или отдел</td><td><strong>iBeacon / зональный BLE</strong></td><td>Низкая стоимость; точная координата не нужна</td></tr>
+        <tr><td>Явное действие пользователя у объекта</td><td><strong>NFC или QR</strong></td><td>Намерение очевидно, приложение может не требоваться</td></tr>
+        <tr><td>Наружная геозона квартала</td><td><strong>GPS/geofencing</strong></td><td>Нет локальной инфраструктуры</td></tr>
+        <tr><td>Навигация по зданию</td><td><strong>BLE + карта + IMU</strong></td><td>Нужен программный навигационный слой, а не только маяки</td></tr>
+        <tr><td>Стабильная точность до десятков сантиметров</td><td><strong>UWB или валидированный BLE AoA</strong></td><td>Обычный RSSI-iBeacon для этого не предназначен</td></tr>
+        <tr><td>Safety-critical остановка техники</td><td><strong>Сертифицированный safety-контур</strong></td><td>Маркетинговая RTLS не должна быть единственным защитным барьером</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="pilot">
+    <h2>Пилот, которому можно доверять</h2>
+    <p class="lead">Проверяйте не дальность маяка в пустом коридоре, а бизнес-событие в реальной среде.</p>
+    <div class="grid checklist">
+      <article class="card"><h3>Один сценарий</h3><p>Например: «приложение правильно определяет отдел и показывает карту товара», а не абстрактная «цифровизация магазина».</p></article>
+      <article class="card"><h3>Разнообразная выборка</h3><p>Несколько моделей iOS и Android, часы пик и тишина, разные ориентации телефона, заполненные тележки и реальные стеллажи.</p></article>
+      <article class="card"><h3>Ошибки, а не средняя точность</h3><p>Измеряются пропуски, ложные входы, задержка p50/p95, «прыжки» между зонами и доля unknown.</p></article>
+      <article class="card"><h3>Контрольная группа</h3><p>Для ритейла сравниваются инкрементальная конверсия, средний чек и отписки, а не демонстрационный CTR.</p></article>
+      <article class="card"><h3>Эксплуатация</h3><p>Реестр маяков, крепления, контроль батареи, версии конфигурации, SLA замены и повторная проверка после перестановок.</p></article>
+      <article class="card"><h3>Privacy by design</h3><p>Opt-in, минимизация данных, короткий срок хранения, роли доступа и возможность отозвать согласие.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Материалы и обзорные статьи</h2>
+    <p class="lead">Публикации на Хабре полезны как инженерные и исторические кейсы. Даты важны: ограничения мобильных ОС, SDK и продуктовые линейки с тех пор менялись.</p>
+    <div class="grid">
+      <a class="card source" href="../ai-beacons/index.html"><h3>AI + BLE/iBeacon: решения и кейсы</h3><p>Kontakt.io, IndoorAtlas, Wiliot, Navigine, TinyML и исследовательские системы — с оценкой доказательности результатов.</p><small>DN·Beacon · обзор рынка · 2026</small></a>
+      <a class="card source" href="https://habr.com/ru/articles/353134/" target="_blank" rel="noopener"><h3>Aruba Meridian: indoor-навигация</h3><p>Карта этажей, конфигурация маяков, Blue Dot и различия результатов на iOS/Android.</p><small>Хабр · 2018 · практический тест</small></a>
+      <a class="card source" href="https://habr.com/ru/articles/343136/" target="_blank" rel="noopener"><h3>Направленный iBeacon и мобильный факап</h3><p>Почему красивый радиопрототип может давать разные результаты на разных смартфонах и терять пары измерений.</p><small>Хабр · 2017 · инженерный эксперимент</small></a>
+      <a class="card source" href="https://habr.com/ru/articles/323580/" target="_blank" rel="noopener"><h3>25 примеров iBeacon в ритейле</h3><p>Историческая подборка паттернов: навигация, click & collect, loyalty, промо, события и тележки.</p><small>Хабр · 2017 · кейсы требуют актуальной перепроверки</small></a>
+      <a class="card source" href="https://habr.com/ru/companies/intel/articles/303670/" target="_blank" rel="noopener"><h3>Создание маяка на Intel Edison/Galileo</h3><p>Наглядное объяснение advertising-режима и учебный прототип. Само оборудование и XDK — исторические.</p><small>Хабр / Intel · 2016 · учебный материал</small></a>
+      <a class="card source" href="https://developer.apple.com/documentation/corelocation/ranging-for-beacons" target="_blank" rel="noopener"><h3>Apple Core Location: ranging beacons</h3><p>Первичный источник по обнаружению и оценке близости маяков в приложениях Apple.</p><small>Документация платформы</small></a>
+      <a class="card source" href="https://www.bluetooth.com/learn-about-bluetooth/feature-enhancements/direction-finding/" target="_blank" rel="noopener"><h3>Bluetooth Direction Finding</h3><p>Первичный обзор AoA/AoD и роли антенных систем — это отдельный класс решения, не функция обычного iBeacon.</p><small>Bluetooth SIG</small></a>
+    </div>
+  </section>
+
+  <div class="cta">
+    <h2>Начните с измеримого сценария</h2>
+    <p>Подготовим схему зон, критерии пилота и перечень ограничений до закупки оборудования.</p>
+    <a class="btn" href="mailto:sayr@inbox.ru?subject=Пилот iBeacon / indoor location">Обсудить пилот</a>
+  </div>
+</main>
+<footer>DN·Beacon · Практический обзор iBeacon и indoor-геолокации · ноябрь 2026</footer>
+</body>
+</html>

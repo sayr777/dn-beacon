@@ -230,6 +230,16 @@
   .card-tz .label { color: #1a3a5c; }
   .card-tz .tag { background: #eef3f8; color: #1a3a5c; }
   .card-tz .cta-link { color: #1a3a5c; }
+  /* Guide — blue */
+  .card-guide .card-head { border-top: 4px solid #2563eb; }
+  .card-guide .label { color: #2563eb; }
+  .card-guide .tag { background: #eff6ff; color: #1d4ed8; }
+  .card-guide .cta-link { color: #2563eb; }
+  /* AI Beacons — violet */
+  .card-ai-guide .card-head { border-top: 4px solid #7c3aed; }
+  .card-ai-guide .label { color: #7c3aed; }
+  .card-ai-guide .tag { background: #f5f3ff; color: #6d28d9; }
+  .card-ai-guide .cta-link { color: #7c3aed; }
   .why { padding: 72px 5%; background: var(--white); }
   .why h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; text-align: center; margin-bottom: 12px; }
   .why .sub { text-align: center; color: var(--muted); margin-bottom: 48px; }
@@ -796,9 +806,41 @@
 </section>
 
 <section class="services">
-  <h2>Для интеграторов и закупщиков</h2>
-  <p class="sub">Шаблоны документов для системных интеграторов, партнёров и команд закупок.</p>
+  <h2>База знаний и документы</h2>
+  <p class="sub">Технологические обзоры, проверяемые кейсы и шаблоны для интеграторов, партнёров и команд закупок.</p>
   <div class="svc-grid">
+
+    <a href="ai-beacons/index.html" class="prod-card card-ai-guide">
+      <div class="card-head">
+        <div class="label">AI + BLE · Решения и истории успеха</div>
+        <h3>AI + iBeacon: обзор рынка</h3>
+        <p>Kontakt.io, IndoorAtlas, Wiliot, Navigine и TinyML: архитектуры, внедрения, измеримые результаты, уровень доказательности и план AI-пилота.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Process AI</span>
+          <span class="tag">Sensor fusion</span>
+          <span class="tag">TinyML</span>
+        </div>
+        <span class="cta-link">Читать статью →</span>
+      </div>
+    </a>
+
+    <a href="ibeacon-guide/index.html" class="prod-card card-guide">
+      <div class="card-head">
+        <div class="label">Технологический обзор · База знаний</div>
+        <h3>iBeacon без мифов</h3>
+        <p>Indoor-геолокация, архитектуры BLE, сценарии ритейла, сравнение с AoA, UWB, GPS, NFC и QR, плюсы, ограничения и план пилота.</p>
+      </div>
+      <div class="card-foot">
+        <div class="tag-list">
+          <span class="tag">Геолокация</span>
+          <span class="tag">Ритейл</span>
+          <span class="tag">Плюсы и минусы</span>
+        </div>
+        <span class="cta-link">Читать обзор →</span>
+      </div>
+    </a>
 
     <a href="dn-kp/index.html" class="prod-card card-kp">
       <div class="card-head">

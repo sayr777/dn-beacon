@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI + BLE-маяки — решения, кейсы и архитектуры без маркетинговых мифов</title>
+<meta name="description" content="Обзор решений AI + BLE/iBeacon: Kontakt.io, IndoorAtlas, Wiliot, Navigine, TinyML и исследования. Истории внедрений, уровень доказательности и применимость к DN·Beacon.">
+<style>
+*,*::before,*::after{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.68 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#6d28d9}nav{height:62px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;background:#111827;position:sticky;top:0;z-index:10}nav a{color:#ddd6fe;text-decoration:none;font-weight:750}.hero{padding:80px 5% 88px;background:radial-gradient(circle at 80% 20%,#5b21b6 0,transparent 28%),linear-gradient(135deg,#312e81,#111827 72%);color:#fff}.wrap{max-width:1120px;margin:auto}.eyebrow{color:#c4b5fd;font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase}.hero h1{max-width:900px;margin:14px 0 20px;font-size:clamp(2rem,5vw,3.8rem);line-height:1.08}.hero p{max-width:810px;color:#d1d5db;font-size:1.13rem}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:28px}.chip{padding:6px 12px;border:1px solid #6d28d9;border-radius:20px;color:#ede9fe;font-size:.82rem}main{max-width:1120px;margin:auto;padding:28px 24px 82px}section{padding-top:54px}h2{font-size:clamp(1.45rem,3vw,2.15rem);line-height:1.2;margin:0 0 14px}h3{line-height:1.3}.lead{max-width:880px;color:#64748b;margin:0 0 28px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:18px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:23px}.card h3{margin:7px 0 9px;font-size:1.02rem}.card p,.card li{color:#475569;font-size:.91rem}.card ul{padding-left:18px;margin-bottom:0}.num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#ede9fe;color:#6d28d9;font-weight:900}.note{padding:20px 22px;border:1px solid #a78bfa;border-radius:12px;background:#f5f3ff;margin:24px 0}.warn{border-color:#fbbf24;background:#fffbeb}.table{overflow:auto;border-radius:12px;border:1px solid #e2e8f0;background:#fff}table{width:100%;border-collapse:collapse;min-width:900px;font-size:.86rem}th{background:#1e293b;color:#fff;text-align:left}th,td{padding:13px 14px;border-bottom:1px solid #e2e8f0;vertical-align:top}tbody tr:last-child td{border-bottom:0}.badge{display:inline-block;padding:3px 8px;border-radius:12px;font-size:.7rem;font-weight:850;white-space:nowrap}.measured{background:#dcfce7;color:#166534}.deployed{background:#dbeafe;color:#1e40af}.product{background:#ede9fe;color:#5b21b6}.research{background:#fef3c7;color:#92400e}.adjacent{background:#f1f5f9;color:#475569}.case{border-top:4px solid #7c3aed}.metric{font-size:1.75rem;font-weight:900;color:#6d28d9;display:block;line-height:1.2;margin:10px 0 5px}.case small,.source small{color:#64748b}.source{display:block;color:inherit;text-decoration:none}.source:hover{border-color:#8b5cf6;transform:translateY(-1px)}.layers{border-left:4px solid #7c3aed}.good{border-left:4px solid #16a34a}.risk{border-left:4px solid #f59e0b}.roadmap{counter-reset:r}.roadmap .card::before{counter-increment:r;content:counter(r);float:right;color:#ddd6fe;font-size:2.2rem;font-weight:900}.cta{text-align:center;padding:54px 24px;border-radius:18px;background:#312e81;color:#fff;margin-top:60px}.cta h2{color:#fff}.cta p{color:#ddd6fe}.btn{display:inline-block;padding:13px 26px;background:#7c3aed;color:#fff;text-decoration:none;border-radius:8px;font-weight:800}footer{text-align:center;padding:26px;background:#111827;color:#94a3b8;font-size:.84rem}@media(max-width:600px){nav{position:static}.hero{padding-top:56px}}
+</style>
+</head>
+<body>
+<nav><a href="../index.html">DN·Beacon</a><a href="#roadmap">Архитектура пилота</a></nav>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Market & technology review · ноябрь 2026</div>
+    <h1>AI + BLE-маяки: где уже есть результат, а где пока только обещание</h1>
+    <p>Маяки создают поток наблюдений о месте, движении и состоянии. AI может улучшать оценку зоны, находить отклонения и прогнозировать процесс — но не исправляет плохое радиопокрытие и не превращает RSSI в точную дистанцию.</p>
+    <div class="chips"><span class="chip">ML positioning</span><span class="chip">Process AI</span><span class="chip">Sensor fusion</span><span class="chip">TinyML</span><span class="chip">Physical AI</span><span class="chip">RTLS</span></div>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Короткий вывод</h2>
+    <div class="grid">
+      <article class="card good"><h3>Наиболее зрелая модель</h3><p>Недорогие BLE-метки → шлюзы → история зон и состояний → серверная аналитика. AI работает поверх накопленных событий: utilisation, dwell, очереди, аномальные маршруты, прогноз потребности.</p></article>
+      <article class="card layers"><h3>Наиболее доказанный эффект</h3><p>Не «сантиметровая AI-геолокация», а снижение ручного поиска, увеличение использования активов и принятие решений по фактическому состоянию вместо календаря.</p></article>
+      <article class="card risk"><h3>Главный пробел рынка</h3><p>Поставщики часто публикуют общий результат RTLS, но не A/B-сравнение AI с простыми правилами. Поэтому нельзя автоматически приписывать весь ROI машинному обучению.</p></article>
+    </div>
+    <div class="note"><strong>Терминологическая граница:</strong> iBeacon — формат BLE advertising-пакета. Многие современные AI+location решения используют BLE-метки, proprietary frames, AoA или battery-free Bluetooth и не являются iBeacon. Они включены как близкие архитектурные аналоги, но помечены явно.</div>
+  </section>
+
+  <section>
+    <h2>Три места, где AI соединяется с маяком</h2>
+    <div class="grid">
+      <article class="card"><span class="num">1</span><h3>AI в positioning engine</h3><p>Модель получает вектор RSSI от нескольких маяков, историю движения, IMU и карту. Выход — зона или координата с confidence. Типовые модели: kNN, Random Forest, gradient boosting, neural networks.</p></article>
+      <article class="card"><span class="num">2</span><h3>AI в бизнес-процессе</h3><p>Локация уже рассчитана. Модель анализирует dwell, очереди, использование, отклонения маршрута, риск дефицита и время завершения операции. Здесь чаще всего находится коммерческая ценность.</p></article>
+      <article class="card"><span class="num">3</span><h3>TinyML на метке</h3><p>IMU, звук или другой сенсор обрабатывается локально; по BLE передаётся класс события вместо сырого потока. Это снижает трафик, но меняет энергобюджет и требует размеченных данных.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Карта решений и уровень доказательности</h2>
+    <p class="lead">«AI есть на сайте» и «AI дал измеримый дополнительный эффект» — разные уровни утверждения.</p>
+    <div class="table"><table>
+      <thead><tr><th>Решение</th><th>Радиослой</th><th>Роль AI</th><th>Публичное подтверждение</th><th>Оценка</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Kontakt.io</strong></td><td>BLE tags, gateways, Wi‑Fi integration; не обязательно iBeacon</td><td>Asset utilisation, patient flow, predictive/agentic analytics</td><td>Коммерческие hospital RTLS-кейсы; вклад AI обычно не изолирован от RTLS</td><td><span class="badge deployed">внедрено</span></td></tr>
+        <tr><td><strong>IndoorAtlas + Optimo/HUS</strong></td><td>Sensor fusion и radio signals; текущая платформа поддерживает BLE assets на Aruba</td><td>Состояние и жизненный цикл IT-активов, предиктивные решения</td><td>30 000+ endpoints, срок до 6 лет, заявлены миллионы евро экономии в год</td><td><span class="badge measured">измеренный результат</span></td></tr>
+        <tr><td><strong>Wiliot + Walmart</strong></td><td>Battery-free Bluetooth IoT Pixels, <em>не iBeacon</em></td><td>Inventory intelligence, alerts, cold-chain data for Walmart AI</td><td>500 объектов на момент публикации; миллионы датчиков; цели масштабирования раскрыты поставщиком</td><td><span class="badge deployed">масштабное внедрение</span></td></tr>
+        <tr><td><strong>Navigine</strong></td><td>60 BLE-маяков в аэропорту</td><td>Алгоритмическое позиционирование и маршрутизация; ML в кейсе не раскрыт</td><td>Терминал 6000 м², indoor routing и targeted push; заказчик не назван</td><td><span class="badge adjacent">BLE-кейс, не AI-доказательство</span></td></tr>
+        <tr><td><strong>Simon AI / Kontakt.io</strong></td><td>Bluetooth beacons на товарах и материалах</td><td>Location IoT analytics, мониторинг физических процессов</td><td>Описание действующей продуктовой связки у поставщика батарей Jauch, без KPI конечного склада</td><td><span class="badge product">продукт</span></td></tr>
+        <tr><td><strong>Музей Порту, 2025</strong></td><td>27 iBeacon/Eddystone, 21 зона</td><td>Random Forest по RSSI + CNN по видео + ensemble</td><td>Реальный объект, открытая методика и датасеты; симулированные маршруты посетителей</td><td><span class="badge research">исследовательский PoC</span></td></tr>
+        <tr><td><strong>Edge Impulse + Nordic</strong></td><td>nRF52840/nRF5340 BLE</td><td>TinyML для движения, звука и sensor classification</td><td>Инструментарий и примеры; не готовый iBeacon business case</td><td><span class="badge product">платформа разработки</span></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Истории, из которых можно извлечь практику</h2>
+    <div class="grid">
+      <article class="card case"><span class="badge deployed">Kontakt.io · Riverside</span><span class="metric">40+ часов/нед.</span><h3>Больница нашла скрытую стоимость поиска</h3><p>В 300-коечной Riverside Medical Center BLE/IoT RTLS использовали для поиска медицинских устройств и контроля выхода пациентов из разрешённых зон. Анализ данных насосов показал, что персонал суммарно тратил на их поиск более одной полной ставки.</p><p><strong>Урок:</strong> сначала измерить потери процесса; AI можно добавлять к чистому потоку событий позже.</p><small>Источник и цифра — customer story Kontakt.io; отдельный uplift AI не измерен.</small></article>
+      <article class="card case"><span class="badge measured">HUS · Optimo · IndoorAtlas</span><span class="metric">3–4 → до 6 лет</span><h3>AI и локация продлили жизнь 30 000+ устройств</h3><p>Helsinki University Hospital объединил телеметрию рабочих станций, indoor location и AI-аналитику. Оборудование стали менять по состоянию, а не только по календарю; поставщик заявляет миллионы евро ежегодной экономии.</p><p><strong>Урок:</strong> координата полезна вместе с состоянием, владельцем и workflow обслуживания.</p><small>Смешанный стек: это не чистый iBeacon-кейс и не результат одной модели.</small></article>
+      <article class="card case"><span class="badge deployed">Wiliot · Walmart</span><span class="metric">500 объектов</span><h3>Bluetooth-данные питают retail AI</h3><p>В октябре 2025 года Wiliot сообщил о внедрении battery-free Bluetooth sensors для паллет Walmart. На момент публикации решение работало на 500 объектах; план — 4600 магазинов, 40+ РЦ и до 90 млн паллет к концу 2026 года.</p><p><strong>Урок:</strong> Physical AI начинается с автоматического, частого и дешёвого сбора данных о физическом мире.</p><small>Это Ambient IoT, не iBeacon; цифры и эффект опубликованы участником проекта.</small></article>
+      <article class="card case"><span class="badge research">Музей Порту · 2025</span><span class="metric">0.82–0.96</span><h3>Sensor fusion обошёл отдельный RSSI</h3><p>В 900 м² исторического музея исследователи классифицировали 21 зону по данным 27 BLE-маяков и видео смартфона. Гибридные модели показали accuracy не ниже 0.82 на маршрутных тестах и до 0.96 на базовом test set.</p><p><strong>Урок:</strong> разные сенсоры компенсируют разные ошибки, но модель чувствительна к типу телефона и условиям обучения.</p><small>PoC с симулированными маршрутами, а не промышленный SLA.</small></article>
+      <article class="card case"><span class="badge adjacent">Navigine · аэропорт</span><span class="metric">60 маяков</span><h3>BLE-навигация создаёт данные для следующего шага</h3><p>В терминале 6000 м² сеть BLE-маяков и mobile SDK обеспечила маршруты к стойкам, выходам и сервисам, а также геоконтекстные уведомления.</p><p><strong>Урок:</strong> даже без доказанного ML навигационный слой создаёт trajectories, dwell и destination data для последующей оптимизации.</p><small>Заказчик не раскрыт; ML-компонент в опубликованном кейсе не описан.</small></article>
+      <article class="card case"><span class="badge product">TinyML · Nordic</span><span class="metric">nRF52 / nRF53</span><h3>Классификация может переехать на BLE-устройство</h3><p>Edge Impulse и Nordic поддерживают embedded ML для motion, sound и sensor classification на BLE SoC. Метка может передавать «удар / движение / покой», а не весь сырой сигнал.</p><p><strong>Урок:</strong> это способ сократить данные и задержку, а не бесплатная функция маяка.</p><small>Опубликованные примеры преимущественно используют nRF52840/nRF5340; перенос на nRF52832 требует отдельной проверки.</small></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Что AI реально может улучшить</h2>
+    <div class="grid">
+      <article class="card"><h3>Стабильная зона</h3><p>История переходов и карта допустимых маршрутов уменьшают «прыжки» между соседними зонами. Выход должен включать confidence, age и unknown.</p></article>
+      <article class="card"><h3>Sensor fusion</h3><p>RSSI объединяется с IMU, состоянием оборудования, временем, камерой или бизнес-контекстом. Это часто полезнее усложнения одной RSSI-модели.</p></article>
+      <article class="card"><h3>Аномалии процесса</h3><p>Необычный dwell, возврат, пропущенный этап, простой или неверная последовательность зон обнаруживаются по истории событий.</p></article>
+      <article class="card"><h3>Прогноз ресурсов</h3><p>История использования помогает оценить PAR levels, дефицит оборудования, загрузку зоны и ожидаемое время операции.</p></article>
+      <article class="card"><h3>Класс события на edge</h3><p>IMU-модель отличает транспортировку, удар, вибрацию и покой, чтобы будить радио или отправлять только значимое событие.</p></article>
+      <article class="card"><h3>Контроль качества данных</h3><p>Модель или прозрачные правила выявляют пропавшие маяки, дрейф RSSI, изменение планировки и участок, где прогнозу нельзя доверять.</p></article>
+    </div>
+    <div class="note warn"><strong>AI не устраняет физику.</strong> Он не восстанавливает пакет, который телефон не принял, не делает разные Bluetooth-радиомодули одинаковыми и не доказывает дистанцию по одному RSSI. Модель, обученная на одном помещении и двух телефонах, не считается автоматически пригодной для другого объекта.</div>
+  </section>
+
+  <section id="roadmap">
+    <h2>Рекомендуемая архитектура для DN·Beacon</h2>
+    <p class="lead">Самый короткий путь к продукту — не начинать с нейросети в метке, а построить измеримый контур данных и постепенно повышать автономность.</p>
+    <div class="grid roadmap">
+      <article class="card"><h3>Надёжные события</h3><p>Метка → несколько шлюзов → нормализованные reads → дедупликация → зона, confidence, age, quality. Сохраняются и сырые RSSI для повторного обучения.</p></article>
+      <article class="card"><h3>Baseline без ML</h3><p>Порог, hysteresis, dwell и конечный автомат переходов. Без этой базы невозможно доказать, что ML действительно лучше.</p></article>
+      <article class="card"><h3>Server-side ML</h3><p>Классификация зоны и аномалий на шлюзе/сервере. Модель сравнивается с baseline на новых днях, устройствах и конфигурациях объекта.</p></article>
+      <article class="card"><h3>Process AI</h3><p>Прогноз задержки, простоя или дефицита поверх проверенных location events. Решение остаётся рекомендацией с объяснимыми входами.</p></article>
+      <article class="card"><h3>Edge inference</h3><p>Перенос компактной IMU-модели на метку только если он измеримо экономит трафик, энергию или задержку.</p></article>
+      <article class="card"><h3>Эксплуатация модели</h3><p>Версия датасета и прошивки, drift-monitoring, rollback, unknown class, периодическая разметка и отчёт по ошибкам каждой зоны.</p></article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Как проверить AI-пилот</h2>
+    <div class="table"><table>
+      <thead><tr><th>Гипотеза</th><th>Baseline</th><th>Метрика</th><th>Условие успеха</th></tr></thead>
+      <tbody>
+        <tr><td>ML устойчивее определяет зону</td><td>Max RSSI + hysteresis</td><td>macro-F1, confusion matrix, unknown rate</td><td>Лучше на отложенных сменах и после перестановок, не только на training map</td></tr>
+        <tr><td>Модель раньше замечает простой</td><td>Фиксированный dwell threshold</td><td>precision/recall, lead time, alarms/1000 ч</td><td>Меньше ложных тревог при равном числе найденных событий</td></tr>
+        <tr><td>TinyML экономит батарею</td><td>Периодическая передача сырых данных</td><td>µAh/сутки, packets/day, latency</td><td>Энергия всей цепочки ниже с учётом сенсора и inference</td></tr>
+        <tr><td>Process AI даёт экономический эффект</td><td>Текущий процесс или правила</td><td>время поиска, цикл, utilisation, простой</td><td>Контрольная группа и эффект больше стоимости эксплуатации модели</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2>Источники</h2>
+    <p class="lead">Показатели коммерческих кейсов приводятся как заявления их участников. Научная работа отделена от промышленной эксплуатации.</p>
+    <div class="grid">
+      <a class="card source" href="https://kontakt.io/success-stories/riverside-healthcare/" target="_blank" rel="noopener"><h3>Riverside Healthcare</h3><p>RTLS для медицинских устройств и patient elopement; более 40 часов поиска насосов в неделю.</p><small>Kontakt.io · customer story</small></a>
+      <a class="card source" href="https://kontakt.io/solutions/healthcare-rtls-tracking-solutions/" target="_blank" rel="noopener"><h3>Kontakt.io Healthcare RTLS</h3><p>Текущая AI-enhanced RTLS-платформа, asset utilisation и patient flow.</p><small>Страница продукта · 2026</small></a>
+      <a class="card source" href="https://optimo.fi/en/blog/hus-to-data-driven-it-asset-management-millions-in-savings-per-year" target="_blank" rel="noopener"><h3>HUS + Optimo + IndoorAtlas</h3><p>30 000+ endpoints, data-driven lifecycle, indoor location и заявленная ежегодная экономия.</p><small>Customer story · 27.11.2025</small></a>
+      <a class="card source" href="https://www.wiliot.com/blog/wiliot-collaborates-with-walmart-to-transform-retail-supply-chain-with-ambient-iot-and-ai" target="_blank" rel="noopener"><h3>Wiliot + Walmart</h3><p>Масштабирование Ambient IoT и передача Bluetooth sensor data в AI-системы Walmart.</p><small>Пресс-релиз участника · 02.10.2025</small></a>
+      <a class="card source" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12608739/" target="_blank" rel="noopener"><h3>BLE RSSI + video ML</h3><p>27 маяков, 21 зона, Random Forest, CNN и ensemble в музее Порту; открытая методика.</p><small>Sensors · peer-reviewed · 29.10.2025</small></a>
+      <a class="card source" href="https://www.jauch.com/blog/en/customer-success-story-real-time-tracking-with-kontakt-ios-bluetooth-beacons/" target="_blank" rel="noopener"><h3>Simon AI + Bluetooth beacons</h3><p>Архитектура складского tracking и Location IoT Analytics.</p><small>Jauch · 05.02.2020</small></a>
+      <a class="card source" href="https://www.casestudies.com/company/navigine/case-study/covering-international-airport-with-mobile-navigation" target="_blank" rel="noopener"><h3>Navigine airport</h3><p>60 BLE-маяков, 6000 м², indoor routing и targeted notifications.</p><small>Агрегированный vendor case</small></a>
+      <a class="card source" href="https://www.edgeimpulse.com/blog/nordic-embedded-machine-learning/" target="_blank" rel="noopener"><h3>Nordic + Edge Impulse</h3><p>Embedded ML на nRF52840/nRF5340 для BLE sensor devices.</p><small>Платформа разработки · 19.01.2021</small></a>
+    </div>
+  </section>
+
+  <div class="cta">
+    <h2>AI начинается не с модели, а с проверяемого события</h2>
+    <p>Для пилота DN·Beacon зафиксируем baseline, схему сбора данных, метрики качества и критерий экономического эффекта.</p>
+    <a class="btn" href="mailto:sayr@inbox.ru?subject=Пилот AI + DN·Beacon">Обсудить AI-пилот</a>
+  </div>
+</main>
+<footer>DN·Beacon · Обзор AI + BLE/iBeacon · источники проверены 24 ноября 2026</footer>
+</body>
+</html>
