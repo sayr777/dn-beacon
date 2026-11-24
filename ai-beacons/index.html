@@ -46,7 +46,7 @@
       <thead><tr><th>Решение</th><th>Радиослой</th><th>Роль AI</th><th>Публичное подтверждение</th><th>Оценка</th></tr></thead>
       <tbody>
         <tr><td><strong>Kontakt.io</strong></td><td>BLE tags, gateways, Wi‑Fi integration; не обязательно iBeacon</td><td>Asset utilisation, patient flow, predictive/agentic analytics</td><td>Коммерческие hospital RTLS-кейсы; вклад AI обычно не изолирован от RTLS</td><td><span class="badge deployed">внедрено</span></td></tr>
-        <tr><td><strong>IndoorAtlas + Optimo/HUS</strong></td><td>Sensor fusion и radio signals; текущая платформа поддерживает BLE assets на Aruba</td><td>Состояние и жизненный цикл IT-активов, предиктивные решения</td><td>30 000+ endpoints, срок до 6 лет, заявлены миллионы евро экономии в год</td><td><span class="badge measured">измеренный результат</span></td></tr>
+        <tr><td><strong>IndoorAtlas + Optimo/HUS</strong></td><td>Sensor fusion и radio signals; текущая платформа поддерживает BLE assets на Aruba</td><td>Состояние и жизненный цикл IT-активов, предиктивные решения</td><td>30 000+ endpoints, срок до 6 лет; заявленный эффект в грубом пересчёте — сотни миллионов рублей в год</td><td><span class="badge measured">измеренный результат</span></td></tr>
         <tr><td><strong>Wiliot + Walmart</strong></td><td>Battery-free Bluetooth IoT Pixels, <em>не iBeacon</em></td><td>Inventory intelligence, alerts, cold-chain data for Walmart AI</td><td>500 объектов на момент публикации; миллионы датчиков; цели масштабирования раскрыты поставщиком</td><td><span class="badge deployed">масштабное внедрение</span></td></tr>
         <tr><td><strong>Navigine</strong></td><td>60 BLE-маяков в аэропорту</td><td>Алгоритмическое позиционирование и маршрутизация; ML в кейсе не раскрыт</td><td>Терминал 6000 м², indoor routing и targeted push; заказчик не назван</td><td><span class="badge adjacent">BLE-кейс, не AI-доказательство</span></td></tr>
         <tr><td><strong>Simon AI / Kontakt.io</strong></td><td>Bluetooth beacons на товарах и материалах</td><td>Location IoT analytics, мониторинг физических процессов</td><td>Описание действующей продуктовой связки у поставщика батарей Jauch, без KPI конечного склада</td><td><span class="badge product">продукт</span></td></tr>
@@ -60,11 +60,11 @@
     <h2>Истории, из которых можно извлечь практику</h2>
     <div class="grid">
       <article class="card case"><span class="badge deployed">Kontakt.io · Riverside</span><span class="metric">40+ часов/нед.</span><h3>Больница нашла скрытую стоимость поиска</h3><p>В 300-коечной Riverside Medical Center BLE/IoT RTLS использовали для поиска медицинских устройств и контроля выхода пациентов из разрешённых зон. Анализ данных насосов показал, что персонал суммарно тратил на их поиск более одной полной ставки.</p><p><strong>Урок:</strong> сначала измерить потери процесса; AI можно добавлять к чистому потоку событий позже.</p><small>Источник и цифра — customer story Kontakt.io; отдельный uplift AI не измерен.</small></article>
-      <article class="card case"><span class="badge measured">HUS · Optimo · IndoorAtlas</span><span class="metric">3–4 → до 6 лет</span><h3>AI и локация продлили жизнь 30 000+ устройств</h3><p>Helsinki University Hospital объединил телеметрию рабочих станций, indoor location и AI-аналитику. Оборудование стали менять по состоянию, а не только по календарю; поставщик заявляет миллионы евро ежегодной экономии.</p><p><strong>Урок:</strong> координата полезна вместе с состоянием, владельцем и workflow обслуживания.</p><small>Смешанный стек: это не чистый iBeacon-кейс и не результат одной модели.</small></article>
+      <article class="card case"><span class="badge measured">HUS · Optimo · IndoorAtlas</span><span class="metric">3–4 → до 6 лет</span><h3>AI и локация продлили жизнь 30 000+ устройств</h3><p>Helsinki University Hospital объединил телеметрию рабочих станций, indoor location и AI-аналитику. Оборудование стали менять по состоянию, а не только по календарю; заявленный поставщиком эффект в грубом пересчёте соответствует сотням миллионов рублей ежегодно.</p><p><strong>Урок:</strong> координата полезна вместе с состоянием, владельцем и workflow обслуживания.</p><small>Это иллюстрация масштаба, а не ориентир цены или ROI для России: курс, стоимость труда, оборудования и процессы отличаются.</small></article>
       <article class="card case"><span class="badge deployed">Wiliot · Walmart</span><span class="metric">500 объектов</span><h3>Bluetooth-данные питают retail AI</h3><p>В октябре 2025 года Wiliot сообщил о внедрении battery-free Bluetooth sensors для паллет Walmart. На момент публикации решение работало на 500 объектах; план — 4600 магазинов, 40+ РЦ и до 90 млн паллет к концу 2026 года.</p><p><strong>Урок:</strong> Physical AI начинается с автоматического, частого и дешёвого сбора данных о физическом мире.</p><small>Это Ambient IoT, не iBeacon; цифры и эффект опубликованы участником проекта.</small></article>
       <article class="card case"><span class="badge research">Музей Порту · 2025</span><span class="metric">0.82–0.96</span><h3>Sensor fusion обошёл отдельный RSSI</h3><p>В 900 м² исторического музея исследователи классифицировали 21 зону по данным 27 BLE-маяков и видео смартфона. Гибридные модели показали accuracy не ниже 0.82 на маршрутных тестах и до 0.96 на базовом test set.</p><p><strong>Урок:</strong> разные сенсоры компенсируют разные ошибки, но модель чувствительна к типу телефона и условиям обучения.</p><small>PoC с симулированными маршрутами, а не промышленный SLA.</small></article>
       <article class="card case"><span class="badge adjacent">Navigine · аэропорт</span><span class="metric">60 маяков</span><h3>BLE-навигация создаёт данные для следующего шага</h3><p>В терминале 6000 м² сеть BLE-маяков и mobile SDK обеспечила маршруты к стойкам, выходам и сервисам, а также геоконтекстные уведомления.</p><p><strong>Урок:</strong> даже без доказанного ML навигационный слой создаёт trajectories, dwell и destination data для последующей оптимизации.</p><small>Заказчик не раскрыт; ML-компонент в опубликованном кейсе не описан.</small></article>
-      <article class="card case"><span class="badge product">TinyML · Nordic</span><span class="metric">nRF52 / nRF53</span><h3>Классификация может переехать на BLE-устройство</h3><p>Edge Impulse и Nordic поддерживают embedded ML для motion, sound и sensor classification на BLE SoC. Метка может передавать «удар / движение / покой», а не весь сырой сигнал.</p><p><strong>Урок:</strong> это способ сократить данные и задержку, а не бесплатная функция маяка.</p><small>Опубликованные примеры преимущественно используют nRF52840/nRF5340; перенос на nRF52832 требует отдельной проверки.</small></article>
+      <article class="card case"><span class="badge product">TinyML · Nordic</span><span class="metric">nRF52 / nRF53</span><h3>Классификация может переехать на BLE-устройство</h3><p>Edge Impulse и Nordic поддерживают embedded ML для motion, sound и sensor classification на BLE SoC. Метка может передавать «удар / движение / покой», а не весь сырой сигнал.</p><p><strong>Урок:</strong> готовый образец на nRF52832 не ограничивает новую сенсорную версию: для TinyML можно спроектировать плату на nRF52840/nRF5340.</p><small>Это отдельный аппаратный вариант с общей серверной архитектурой; автономность подтверждается измерением готовой платы.</small></article>
     </div>
   </section>
 
@@ -79,6 +79,35 @@
       <article class="card"><h3>Контроль качества данных</h3><p>Модель или прозрачные правила выявляют пропавшие маяки, дрейф RSSI, изменение планировки и участок, где прогнозу нельзя доверять.</p></article>
     </div>
     <div class="note warn"><strong>AI не устраняет физику.</strong> Он не восстанавливает пакет, который телефон не принял, не делает разные Bluetooth-радиомодули одинаковыми и не доказывает дистанцию по одному RSSI. Модель, обученная на одном помещении и двух телефонах, не считается автоматически пригодной для другого объекта.</div>
+  </section>
+
+  <section>
+    <h2>Как эта архитектура должна выглядеть в России</h2>
+    <p class="lead">Зарубежные кейсы подтверждают подход, но российский продукт должен работать без обязательного иностранного облака, зарубежной техподдержки и постоянного доступа в Internet.</p>
+    <div class="table"><table>
+      <thead><tr><th>Слой</th><th>Базовый вариант для РФ</th><th>Требование к автономности</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Метка</strong></td><td>Базовая версия на nRF52832/YJ‑16013; сенсорная TinyML-версия на nRF52840/nRF5340. Схема, прошивка, корпусирование, тестирование и сборка — российские</td><td>Общий формат пакета и Edge API, запас импортных компонентов, несколько аппаратных вариантов и переносимый HAL</td></tr>
+        <tr><td><strong>Edge-шлюз</strong></td><td>Промышленный контроллер российского производства, например Wiren Board 8 с BLE 4.2, либо российский промышленный компьютер с отдельным BLE-адаптером</td><td>Локальная дедупликация, identity resolution, буфер событий и store-and-forward без связи с ЦОД</td></tr>
+        <tr><td><strong>ОС и данные</strong></td><td>ОС и СУБД из актуального реестра российского ПО, когда это требуется закупкой: российский Linux, Postgres Pro или совместимый локальный стек</td><td>Локальные пакеты, mirror зависимостей, резервное копирование и восстановление без внешнего SaaS</td></tr>
+        <tr><td><strong>Интеграция</strong></td><td>1С, российские MES/WMS/АСУ ТП и телематика через REST, MQTT, OPC UA, Modbus TCP и файловый обмен</td><td>Открытый документированный API; отсутствие привязки к одному иностранному SDK или облаку</td></tr>
+        <tr><td><strong>ML/MLOps</strong></td><td>Обучение и инференс on-premise; открытые форматы датасетов и моделей, локальный registry артефактов и воспроизводимая сборка</td><td>Экспорт модели в переносимый формат, локальный CI, rollback и работа правил при недоступности ML</td></tr>
+        <tr><td><strong>Облако</strong></td><td>Необязательный контур. При допустимости данных — российский IaaS; для промышленного объекта базовый режим остаётся локальным</td><td>Потеря Internet не останавливает считывание, тревоги, журнал и локальный dashboard</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note"><strong>Российское производство ≠ российская элементная база.</strong> Корректная формулировка для текущей платформы: российская разработка, прошивка, серверное ПО, конструкция, сборка и поддержка при контролируемой импортной компонентной базе. Степень локализации и реестровый статус подтверждаются документами на конкретную комплектацию.</div>
+  </section>
+
+  <section>
+    <h2>Санкционная устойчивость и регуляторика</h2>
+    <div class="grid">
+      <article class="card good"><h3>Без иностранного control plane</h3><p>Активация, лицензии, ключи, обновления и администрирование не должны требовать AWS, Azure, Google Cloud или зарубежного аккаунта. Исходный код, сборочные артефакты и документация хранятся в российском контуре.</p></article>
+      <article class="card good"><h3>Два аппаратных маршрута</h3><p>Для Nordic фиксируется складской запас и жизненный цикл. Параллельно исследуется альтернативный доступный BLE SoC; HAL и формат пакета отделяются от SDK производителя.</p></article>
+      <article class="card good"><h3>ЗИП и ремонт в РФ</h3><p>Шлюзы, адаптеры, блоки питания и метки имеют нормы ЗИП, стенд входного контроля и процедуру замены без отправки за рубеж.</p></article>
+      <article class="card risk"><h3>152‑ФЗ</h3><p>Если события связываются с человеком, применяются минимизация, российская локализация баз данных, роли, сроки хранения и правовое основание. Для первого пилота предпочтительны активы, а не работники.</p></article>
+      <article class="card risk"><h3>187‑ФЗ и КИИ</h3><p>Применимость определяет заказчик. Для значимого объекта КИИ архитектура, журналы, обновления и средства защиты проектируются по его модели угроз и обязательным требованиям.</p></article>
+      <article class="card risk"><h3>Криптография</h3><p>AES в BLE-метке не означает соответствие требованиям регуляторов. Если нужны сертифицированные СКЗИ или ГОСТ-алгоритмы, они вводятся отдельным защищённым контуром шлюз—сервер.</p></article>
+    </div>
   </section>
 
   <section id="roadmap">
@@ -102,7 +131,7 @@
         <tr><td>ML устойчивее определяет зону</td><td>Max RSSI + hysteresis</td><td>macro-F1, confusion matrix, unknown rate</td><td>Лучше на отложенных сменах и после перестановок, не только на training map</td></tr>
         <tr><td>Модель раньше замечает простой</td><td>Фиксированный dwell threshold</td><td>precision/recall, lead time, alarms/1000 ч</td><td>Меньше ложных тревог при равном числе найденных событий</td></tr>
         <tr><td>TinyML экономит батарею</td><td>Периодическая передача сырых данных</td><td>µAh/сутки, packets/day, latency</td><td>Энергия всей цепочки ниже с учётом сенсора и inference</td></tr>
-        <tr><td>Process AI даёт экономический эффект</td><td>Текущий процесс или правила</td><td>время поиска, цикл, utilisation, простой</td><td>Контрольная группа и эффект больше стоимости эксплуатации модели</td></tr>
+        <tr><td>Process AI даёт экономический эффект</td><td>Текущий процесс или правила</td><td>время поиска, цикл, использование, простой и рубли на актив/год</td><td>Контрольная группа; эффект в рублях больше полной стоимости владения с ЗИП, связью и поддержкой</td></tr>
       </tbody>
     </table></div>
   </section>
@@ -119,6 +148,10 @@
       <a class="card source" href="https://www.jauch.com/blog/en/customer-success-story-real-time-tracking-with-kontakt-ios-bluetooth-beacons/" target="_blank" rel="noopener"><h3>Simon AI + Bluetooth beacons</h3><p>Архитектура складского tracking и Location IoT Analytics.</p><small>Jauch · 05.02.2020</small></a>
       <a class="card source" href="https://www.casestudies.com/company/navigine/case-study/covering-international-airport-with-mobile-navigation" target="_blank" rel="noopener"><h3>Navigine airport</h3><p>60 BLE-маяков, 6000 м², indoor routing и targeted notifications.</p><small>Агрегированный vendor case</small></a>
       <a class="card source" href="https://www.edgeimpulse.com/blog/nordic-embedded-machine-learning/" target="_blank" rel="noopener"><h3>Nordic + Edge Impulse</h3><p>Embedded ML на nRF52840/nRF5340 для BLE sensor devices.</p><small>Платформа разработки · 19.01.2021</small></a>
+      <a class="card source" href="https://reestr.digital.gov.ru/" target="_blank" rel="noopener"><h3>Реестр российского ПО</h3><p>Проверка актуального статуса ОС, СУБД и прикладных компонентов для конкретной закупки.</p><small>Минцифры России · официальный реестр</small></a>
+      <a class="card source" href="https://www.consultant.ru/document/cons_doc_LAW_61801/" target="_blank" rel="noopener"><h3>152‑ФЗ</h3><p>Правовая граница для сценариев, где события метки связываются с работником или посетителем.</p><small>Федеральный закон о персональных данных</small></a>
+      <a class="card source" href="https://www.consultant.ru/document/cons_doc_LAW_220885/" target="_blank" rel="noopener"><h3>187‑ФЗ</h3><p>Требования учитываются, если система используется субъектом и на объекте КИИ.</p><small>Федеральный закон о безопасности КИИ</small></a>
+      <a class="card source" href="https://wirenboard.com/ru/product/wiren-board-8/" target="_blank" rel="noopener"><h3>Российский edge-шлюз</h3><p>Пример локально поддерживаемого промышленного контроллера с Bluetooth для прототипирования шлюза.</p><small>Wiren Board 8 · сайт производителя</small></a>
     </div>
   </section>
 

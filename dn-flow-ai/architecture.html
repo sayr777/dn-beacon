@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Архитектура DN·Flow AI: BLE, TinyML и Edge RTLS</title>
-<meta name="description" content="Проектная архитектура DN·Flow AI: сенсорная метка nRF52832, TinyML, on-premise Edge RTLS, Process AI, MLOps и защита данных.">
+<meta name="description" content="Проектная архитектура DN·Flow AI: семейство меток nRF52832/nRF52840/nRF5340, TinyML, on-premise Edge RTLS, Process AI, MLOps и защита данных.">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f8fafc;color:#1e293b;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:#6d28d9}nav{padding:18px 5%;background:#111827}nav a{color:#ddd6fe;text-decoration:none;font-weight:700;margin-right:24px}.hero{padding:70px 5%;background:linear-gradient(135deg,#2e1065,#111827);color:#fff}.wrap{max-width:1050px;margin:auto}.hero p{max-width:800px;color:#ddd6fe}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.12}main{max-width:1050px;margin:auto;padding:30px 24px 70px}h2{margin-top:52px;font-size:clamp(1.45rem,3vw,2rem)}h3{margin-bottom:5px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:18px}.card{background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:22px}.card p,.card li{font-size:.91rem;color:#475569}.card ul{padding-left:18px}.note{padding:20px;background:#f5f3ff;border:1px solid #c4b5fd;border-radius:10px;margin:24px 0}.warn{background:#fffbeb;border-color:#fcd34d}.table{overflow:auto}table{border-collapse:collapse;width:100%;background:#fff;min-width:740px}th,td{padding:12px;border:1px solid #e2e8f0;text-align:left;vertical-align:top}th{background:#1e293b;color:#fff}code{background:#e2e8f0;border-radius:4px;padding:2px 5px}footer{padding:24px;text-align:center;background:#111827;color:#94a3b8}
 </style>
@@ -17,11 +17,11 @@
 
 <h2>1. Сенсорный узел</h2>
 <div class="grid">
-  <article class="card"><h3>Аппаратура</h3><p>nRF52832 + low-power IMU с прерыванием и FIFO. Для обычного движения рассматривается диапазон порядка ±16 g; для коротких сильных импульсов может понадобиться high-g датчик.</p></article>
+  <article class="card"><h3>Аппаратура</h3><p>Базовая метка использует nRF52832. Сенсорная TinyML-версия может сразу проектироваться на nRF52840 или nRF5340 с low-power IMU, прерыванием и FIFO. Для коротких сильных импульсов может понадобиться отдельный high-g датчик.</p></article>
   <article class="card"><h3>Событийная работа</h3><p>IMU будит MCU только по событию. Буфер хранит окно до и после триггера. Непрерывный инференс и постоянное сканирование не предполагаются.</p></article>
   <article class="card"><h3>TinyML</h3><p>Компактная int8-модель классифицирует движение, вибрацию, импульс, наклон, вмешательство и unknown. Обучение выполняется вне метки.</p></article>
 </div>
-<p>nRF52832 имеет ограниченные RAM и Flash. Начальный baseline — признаки временного ряда и небольшая модель дерева/линейный классификатор. 1D CNN применяется только при измеримом преимуществе и после профилирования арены памяти, времени и энергии.</p>
+<p>Выбор SoC следует за задачей, а не за готовым образцом. nRF52832 подходит для минимального baseline; nRF52840/nRF5340 дают запас для IMU-окон, OTA и более сложной int8-модели. 1D CNN применяется только при измеримом преимуществе и после профилирования памяти, времени и энергии на целевой плате.</p>
 <div class="note warn"><strong>До 10 лет батареи нельзя переносить на TinyML-версию.</strong> Автономность зависит от IMU, ODR, числа событий, времени работы CPU, интервала BLE и температуры.</div>
 
 <h2>2. Контракт события</h2>
@@ -68,7 +68,28 @@
   <li>роли, аудит, сроки хранения и удаление;</li>
   <li>статус «данные неизвестны» при потере heartbeat.</li>
 </ul>
-<p><a href="tinyml.html">Далее: практический TinyML на nRF52832 →</a></p>
+
+<h2>6. Российский профиль развёртывания</h2>
+<div class="table"><table>
+  <thead><tr><th>Узел</th><th>Рекомендуемый профиль</th><th>Резервный режим</th></tr></thead>
+  <tbody>
+    <tr><td>BLE-метка</td><td>Российские схема, прошивка, корпусирование, сборка и поддержка; линейка nRF52832/nRF52840/nRF5340 учитывается как импортная компонентная база</td><td>Общий radio/HAL и формат событий, запас критичных компонентов и возможность выпуска нескольких аппаратных вариантов</td></tr>
+    <tr><td>Шлюз зоны</td><td>Российский промышленный контроллер с BLE, например Wiren Board 8, либо промышленный компьютер российского производства</td><td>Локальный буфер, автономные правила и передача накопленных событий после восстановления сети</td></tr>
+    <tr><td>Edge-сервер</td><td>Развёртывание в ЦОД заказчика на российской ОС и СУБД из актуального реестра, если это требуется политикой закупки</td><td>Кластер или холодный резерв; backup и установка из локального репозитория</td></tr>
+    <tr><td>Интеграция</td><td>1С, MES/WMS/АСУ ТП через REST, MQTT, OPC UA, Modbus TCP и регламентированный файловый обмен</td><td>Очередь сообщений и повторная доставка без потери порядка внутри актива</td></tr>
+    <tr><td>ML-контур</td><td>Локальные dataset/model registry, CI-сборка, подпись и аудит; без обязательного иностранного MLOps SaaS</td><td>Rules baseline продолжает работать при остановке inference service</td></tr>
+  </tbody>
+</table></div>
+<div class="note"><strong>Уровень локализации фиксируется в спецификации.</strong> Российская сборка не превращает Nordic, память, IMU и батарею в отечественную элементную базу. Для каждого импортного компонента нужны срок поставки, складской норматив, второй источник либо документированный план редизайна.</div>
+
+<h2>7. Регуляторные границы</h2>
+<ul>
+  <li><strong>152‑ФЗ:</strong> применяется, если события можно связать с работником или посетителем; первый пилот ограничивается тарой и оборудованием.</li>
+  <li><strong>187‑ФЗ:</strong> применимость и категорию КИИ определяет заказчик; для значимого объекта требования включаются до выбора компонентов.</li>
+  <li><strong>Реестр российского ПО/ПАК:</strong> актуальность записей ОС, СУБД, шлюза и платформы проверяется для конкретной закупки, а не заявляется по классу продукта.</li>
+  <li><strong>Криптография:</strong> BLE AES-128 не заменяет сертифицированные средства защиты. ГОСТ/СКЗИ при необходимости размещаются на канале шлюз—сервер и в контуре управления ключами.</li>
+</ul>
+<p><a href="tinyml.html">Далее: практический TinyML на nRF52/nRF53 →</a></p>
 </main>
 <footer>DN·Flow AI · Статья 01 · <a href="index.html">Оглавление</a></footer>
 </body>

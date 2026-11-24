@@ -20,8 +20,8 @@
   <span class="badge">Планируемый продукт · Industrial IoT · Edge AI</span>
   <h1>Не только «где объект».<br><span>Что происходит с процессом?</span></h1>
   <p>DN·Flow AI — концепция локальной платформы, которая объединяет BLE-события зон, состояние движения от сенсоров и технологический маршрут, чтобы выявлять неправильную последовательность операций и заранее замечать риск задержки.</p>
-  <div class="hero-facts"><span>On-premise по умолчанию</span><span>Edge AI + TinyML</span><span>Оборотная тара и WIP</span><span>Объяснимые рекомендации</span></div>
-  <div class="status"><strong>Статус:</strong> продуктовая гипотеза и архитектура пилота. Готовой обученной модели, подтверждённой точности и доказанного процента экономии пока нет — их должен установить пилот.</div>
+  <div class="hero-facts"><span>On-premise по умолчанию</span><span>Работа без Internet</span><span>Интеграция с 1С/MES/WMS</span><span>Экономика в рублях</span></div>
+  <div class="status"><strong>Статус:</strong> продуктовая гипотеза и архитектура пилота для российского производства. Готовой обученной модели, подтверждённой точности и доказанного эффекта в рублях пока нет — их должен установить пилот. Текущий nRF52832 не ограничивает продукт: сенсорная версия может использовать nRF52840/nRF5340.</div>
 </div></header>
 <main>
 <div class="deck-nav"><div class="wrap"><a href="#audience">Аудитория</a><a href="#problem">Проблема</a><a href="#story">Сценарий</a><a href="#architecture">Архитектура</a><a href="#ai">AI</a><a href="#result">Результат</a><a href="#pilot">Пилот</a><a href="#roadmap">Roadmap</a><a href="#ask">Запрос</a></div></div>
@@ -174,14 +174,14 @@ flowchart LR
   <div class="eyebrow">Как проверить гипотезу</div>
   <h2>Пилот начинается с данных, а не с обещанного процента экономии</h2>
   <div class="grid">
-    <article class="card step"><h3>1. Обследование</h3><p>Один процесс, 4–6 зон, типы тары, исходный cycle time, роли и правила разметки.</p></article>
+    <article class="card step"><h3>1. Обследование</h3><p>Один процесс, 4–6 зон, типы тары, исходный cycle time, роли, требования 152‑ФЗ/187‑ФЗ и правила разметки.</p></article>
     <article class="card step"><h3>2. Наблюдение</h3><p>BLE-журнал и качество зон. Никаких рекомендаций до проверки покрытия и часов.</p></article>
     <article class="card step"><h3>3. Baseline</h3><p>Правила маршрута и dwell. Фиксируются ложные события, пропуски и unknown.</p></article>
     <article class="card step"><h3>4. Shadow AI</h3><p>Модель сравнивается с правилами, но не влияет на операционный процесс.</p></article>
     <article class="card step"><h3>5. TinyML</h3><p>Часть активов получает IMU. Измеряются вклад motion state и реальная энергия.</p></article>
     <article class="card step"><h3>6. Решение</h3><p>Тираж, доработка или остановка гипотезы по заранее согласованным метрикам.</p></article>
   </div>
-  <div class="callout"><strong>Ключевые метрики:</strong> ошибки зон, p95 перехода, false alerts на актив-день, lead time прогноза, unknown-rate, cycle time, dwell и измеренный энергобюджет TinyML-метки.</div>
+  <div class="callout"><strong>Ключевые метрики:</strong> ошибки зон, p95 перехода, false alerts на актив-день, lead time прогноза, unknown-rate, cycle time, dwell, ₽/актив в год, полная стоимость владения и измеренный энергобюджет TinyML-метки. Отдельно проверяется работа без Internet и зарубежных сервисов.</div>
   <div class="speaker">Пилот должен иметь право опровергнуть гипотезу. Для акселератора это признак инженерной зрелости, а не слабость продукта.</div>
 </div></section>
 
@@ -201,8 +201,8 @@ flowchart LR
   <h2>Материалы раздела</h2>
   <p class="lead">Пять статей отделяют продуктовую идею от инженерных ограничений, рыночных кейсов и плана проверки.</p>
   <div class="grid">
-    <article class="card article"><span class="num">01</span><h3>Архитектура BLE + TinyML + Edge AI</h3><p>Что выполняется на nRF52832, что остаётся на питаемом шлюзе и как строится воспроизводимый ML-конвейер.</p><a href="architecture.html">Читать архитектуру →</a></article>
-    <article class="card article"><span class="num">02</span><h3>Практический TinyML на nRF52832</h3><p>IMU-окна, baseline, int8, TFLite Micro/CMSIS-NN, память BLE-стека и измерение энергии на событие.</p><a href="tinyml.html">Читать TinyML-план →</a></article>
+    <article class="card article"><span class="num">01</span><h3>Архитектура BLE + TinyML + Edge AI</h3><p>Как разделены роли меток nRF52832/nRF52840/nRF5340, шлюза и воспроизводимого ML-конвейера.</p><a href="architecture.html">Читать архитектуру →</a></article>
+    <article class="card article"><span class="num">02</span><h3>Практический TinyML на nRF52/nRF53</h3><p>Выбор SoC, IMU-окна, baseline, int8, память BLE-стека и измерение энергии на событие.</p><a href="tinyml.html">Читать TinyML-план →</a></article>
     <article class="card article"><span class="num">03</span><h3>Позиционирование без маркетинговых мифов</h3><p>Зональный RSSI, AoA, неопределённость, приватность, on-premise и границы «AI-агентов».</p><a href="positioning.html">Читать о позиционировании →</a></article>
     <article class="card article"><span class="num">04</span><h3>MVP и пилот для AI-акселератора</h3><p>Стенд, данные, baseline, метрики, этапы и короткий питч без обещаний неподтверждённого эффекта.</p><a href="pilot.html">Читать план пилота →</a></article>
     <article class="card article"><span class="num">05</span><h3>AI + BLE/iBeacon: решения и истории внедрений</h3><p>Kontakt.io, IndoorAtlas, Wiliot, Navigine и TinyML: измеримые результаты, уровень доказательности и выводы для DN·Beacon.</p><a href="../ai-beacons/index.html">Читать обзор рынка →</a></article>
